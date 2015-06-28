@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name">Twinown</string>
 
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+
+    <string name="title_activity_auth">AuthActivity</string>
+    <string name="pin_code_edit_text_hint">PINコードを入力してください</string>
+    <string name="open_authorization_button_hint">認証画面を開く</string>
+    <string name="error">エラーが発生しました</string>
+    <string name="please_enter_pin_code">PINコードを入力してください</string>
+    <string name="added_user_preference">アカウントを追加しました</string>
 </resources>
