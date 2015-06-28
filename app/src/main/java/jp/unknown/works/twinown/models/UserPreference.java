@@ -17,7 +17,11 @@ public class UserPreference extends Model {
     @Column("consumer_key") public String consumerKey;
     @Column("consumer_secret") public String consumerSecret;
 
-    public List<UserPreference> getAll() {
+    public static UserPreference get() {
+        return Select.from(UserPreference.class).fetchSingle();
+    }
+
+    public static List<UserPreference> getAll() {
         return Select.from(UserPreference.class).fetch();
     }
 

@@ -7,19 +7,18 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.Status;
 
 public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // DB設定
         Base.initDataBase(getApplicationContext());
         if (UserPreference.getCount() == 0) {
-            // 初回起動処理
             Intent intent=new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
             intent.setClass(this, AuthActivity.class);
             Resources resources = getResources();
@@ -27,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra(Globals.EXTRA_KEYWORD_CONSUMER_SECRET, resources.getText(R.string.default_consumer_secret));
             startActivity(intent);
             finish();
-            // 初回起動処理
+            return;
         }
         setContentView(R.layout.activity_main);
     }
@@ -48,5 +47,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
     }
 }

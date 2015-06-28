@@ -65,9 +65,6 @@ public class AuthActivity extends AppCompatActivity {
             }
         }
 
-        public AuthActivityFragment() {
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_auth, container, false);
