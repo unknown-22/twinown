@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown.Twitter;
+package jp.unknown.works.twinown.Views;
 
 
 import android.content.Context;
@@ -13,9 +13,9 @@ import java.util.ArrayList;
 import jp.unknown.works.twinown.R;
 import twitter4j.Status;
 
-public class TimelineAdapter extends RecyclerView.Adapter{
+class TimelineAdapter extends RecyclerView.Adapter{
     private final LayoutInflater inflater;
-    private ArrayList<Status> timelineList;
+    private final ArrayList<Status> timelineList;
 
     public TimelineAdapter(Context context) {
         inflater = LayoutInflater.from(context);
@@ -24,6 +24,7 @@ public class TimelineAdapter extends RecyclerView.Adapter{
 
     public void addStatus(Status status) {
         timelineList.add(0, status);
+        notifyItemInserted(0);
     }
 
     @Override
@@ -33,7 +34,7 @@ public class TimelineAdapter extends RecyclerView.Adapter{
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int i) {
-        ((StatusViewHolder)viewHolder).mTextView.setText(timelineList.get(i).getText());
+        ((StatusViewHolder)viewHolder).setStatus(timelineList.get(i));
     }
 
     @Override
@@ -42,10 +43,17 @@ public class TimelineAdapter extends RecyclerView.Adapter{
     }
 
     private static class StatusViewHolder extends RecyclerView.ViewHolder {
-        public TextView mTextView;
+        private final TextView statusTextView;
+        private final TextView statusNameView;
         public StatusViewHolder(View itemView) {
             super(itemView);
-            mTextView = (TextView)itemView.findViewById(R.id.textView);
+            statusNameView = (TextView)itemView.findViewById(R.id.statusNameView);
+            statusTextView = (TextView)itemView.findViewById(R.id.statusTextView);
+        }
+
+        public void setStatus(Status status) {
+            statusNameView.setText(status.getUser().getScreenName());
+            statusTextView.setText(status.getText());
         }
     }
 }

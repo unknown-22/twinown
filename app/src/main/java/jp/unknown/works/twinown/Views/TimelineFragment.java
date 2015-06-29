@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown;
+package jp.unknown.works.twinown.Views;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,26 +12,28 @@ import android.view.ViewGroup;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.Twitter.TimelineAdapter;
+import jp.unknown.works.twinown.Globals;
+import jp.unknown.works.twinown.R;
+import jp.unknown.works.twinown.Twitter.Component;
 import jp.unknown.works.twinown.Twitter.TwinownHelper;
-import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
-import twitter4j.TwitterStream;
 
 
 public class TimelineFragment extends Fragment {
-    private static Handler handler = new Handler();
-    TwitterStream twitterStream;
-    LinearLayoutManager linearLayoutManager;
-    TimelineAdapter timelineAdapter;
+    private static final Handler handler = new Handler();
+    private UserPreference userPreference;
+    private LinearLayoutManager linearLayoutManager;
+    private TimelineAdapter timelineAdapter;
     @InjectView(R.id.timeline_view) RecyclerView timelineView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        UserPreference userPreference = UserPreference.get();
-        twitterStream = TwinownHelper.createUserStream(userPreference);
-        TwinownHelper.startUserStream(twitterStream);
+        setRetainInstance(true);
+        userPreference = (UserPreference) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE);
+        TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
+        TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
+        timelineAdapter = new TimelineAdapter(getActivity().getApplicationContext());
         EventBus.getDefault().register(this);
     }
 
@@ -40,9 +42,6 @@ public class TimelineFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_timeline, container, false);
         ButterKnife.inject(this, view);
         linearLayoutManager = new LinearLayoutManager(getActivity());
-        //linearLayoutManager.setReverseLayout(true);
-        //linearLayoutManager.setStackFromEnd(true);
-        timelineAdapter = new TimelineAdapter(getActivity());
         timelineView.setLayoutManager(linearLayoutManager);
         timelineView.setAdapter(timelineAdapter);
         return view;
@@ -52,18 +51,24 @@ public class TimelineFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
         EventBus.getDefault().unregister(this);
-        TwinownHelper.stopUserStream(twitterStream);
+        TwinownHelper.StreamSingleton.getInstance().stopAndDeleteUserStream(userPreference);
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(final Base.StatusEvent statusEvent) {
+    public void onEvent(final Component.StatusEvent statusEvent) {
         handler.post(new Runnable() {
             @Override
             public void run() {
                 timelineAdapter.addStatus(statusEvent.status);
-                timelineAdapter.notifyItemInserted(0);
-                timelineView.smoothScrollToPosition(0);  // TODO Topに居る、スクロール中でない場合のみ
+                refreshTimelineView();
             }
         });
+    }
+
+    private void refreshTimelineView() {
+        if (timelineView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE
+                && linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
+            linearLayoutManager.scrollToPosition(0);
+        }
     }
 }
