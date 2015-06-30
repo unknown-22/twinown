@@ -10,8 +10,6 @@ public class Globals {
     public static final String DATABASE_NAME = "twinown.db";
 
     public static final String ACTION_KEYWORD_AUTHORIZATION = "action_keyword_authorization";
-    public static final String EXTRA_KEYWORD_CONSUMER_KEY = "extra_keyword_consumer_key";
-    public static final String EXTRA_KEYWORD_CONSUMER_SECRET = "extra_keyword_consumer_secret";
 
     public static final String ARGUMENTS_KEYWORD_USER_PREFERENCE = "arguments_keyword_user_preference";
 

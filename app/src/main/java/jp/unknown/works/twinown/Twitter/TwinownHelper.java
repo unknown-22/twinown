@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 
 import java.util.HashMap;
 
+import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
@@ -11,11 +12,12 @@ import twitter4j.conf.ConfigurationBuilder;
 
 public class TwinownHelper {
     private static TwitterStream createUserStream(UserPreference userPreference) {
+        Client client = Client.get(userPreference.clientId);
         ConfigurationBuilder conf  = new ConfigurationBuilder()
                 .setOAuthAccessToken(userPreference.tokenKey)
                 .setOAuthAccessTokenSecret(userPreference.tokenSecret)
-                .setOAuthConsumerKey(userPreference.consumerKey)
-                .setOAuthConsumerSecret(userPreference.consumerSecret);
+                .setOAuthConsumerKey(client.consumerKey)
+                .setOAuthConsumerSecret(client.consumerSecret);
         TwitterStream twitterStream = new TwitterStreamFactory(conf.build()).getInstance();
         twitterStream.addListener(new TwinownUserStreamListener());
         return twitterStream;

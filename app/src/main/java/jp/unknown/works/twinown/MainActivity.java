@@ -26,11 +26,8 @@ public class MainActivity extends AppCompatActivity {
         // TODO DBのinitを毎回やる必要はないはず。画面回転時の最適化を検討。
         Base.initDataBase(getApplicationContext());
         if (UserPreference.getCount() == 0) {
-            Intent intent=new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
+            Intent intent = new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
             intent.setClass(this, AuthActivity.class);
-            Resources resources = getResources();
-            intent.putExtra(Globals.EXTRA_KEYWORD_CONSUMER_KEY, resources.getText(R.string.default_consumer_key));
-            intent.putExtra(Globals.EXTRA_KEYWORD_CONSUMER_SECRET, resources.getText(R.string.default_consumer_secret));
             startActivity(intent);
             finish();
             return;

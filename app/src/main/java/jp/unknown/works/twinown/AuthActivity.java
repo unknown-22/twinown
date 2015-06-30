@@ -15,6 +15,7 @@ import android.widget.EditText;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
@@ -25,20 +26,15 @@ import twitter4j.auth.RequestToken;
 
 public class AuthActivity extends AppCompatActivity {
     private static final Handler handler = new Handler();
-    private String consumerKey;
-    private String consumerSecret;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Globals.ACTION_KEYWORD_AUTHORIZATION.equals(getIntent().getAction())) {
-            consumerKey = getIntent().getStringExtra(Globals.EXTRA_KEYWORD_CONSUMER_KEY);
-            consumerSecret = getIntent().getStringExtra(Globals.EXTRA_KEYWORD_CONSUMER_SECRET);
-        }
         setContentView(R.layout.activity_auth);
     }
 
     public static class AuthActivityFragment extends Fragment {
+        private Client client;
         private RequestToken mRequestToken;
         final AsyncTwitterFactory factory = new AsyncTwitterFactory();
         final AsyncTwitter twitter = factory.getInstance();
@@ -63,18 +59,32 @@ public class AuthActivity extends AppCompatActivity {
             } else {
                 String pinCode = pinCodeEditText.getText().toString();
                 twitter.getOAuthAccessTokenAsync(mRequestToken, pinCode);
-
             }
+        }
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setRetainInstance(true);
+            if (Client.getCount() == 0) {
+                client = new Client();
+                client.name = getResources().getString(R.string.default_client_name);
+                client.consumerKey = getResources().getString(R.string.default_consumer_key);
+                client.consumerSecret = getResources().getString(R.string.default_consumer_secret);
+                client.save();
+            } else {
+                client = Client.get();
+            }
+            twitter.addListener(listener);
+            twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
+            twitter.getOAuthRequestTokenAsync();
         }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_auth, container, false);
             ButterKnife.bind(this, view);
-            twitter.addListener(listener);
-            AuthActivity authActivity = (AuthActivity) getActivity();
-            twitter.setOAuthConsumer(authActivity.consumerKey, authActivity.consumerSecret);
-            twitter.getOAuthRequestTokenAsync();
+
             return view;
         }
 
@@ -86,14 +96,12 @@ public class AuthActivity extends AppCompatActivity {
 
             @Override
             public void gotOAuthAccessToken(AccessToken token) {
-                AuthActivity authActivity = (AuthActivity) getActivity();
                 UserPreference userPreference = new UserPreference();
                 userPreference.userId = token.getUserId();
                 userPreference.screenName = token.getScreenName();
                 userPreference.tokenKey = token.getToken();
                 userPreference.tokenSecret = token.getTokenSecret();
-                userPreference.consumerKey = authActivity.consumerKey;
-                userPreference.consumerSecret = authActivity.consumerSecret;
+                userPreference.clientId = client.id;
                 userPreference.save();
                 handler.post(new Runnable() {
                     @Override
