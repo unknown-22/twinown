@@ -13,8 +13,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import jp.unknown.works.twinown.Views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -58,12 +58,12 @@ public class MainActivity extends AppCompatActivity {
 
     public static class MainFragment extends Fragment {
         TimelinePagerAdapter timelinePagerAdapter;
-        @InjectView(R.id.timelinePager) ViewPager timelineViewPager;
+        @Bind(R.id.timelinePager) ViewPager timelineViewPager;
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_main, container, false);
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
             FragmentManager fragmentManager = this.getFragmentManager();
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager);
             timelineViewPager.setAdapter(timelinePagerAdapter);

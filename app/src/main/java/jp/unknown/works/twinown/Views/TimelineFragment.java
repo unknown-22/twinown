@@ -9,8 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.Globals;
 import jp.unknown.works.twinown.R;
@@ -24,7 +24,7 @@ public class TimelineFragment extends Fragment {
     private UserPreference userPreference;
     private LinearLayoutManager linearLayoutManager;
     private TimelineAdapter timelineAdapter;
-    @InjectView(R.id.timeline_view) RecyclerView timelineView;
+    @Bind(R.id.timeline_view) RecyclerView timelineView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +40,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_timeline, container, false);
-        ButterKnife.inject(this, view);
+        ButterKnife.bind(this, view);
         linearLayoutManager = new LinearLayoutManager(getActivity());
         timelineView.setLayoutManager(linearLayoutManager);
         timelineView.setAdapter(timelineAdapter);

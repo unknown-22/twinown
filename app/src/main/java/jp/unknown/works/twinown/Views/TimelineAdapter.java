@@ -6,14 +6,20 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import jp.unknown.works.twinown.R;
 import twitter4j.Status;
 
 class TimelineAdapter extends RecyclerView.Adapter{
+    private RecyclerView recyclerView;
     private final LayoutInflater inflater;
     private final ArrayList<Status> timelineList;
 
@@ -42,16 +48,39 @@ class TimelineAdapter extends RecyclerView.Adapter{
         return timelineList.size();
     }
 
-    private static class StatusViewHolder extends RecyclerView.ViewHolder {
-        private final TextView statusTextView;
-        private final TextView statusNameView;
-        public StatusViewHolder(View itemView) {
+    @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView= recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        this.recyclerView = null;
+    }
+
+    public class StatusViewHolder extends RecyclerView.ViewHolder {
+        private final Context context;
+        @Bind(R.id.statusIconView) ImageView statusIconView;
+        @Bind(R.id.statusNameView) TextView statusNameView;
+        @Bind(R.id.statusTextView) TextView statusTextView;
+
+        public StatusViewHolder(final View itemView) {
             super(itemView);
-            statusNameView = (TextView)itemView.findViewById(R.id.statusNameView);
-            statusTextView = (TextView)itemView.findViewById(R.id.statusTextView);
+            ButterKnife.bind(this, itemView);
+            context = itemView.getContext();
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    recyclerView.getChildAdapterPosition(itemView);
+                }
+            });
         }
 
         public void setStatus(Status status) {
+            Picasso.with(context).load(status.getUser().getBiggerProfileImageURL())  // TODO サイズ設定
+                .resizeDimen(android.R.dimen.app_icon_size, android.R.dimen.app_icon_size).into(statusIconView);
             statusNameView.setText(status.getUser().getScreenName());
             statusTextView.setText(status.getText());
         }

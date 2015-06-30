@@ -2,6 +2,7 @@ package jp.unknown.works.twinown;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,8 +12,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 
+import butterknife.Bind;
 import butterknife.ButterKnife;
-import butterknife.InjectView;
 import butterknife.OnClick;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
@@ -23,6 +24,7 @@ import twitter4j.auth.AccessToken;
 import twitter4j.auth.RequestToken;
 
 public class AuthActivity extends AppCompatActivity {
+    private static final Handler handler = new Handler();
     private String consumerKey;
     private String consumerSecret;
 
@@ -40,7 +42,7 @@ public class AuthActivity extends AppCompatActivity {
         private RequestToken mRequestToken;
         final AsyncTwitterFactory factory = new AsyncTwitterFactory();
         final AsyncTwitter twitter = factory.getInstance();
-        @InjectView(R.id.pin_code_edit_text) EditText pinCodeEditText;
+        @Bind(R.id.pin_code_edit_text) EditText pinCodeEditText;
 
         @SuppressWarnings("unused")
         @OnClick(R.id.open_authorization_button)
@@ -68,7 +70,7 @@ public class AuthActivity extends AppCompatActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             View view = inflater.inflate(R.layout.fragment_auth, container, false);
-            ButterKnife.inject(this, view);
+            ButterKnife.bind(this, view);
             twitter.addListener(listener);
             AuthActivity authActivity = (AuthActivity) getActivity();
             twitter.setOAuthConsumer(authActivity.consumerKey, authActivity.consumerSecret);
@@ -93,8 +95,13 @@ public class AuthActivity extends AppCompatActivity {
                 userPreference.consumerKey = authActivity.consumerKey;
                 userPreference.consumerSecret = authActivity.consumerSecret;
                 userPreference.save();
-                Globals.showToast(getActivity(), getResources().getText(R.string.added_user_preference));
-                getActivity().finish();
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Globals.showToast(getActivity(), getResources().getText(R.string.added_user_preference));
+                        getActivity().finish();
+                    }
+                });
             }
         };
     }
