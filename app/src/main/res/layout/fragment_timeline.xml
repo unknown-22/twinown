@@ -17,6 +17,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         fab:fab_addButtonColorNormal="?attr/accent_color_2"
+        fab:fab_addButtonColorPressed="?attr/accent_color_2"
         fab:fab_labelStyle="?attr/fabLabelStyle">
         <com.getbase.floatingactionbutton.FloatingActionButton
             android:id="@+id/action_a"
