@@ -24,7 +24,7 @@ public class TimelineFragment extends Fragment {
     private UserPreference userPreference;
     private LinearLayoutManager linearLayoutManager;
     private TimelineAdapter timelineAdapter;
-    @Bind(R.id.timeline_view) RecyclerView timelineView;
+    @Bind(R.id.timelineView) RecyclerView timelineView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class TimelineFragment extends Fragment {
         userPreference = (UserPreference) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE);
         TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
         TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
-        timelineAdapter = new TimelineAdapter(getActivity().getApplicationContext());
+        timelineAdapter = new TimelineAdapter(getActivity());
         EventBus.getDefault().register(this);
     }
 

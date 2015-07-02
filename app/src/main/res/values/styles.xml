@@ -1,8 +1,12 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light">
+        <item name="fabLabelStyle">@style/menu_labels_style_black</item>
+        <item name="base_color_1">#FFD25A</item>
+        <item name="base_color_2">#E8E8E7</item>
+        <item name="impact_color">#362F3C</item>
+        <item name="accent_color_1">#FF837B</item>
+        <item name="accent_color_2">#57B196</item>
+        <item name="text_color_1">#362F3C</item>
+        <item name="text_color_2">#E8E8E7</item>
     </style>
-
 </resources>

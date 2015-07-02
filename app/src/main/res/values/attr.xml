@@ -1,0 +1,10 @@
+<resources>
+    <attr name="base_color_1" format="color" />
+    <attr name="base_color_2" format="color" />
+    <attr name="impact_color" format="color" />
+    <attr name="accent_color_1" format="color" />
+    <attr name="accent_color_2" format="color" />
+    <attr name="text_color_1" format="color" />
+    <attr name="text_color_2" format="color" />
+    <attr name="fabLabelStyle" format="reference" />
+</resources>

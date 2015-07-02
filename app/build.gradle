@@ -38,5 +38,5 @@ dependencies {
     compile 'com.michaelpardo:ollie:0.3.2-SNAPSHOT'
     provided 'com.michaelpardo:ollie-compiler:0.3.2-SNAPSHOT'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.joanzapata.android:android-iconify:1.0.9'
+    compile 'com.getbase:floatingactionbutton:1.9.1'
 }
