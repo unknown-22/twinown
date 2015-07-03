@@ -22,9 +22,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
     private RecyclerView recyclerView;
     private final LayoutInflater inflater;
     private final ArrayList<Status> timelineList;
+    private final RoundedTransformation transform;
 
     public TimelineAdapter(Context context) {
         inflater = LayoutInflater.from(context);
+        transform = new RoundedTransformation((int) (context.getResources().getDimension(R.dimen.icon_size) / 8), 0);
         timelineList = new ArrayList<>();
     }
 
@@ -79,8 +81,8 @@ class TimelineAdapter extends RecyclerView.Adapter{
         }
 
         public void setStatus(Status status) {
-            Picasso.with(context).load(status.getUser().getBiggerProfileImageURL())  // TODO サイズ設定
-                .resizeDimen(android.R.dimen.app_icon_size, android.R.dimen.app_icon_size).into(statusIconView);
+            Picasso.with(context).load(status.getUser().getBiggerProfileImageURL())
+                .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
             statusNameView.setText(status.getUser().getScreenName());
             statusTextView.setText(status.getText());
         }

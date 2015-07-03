@@ -1,0 +1,10 @@
+<resources>
+    <style name="AppThemeDark" parent="Theme.AppCompat">
+        <item name="fabLabelStyle">@style/menu_labels_style_black</item>
+        <item name="base_color_1">#666666</item>
+        <item name="base_color_2">#303030</item>
+        <item name="impact_color">#00D6B7</item>
+        <item name="accent_color_1">#D94079</item>
+        <item name="accent_color_2">#E3E3E3</item>
+    </style>
+</resources>

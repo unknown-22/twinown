@@ -44,6 +44,7 @@ public class TimelineFragment extends Fragment {
         linearLayoutManager = new LinearLayoutManager(getActivity());
         timelineView.setLayoutManager(linearLayoutManager);
         timelineView.setAdapter(timelineAdapter);
+        timelineView.addItemDecoration(new TimelineItemDecoration(getActivity()));
         return view;
     }
 

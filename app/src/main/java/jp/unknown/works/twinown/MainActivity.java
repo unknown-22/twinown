@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+        // setTheme(R.style.AppThemeLight);  // TODO
         setContentView(R.layout.activity_main);
     }
 
