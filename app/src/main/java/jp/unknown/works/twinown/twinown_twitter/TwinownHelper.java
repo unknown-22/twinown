@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown.Twitter;
+package jp.unknown.works.twinown.twinown_twitter;
 
 import android.os.AsyncTask;
 

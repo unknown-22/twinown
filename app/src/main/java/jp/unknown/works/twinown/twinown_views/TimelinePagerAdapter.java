@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown.Views;
+package jp.unknown.works.twinown.twinown_views;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

@@ -19,9 +19,9 @@ import android.view.ViewGroup;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import jp.unknown.works.twinown.Twitter.TwinownHelper;
-import jp.unknown.works.twinown.Twitter.TwinownService;
-import jp.unknown.works.twinown.Views.TimelinePagerAdapter;
+import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
+import jp.unknown.works.twinown.twinown_twitter.TwinownService;
+import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
 

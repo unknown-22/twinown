@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown.Views;
+package jp.unknown.works.twinown.twinown_views;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,8 +14,8 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.Globals;
 import jp.unknown.works.twinown.R;
-import jp.unknown.works.twinown.Twitter.Component;
-import jp.unknown.works.twinown.Twitter.TwinownHelper;
+import jp.unknown.works.twinown.twinown_twitter.Component;
+import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.models.UserPreference;
 
 

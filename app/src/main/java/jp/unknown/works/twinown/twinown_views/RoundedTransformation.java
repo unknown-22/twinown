@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown.Views;
+package jp.unknown.works.twinown.twinown_views;
 
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
