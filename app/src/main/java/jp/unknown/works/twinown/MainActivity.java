@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,7 +30,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO DBのinitを毎回やる必要はないはず。画面回転時の最適化を検討。
         Base.initDataBase(getApplicationContext());
         if (UserPreference.getCount() == 0) {
             Intent intent = new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setTheme(R.style.AppThemeDark);  // TODO テーマの設定
         setContentView(R.layout.activity_main);
     }
