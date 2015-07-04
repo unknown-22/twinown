@@ -9,4 +9,8 @@
     <string name="error">エラーが発生しました</string>
     <string name="please_enter_pin_code">PINコードを入力してください</string>
     <string name="added_user_preference">アカウントを追加しました</string>
+
+    <string name="user_stream_notification_ticker">Twitterストリームを起動しました</string>
+    <string name="user_stream_notification_title">Twinown</string>
+    <string name="user_stream_notification_text">Twitterストリーム接続中です</string>
 </resources>

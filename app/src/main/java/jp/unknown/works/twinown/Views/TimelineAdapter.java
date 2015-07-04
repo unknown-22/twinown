@@ -26,7 +26,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
 
     public TimelineAdapter(Context context) {
         inflater = LayoutInflater.from(context);
-        transform = new RoundedTransformation((int) (context.getResources().getDimension(R.dimen.icon_size) / 8), 0);
+        transform = new RoundedTransformation((int) (context.getResources().getDimension(R.dimen.icon_size) / 8));
         timelineList = new ArrayList<>();
     }
 

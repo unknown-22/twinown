@@ -39,6 +39,7 @@ public class TwinownHelper {
             @Override
             protected Void doInBackground(Void... params) {
                 twitterStream.cleanUp();
+                twitterStream.shutdown();
                 return null;
             }
         };
@@ -73,6 +74,13 @@ public class TwinownHelper {
                 TwinownHelper.stopUserStream(userIdTwitterStreamHashMap.get(userPreference.userId));
                 userIdTwitterStreamHashMap.remove(userPreference.userId);
             }
+        }
+
+        public void stopAllUserStream() {
+            for (TwitterStream twitterStream : userIdTwitterStreamHashMap.values()) {
+                TwinownHelper.stopUserStream(twitterStream);
+            }
+            userIdTwitterStreamHashMap.clear();
         }
     }
 }

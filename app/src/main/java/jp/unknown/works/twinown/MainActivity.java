@@ -1,6 +1,11 @@
 package jp.unknown.works.twinown;
 
+import android.app.NotificationManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
+import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -14,6 +19,8 @@ import android.view.ViewGroup;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.unknown.works.twinown.Twitter.TwinownHelper;
+import jp.unknown.works.twinown.Twitter.TwinownService;
 import jp.unknown.works.twinown.Views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -31,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        // setTheme(R.style.AppThemeLight);  // TODO
+        setTheme(R.style.AppThemeDark);  // TODO テーマの設定
         setContentView(R.layout.activity_main);
     }
 
@@ -56,6 +63,21 @@ public class MainActivity extends AppCompatActivity {
     public static class MainFragment extends Fragment {
         TimelinePagerAdapter timelinePagerAdapter;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
+        ServiceConnection serviceConnection = new ServiceConnection() {
+            @Override
+            public void onServiceConnected(ComponentName name, IBinder service) {}
+            @Override
+            public void onServiceDisconnected(ComponentName name) {}
+        };
+
+        @Override
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            setRetainInstance(true);
+            Context context = getActivity().getApplicationContext();
+            context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
+            context.startService(new Intent(context, TwinownService.class));
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +87,17 @@ public class MainActivity extends AppCompatActivity {
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager);
             timelineViewPager.setAdapter(timelinePagerAdapter);
             return view;
+        }
+
+        @Override
+        public void onDestroy() {
+            super.onDestroy();
+            NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
+            notificationManager.cancel(Globals.USER_STREAM_NOTIFICATION_TAG, Globals.USER_STREAM_NOTIFICATION_ID);
+            Context context = getActivity().getApplicationContext();
+            context.unbindService(serviceConnection);
+            context.stopService(new Intent(context, TwinownService.class));
+            TwinownHelper.StreamSingleton.getInstance().stopAllUserStream();
         }
     }
 }

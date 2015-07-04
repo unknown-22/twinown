@@ -13,6 +13,9 @@ public class Globals {
 
     public static final String ARGUMENTS_KEYWORD_USER_PREFERENCE = "arguments_keyword_user_preference";
 
+    public static final String USER_STREAM_NOTIFICATION_TAG = "user_stream_notification_tag";
+    public static final int USER_STREAM_NOTIFICATION_ID = 0;
+
     @SuppressWarnings("unused")
     public static void debugLog(String message) {
         String debugLogTag = "TWINOWN_DEBUG";

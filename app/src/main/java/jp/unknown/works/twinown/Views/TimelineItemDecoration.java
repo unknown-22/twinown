@@ -7,8 +7,8 @@ import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-public class TimelineItemDecoration extends RecyclerView.ItemDecoration {
-    private Drawable mDivider;
+class TimelineItemDecoration extends RecyclerView.ItemDecoration {
+    private final Drawable mDivider;
     private static final int[] ATTRS = new int[]{
             android.R.attr.listDivider
     };

@@ -12,7 +12,6 @@ class TwinownUserStreamListener extends UserStreamAdapter {
 
     @Override
     public void onStatus(Status status) {
-        // TODO statusをそのまま使わないようにする
         EventBus.getDefault().post(new Component.StatusEvent(status));
     }
 
