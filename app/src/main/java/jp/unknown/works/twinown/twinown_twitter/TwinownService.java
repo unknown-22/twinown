@@ -16,10 +16,11 @@ import jp.unknown.works.twinown.R;
 public class TwinownService extends Service {
     @Override
     public IBinder onBind(Intent intent) {
-        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(),
-                0,
-                new Intent(this, MainActivity.class),
-                PendingIntent.FLAG_NO_CREATE);
+        Intent mainActivityIntent = new Intent(this, MainActivity.class);
+        intent.setAction(Intent.ACTION_MAIN);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        PendingIntent contentIntent = PendingIntent.getActivity(getApplicationContext(), 0, mainActivityIntent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext());
         builder.setTicker(getText(R.string.user_stream_notification_ticker));
         builder.setContentTitle(getText(R.string.user_stream_notification_title));

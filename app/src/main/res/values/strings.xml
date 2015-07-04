@@ -13,4 +13,6 @@
     <string name="user_stream_notification_ticker">Twitterストリームを起動しました</string>
     <string name="user_stream_notification_title">Twinown</string>
     <string name="user_stream_notification_text">Twitterストリーム接続中です</string>
+    <string name="tweet_hint">ついーとする</string>
+    <string name="tweet">TWEET</string>
 </resources>

@@ -11,15 +11,19 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.EditText;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.twinown_twitter.TwinownService;
 import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
@@ -63,13 +67,34 @@ public class MainActivity extends AppCompatActivity {
 
     public static class MainFragment extends Fragment {
         TimelinePagerAdapter timelinePagerAdapter;
-        @Bind(R.id.timelinePager) ViewPager timelineViewPager;
         ServiceConnection serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {}
             @Override
             public void onServiceDisconnected(ComponentName name) {}
         };
+        @Bind(R.id.timelinePager) ViewPager timelineViewPager;
+        @Bind(R.id.tweetEditText) EditText tweetEditText;
+
+        @SuppressWarnings("unused")
+        @OnClick(R.id.tweetButton)
+        public void statusUpdate() {
+            if (tweetEditText.length() != 0) {
+                UserPreference userPreference = UserPreference.get();
+                TwinownHelper.statusUpdate(userPreference, tweetEditText.getText().toString());
+                tweetEditText.setText("");
+            }
+        }
+
+        @SuppressWarnings("unused")
+        @OnEditorAction(R.id.tweetEditText)
+        public boolean statusQuickUpdate(KeyEvent keyEvent) {
+            if (keyEvent != null && keyEvent.getKeyCode() == KeyEvent.KEYCODE_ENTER){
+                statusUpdate();
+                return true;
+            }
+            return false;
+        }
 
         @Override
         public void onCreate(Bundle savedInstanceState) {

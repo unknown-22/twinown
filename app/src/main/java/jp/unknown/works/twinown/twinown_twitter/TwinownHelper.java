@@ -6,11 +6,34 @@ import java.util.HashMap;
 
 import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.AsyncTwitter;
+import twitter4j.AsyncTwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class TwinownHelper {
+    private static final AsyncTwitterFactory factory = new AsyncTwitterFactory();
+    private static final HashMap<Long, AsyncTwitter> userIdTwitterHashMap = new HashMap<>();
+
+    private static AsyncTwitter createTwitter(UserPreference userPreference) {
+        Client client = Client.get(userPreference.clientId);
+        AsyncTwitter twitter = factory.getInstance();
+        twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
+        twitter.setOAuthAccessToken(new AccessToken(userPreference.tokenKey, userPreference.tokenSecret));
+        return twitter;
+    }
+
+    public static void statusUpdate(UserPreference userPreference, String statusText) {
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            userIdTwitterHashMap.get(userPreference.userId).updateStatus(statusText);
+        }
+        AsyncTwitter twitter = createTwitter(userPreference);
+        twitter.updateStatus(statusText);
+        userIdTwitterHashMap.put(userPreference.userId, twitter);
+    }
+
     private static TwitterStream createUserStream(UserPreference userPreference) {
         Client client = Client.get(userPreference.clientId);
         ConfigurationBuilder conf  = new ConfigurationBuilder()
