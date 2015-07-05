@@ -15,6 +15,8 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
+import jp.unknown.works.twinown.Globals;
 import jp.unknown.works.twinown.R;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -74,16 +76,16 @@ class TimelineAdapter extends RecyclerView.Adapter{
         @Bind(R.id.statusNameView) TextView statusNameView;
         @Bind(R.id.statusTextView) TextView statusTextView;
 
+        @SuppressWarnings("unused")
+        @OnClick(R.id.itemView)
+        public void showStatusMenu(View itemView) {
+            recyclerView.getChildAdapterPosition(itemView);
+        }
+
         public StatusViewHolder(final View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
             context = itemView.getContext();
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    recyclerView.getChildAdapterPosition(itemView);
-                }
-            });
         }
 
         public void setStatus(Status status) {
