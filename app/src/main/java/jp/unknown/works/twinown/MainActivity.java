@@ -66,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static class MainFragment extends Fragment {
+        UserPreference userPreference; // TODO 全部持つようにするはず
         TimelinePagerAdapter timelinePagerAdapter;
         ServiceConnection serviceConnection = new ServiceConnection() {
             @Override
@@ -80,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
         @OnClick(R.id.tweetButton)
         public void statusUpdate() {
             if (tweetEditText.length() != 0) {
-                UserPreference userPreference = UserPreference.get();
                 TwinownHelper.statusUpdate(userPreference, tweetEditText.getText().toString());
                 tweetEditText.setText("");
             }
@@ -100,6 +100,8 @@ public class MainActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
+            userPreference = UserPreference.get();
+            TwinownHelper.getHomeTimeline(userPreference);
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
             context.startService(new Intent(context, TwinownService.class));

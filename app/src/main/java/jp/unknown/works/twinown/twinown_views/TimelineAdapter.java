@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import jp.unknown.works.twinown.R;
+import twitter4j.ResponseList;
 import twitter4j.Status;
 
 class TimelineAdapter extends RecyclerView.Adapter{
@@ -33,6 +34,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
     public void addStatus(Status status) {
         timelineList.add(0, status);
         notifyItemInserted(0);
+    }
+
+    public void addStatusList(ResponseList<Status> statuses) {
+        timelineList.addAll(statuses);
+        notifyItemRangeInserted(timelineList.size() - statuses.size(), statuses.size());
     }
 
     @Override

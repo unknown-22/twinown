@@ -66,6 +66,15 @@ public class TimelineFragment extends Fragment {
         });
     }
 
+    public void onEvent(final Component.StatusListEvent statusListEvent) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                timelineAdapter.addStatusList(statusListEvent.statuses);
+            }
+        });
+    }
+
     private void refreshTimelineView() {
         if (timelineView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE
                 && linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {

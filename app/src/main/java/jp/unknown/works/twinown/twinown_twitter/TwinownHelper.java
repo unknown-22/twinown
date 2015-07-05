@@ -22,16 +22,29 @@ public class TwinownHelper {
         AsyncTwitter twitter = factory.getInstance();
         twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
         twitter.setOAuthAccessToken(new AccessToken(userPreference.tokenKey, userPreference.tokenSecret));
+        twitter.addListener(new TwitterListener());
+        userIdTwitterHashMap.put(userPreference.userId, twitter);
         return twitter;
     }
 
     public static void statusUpdate(UserPreference userPreference, String statusText) {
+        AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
-            userIdTwitterHashMap.get(userPreference.userId).updateStatus(statusText);
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
         }
-        AsyncTwitter twitter = createTwitter(userPreference);
         twitter.updateStatus(statusText);
-        userIdTwitterHashMap.put(userPreference.userId, twitter);
+    }
+
+    public static void getHomeTimeline(UserPreference userPreference) {
+        AsyncTwitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
+        }
+        twitter.getHomeTimeline();
     }
 
     private static TwitterStream createUserStream(UserPreference userPreference) {
