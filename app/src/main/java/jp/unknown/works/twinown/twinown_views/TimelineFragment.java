@@ -33,7 +33,7 @@ public class TimelineFragment extends Fragment {
         userPreference = (UserPreference) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE);
         TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
         TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
-        timelineAdapter = new TimelineAdapter(getActivity());
+        timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
         EventBus.getDefault().register(this);
     }
 
@@ -66,6 +66,7 @@ public class TimelineFragment extends Fragment {
         });
     }
 
+    @SuppressWarnings("unused")
     public void onEvent(final Component.StatusListEvent statusListEvent) {
         handler.post(new Runnable() {
             @Override

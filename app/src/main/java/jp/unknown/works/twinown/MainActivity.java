@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         @OnClick(R.id.tweetButton)
         public void statusUpdate() {
             if (tweetEditText.length() != 0) {
-                TwinownHelper.statusUpdate(userPreference, tweetEditText.getText().toString());
+                TwinownHelper.updateStatus(userPreference, tweetEditText.getText().toString());
                 tweetEditText.setText("");
             }
         }

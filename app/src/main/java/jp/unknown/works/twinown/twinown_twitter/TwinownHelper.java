@@ -8,6 +8,7 @@ import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
+import twitter4j.Status;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.auth.AccessToken;
@@ -27,7 +28,7 @@ public class TwinownHelper {
         return twitter;
     }
 
-    public static void statusUpdate(UserPreference userPreference, String statusText) {
+    public static void updateStatus(UserPreference userPreference, String statusText) {
         AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
             twitter = userIdTwitterHashMap.get(userPreference.userId);
@@ -35,6 +36,16 @@ public class TwinownHelper {
             twitter = createTwitter(userPreference);
         }
         twitter.updateStatus(statusText);
+    }
+
+    public static void createFavorite(UserPreference userPreference, Status status) {
+        AsyncTwitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
+        }
+        twitter.createFavorite(status.getId());
     }
 
     public static void getHomeTimeline(UserPreference userPreference) {

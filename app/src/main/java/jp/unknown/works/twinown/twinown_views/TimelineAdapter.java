@@ -2,6 +2,8 @@ package jp.unknown.works.twinown.twinown_views;
 
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,16 +20,21 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.unknown.works.twinown.Globals;
 import jp.unknown.works.twinown.R;
+import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 
 class TimelineAdapter extends RecyclerView.Adapter{
+    private final FragmentManager fragmentManager;
+    private final UserPreference userPreference;
     private RecyclerView recyclerView;
     private final LayoutInflater inflater;
     private final ArrayList<Status> timelineList;
     private final RoundedTransformation transform;
 
-    public TimelineAdapter(Context context) {
+    public TimelineAdapter(FragmentManager fragmentManager, Context context, UserPreference userPreference) {
+        this.fragmentManager = fragmentManager;
+        this.userPreference = userPreference;
         inflater = LayoutInflater.from(context);
         transform = new RoundedTransformation((int) (context.getResources().getDimension(R.dimen.icon_size) / 8));
         timelineList = new ArrayList<>();
@@ -79,7 +86,13 @@ class TimelineAdapter extends RecyclerView.Adapter{
         @SuppressWarnings("unused")
         @OnClick(R.id.itemView)
         public void showStatusMenu(View itemView) {
-            recyclerView.getChildAdapterPosition(itemView);
+            Status status = timelineList.get(recyclerView.getChildAdapterPosition(itemView));
+            MenuDialogFragment menuDialogFragment = new MenuDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference);
+            bundle.putSerializable(Globals.ARGUMENTS_KEYWORD_STATUS, status);
+            menuDialogFragment.setArguments(bundle);
+            menuDialogFragment.show(fragmentManager, "hoge");
         }
 
         public StatusViewHolder(final View itemView) {
