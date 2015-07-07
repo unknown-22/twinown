@@ -24,11 +24,15 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
+import butterknife.OnTextChanged;
+import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.twinown_twitter.TwinownService;
 import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.Status;
 
 public class MainActivity extends AppCompatActivity {
     @Override
@@ -77,11 +81,15 @@ public class MainActivity extends AppCompatActivity {
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
 
+        Status toReplyStatus;
+
         @SuppressWarnings("unused")
         @OnClick(R.id.tweetButton)
         public void statusUpdate() {
             if (tweetEditText.length() != 0) {
-                TwinownHelper.updateStatus(userPreference, tweetEditText.getText().toString());
+                TwinownHelper.updateStatus(userPreference, tweetEditText.getText().toString(), toReplyStatus);
+                toReplyStatus = null;
+                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
                 tweetEditText.setText("");
             }
         }
@@ -96,6 +104,15 @@ public class MainActivity extends AppCompatActivity {
             return false;
         }
 
+        @SuppressWarnings("unused")
+        @OnTextChanged(R.id.tweetEditText)
+        public void updateTweetEditText(CharSequence changedText) {
+            if (changedText.length() == 0) {
+                toReplyStatus = null;
+                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -105,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
             context.startService(new Intent(context, TwinownService.class));
+            EventBus.getDefault().register(this);
         }
 
         @Override
@@ -126,6 +144,18 @@ public class MainActivity extends AppCompatActivity {
             context.unbindService(serviceConnection);
             context.stopService(new Intent(context, TwinownService.class));
             TwinownHelper.StreamSingleton.getInstance().stopAllUserStream();
+            EventBus.getDefault().unregister(this);
+        }
+
+        @SuppressWarnings("unused")
+        public void onEvent(final Component.MenuActionReply menuActionReply) {
+            toReplyStatus = menuActionReply.toReplyStatus;
+            Long inReplyToId = toReplyStatus.getId();
+            final String userScreenName = toReplyStatus.getUser().getScreenName();
+            tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
+            tweetEditText.setSelection(tweetEditText.getText().toString().length());
+            // TODO TextInputLayoutでうまいこと表現したかったけど無理だった（ライブラリのバグが治ったら挑戦する）
+            tweetEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.abc_ic_menu_copy_mtrl_am_alpha, 0, 0, 0);
         }
     }
 }

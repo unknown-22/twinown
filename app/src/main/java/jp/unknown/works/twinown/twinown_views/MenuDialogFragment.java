@@ -23,9 +23,11 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.Globals;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
+import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import twitter4j.Status;
 
@@ -68,6 +70,7 @@ public class MenuDialogFragment extends DialogFragment {
                 StatusMenuItem statusMenuItem = statusMenuItemList.get(position);
                 switch (statusMenuItem.actionType) {
                     case MENU_ACTION_TYPE_REPLY:
+                        EventBus.getDefault().post(new Component.MenuActionReply(status));
                         break;
                     case MENU_ACTION_TYPE_RT:
                         Globals.showToast(getActivity(), "RTやめろ");  // TODO 修正

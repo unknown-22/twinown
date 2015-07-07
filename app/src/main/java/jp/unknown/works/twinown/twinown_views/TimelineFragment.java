@@ -51,8 +51,8 @@ public class TimelineFragment extends Fragment {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        EventBus.getDefault().unregister(this);
         TwinownHelper.StreamSingleton.getInstance().stopAndDeleteUserStream(userPreference);
+        EventBus.getDefault().unregister(this);
     }
 
     @SuppressWarnings("unused")

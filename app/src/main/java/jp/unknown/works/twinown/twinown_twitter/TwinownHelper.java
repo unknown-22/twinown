@@ -9,6 +9,7 @@ import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
 import twitter4j.Status;
+import twitter4j.StatusUpdate;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.auth.AccessToken;
@@ -28,14 +29,18 @@ public class TwinownHelper {
         return twitter;
     }
 
-    public static void updateStatus(UserPreference userPreference, String statusText) {
+    public static void updateStatus(UserPreference userPreference, String statusText, Status toReplyStatus) {
         AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
             twitter = userIdTwitterHashMap.get(userPreference.userId);
         } else {
             twitter = createTwitter(userPreference);
         }
-        twitter.updateStatus(statusText);
+        StatusUpdate statusUpdate = new StatusUpdate(statusText);
+        if (toReplyStatus != null) {
+            statusUpdate.setInReplyToStatusId(toReplyStatus.getId());
+        }
+        twitter.updateStatus(statusUpdate);
     }
 
     public static void createFavorite(UserPreference userPreference, Status status) {

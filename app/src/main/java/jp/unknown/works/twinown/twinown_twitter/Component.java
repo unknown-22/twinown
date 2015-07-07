@@ -19,4 +19,11 @@ public class Component {
             this.status = status;
         }
     }
+
+    public static class MenuActionReply {
+        public final Status toReplyStatus;
+        public MenuActionReply(Status toReplyStatus) {
+            this.toReplyStatus = toReplyStatus;
+        }
+    }
 }
