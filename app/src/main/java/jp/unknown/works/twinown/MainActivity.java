@@ -20,12 +20,15 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.twinown_twitter.TwinownService;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Base.initDataBase(getApplicationContext());
-        if (UserPreference.getCount() == 0) {
+        if (Tab.getCount() < 1) {
             Intent intent = new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
             intent.setClass(this, AuthActivity.class);
             startActivity(intent);
@@ -70,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static class MainFragment extends Fragment {
+        List<Tab> tabList;
         UserPreference userPreference; // TODO 全部持つようにするはず
         TimelinePagerAdapter timelinePagerAdapter;
         ServiceConnection serviceConnection = new ServiceConnection() {
@@ -117,8 +121,9 @@ public class MainActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
-            userPreference = UserPreference.get();
-            TwinownHelper.getHomeTimeline(userPreference);
+            tabList = Tab.getALL();
+            Globals.debugLog(String.valueOf(tabList.size()));
+            userPreference = UserPreference.get(tabList.get(0).userId);
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
             context.startService(new Intent(context, TwinownService.class));
@@ -130,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             View view = inflater.inflate(R.layout.fragment_main, container, false);
             ButterKnife.bind(this, view);
             FragmentManager fragmentManager = this.getFragmentManager();
-            timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager);
+            timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager, tabList);
             timelineViewPager.setAdapter(timelinePagerAdapter);
             return view;
         }

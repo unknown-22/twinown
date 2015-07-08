@@ -16,6 +16,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import jp.unknown.works.twinown.models.Client;
+import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
@@ -103,6 +104,11 @@ public class AuthActivity extends AppCompatActivity {
                 userPreference.tokenSecret = token.getTokenSecret();
                 userPreference.clientId = client.id;
                 userPreference.save();
+                Tab tab = new Tab();
+                tab.name = String.format("@%s stream", userPreference.screenName);
+                tab.userId = userPreference.userId;
+                tab.type = Tab.TAB_TYPE_STREAM;
+                tab.save();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

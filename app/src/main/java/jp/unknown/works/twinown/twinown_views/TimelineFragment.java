@@ -9,11 +9,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.Objects;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.Globals;
 import jp.unknown.works.twinown.R;
+import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -21,6 +24,7 @@ import jp.unknown.works.twinown.models.UserPreference;
 
 public class TimelineFragment extends Fragment {
     private static final Handler handler = new Handler();
+    private Tab tab;
     private UserPreference userPreference;
     private LinearLayoutManager linearLayoutManager;
     private TimelineAdapter timelineAdapter;
@@ -30,9 +34,11 @@ public class TimelineFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        userPreference = (UserPreference) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE);
+        tab = (Tab) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_TAB);
+        userPreference = UserPreference.get(tab != null ? tab.userId : null);
         TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
         TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
+        TwinownHelper.getHomeTimeline(userPreference);
         timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
         EventBus.getDefault().register(this);
     }
@@ -57,23 +63,27 @@ public class TimelineFragment extends Fragment {
 
     @SuppressWarnings("unused")
     public void onEvent(final Component.StatusEvent statusEvent) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                timelineAdapter.addStatus(statusEvent.status);
-                refreshTimelineView();
-            }
-        });
+        if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(statusEvent.userPreference.userId, userPreference.userId)) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    timelineAdapter.addStatus(statusEvent.status);
+                    refreshTimelineView();
+                }
+            });
+        }
     }
 
     @SuppressWarnings("unused")
     public void onEvent(final Component.StatusListEvent statusListEvent) {
-        handler.post(new Runnable() {
-            @Override
-            public void run() {
-                timelineAdapter.addStatusList(statusListEvent.statuses);
-            }
-        });
+        if (Objects.equals(statusListEvent.userPreference.userId, userPreference.userId)) {
+            handler.post(new Runnable() {
+                @Override
+                public void run() {
+                    timelineAdapter.addStatusList(statusListEvent.statuses);
+                }
+            });
+        }
     }
 
     private void refreshTimelineView() {
