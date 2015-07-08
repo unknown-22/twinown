@@ -24,7 +24,7 @@ public class TwinownHelper {
         AsyncTwitter twitter = factory.getInstance();
         twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
         twitter.setOAuthAccessToken(new AccessToken(userPreference.tokenKey, userPreference.tokenSecret));
-        twitter.addListener(new TwitterListener());
+        twitter.addListener(new TwitterListener(userPreference));
         userIdTwitterHashMap.put(userPreference.userId, twitter);
         return twitter;
     }
@@ -71,7 +71,7 @@ public class TwinownHelper {
                 .setOAuthConsumerKey(client.consumerKey)
                 .setOAuthConsumerSecret(client.consumerSecret);
         TwitterStream twitterStream = new TwitterStreamFactory(conf.build()).getInstance();
-        twitterStream.addListener(new TwinownUserStreamListener());
+        twitterStream.addListener(new TwinownUserStreamListener(userPreference));
         return twitterStream;
     }
 

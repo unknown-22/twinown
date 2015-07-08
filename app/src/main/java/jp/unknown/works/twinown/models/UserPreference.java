@@ -17,8 +17,8 @@ public class UserPreference extends Model implements Serializable {
     @Column("token_secret") public String tokenSecret;
     @Column("client_id") public Long clientId;
 
-    public static UserPreference get() {
-        return Select.from(UserPreference.class).fetchSingle(); // TODO userIdから引くと思う
+    public static UserPreference get(Long userId) {
+        return Select.from(UserPreference.class).where(String.format("%s=%d", "user_id", userId)).fetchSingle();
     }
 
     @SuppressWarnings("unused")  // TODO 設定画面とかで使うはず

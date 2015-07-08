@@ -12,6 +12,7 @@ public class Globals {
     public static final String ACTION_KEYWORD_AUTHORIZATION = "action_keyword_authorization";
 
     public static final String ARGUMENTS_KEYWORD_USER_PREFERENCE = "arguments_keyword_user_preference";
+    public static final String ARGUMENTS_KEYWORD_TAB = "arguments_keyword_tab";
     public static final String ARGUMENTS_KEYWORD_STATUS = "arguments_keyword_status";
 
     public static final String USER_STREAM_NOTIFICATION_TAG = "user_stream_notification_tag";
