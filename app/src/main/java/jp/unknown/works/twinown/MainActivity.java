@@ -5,6 +5,10 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +23,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -72,9 +79,20 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public Drawable getDrawableResource(int id){
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
+            return getDrawable(id);
+        }
+        else{
+            //noinspection deprecation
+            return getResources().getDrawable(id);
+        }
+    }
+
     public static class MainFragment extends Fragment {
         List<Tab> tabList;
-        UserPreference userPreference; // TODO 全部持つようにするはず
+        List<UserPreference> userPreferenceList;
+        int currentUserIndex = 0;
         TimelinePagerAdapter timelinePagerAdapter;
         ServiceConnection serviceConnection = new ServiceConnection() {
             @Override
@@ -91,9 +109,10 @@ public class MainActivity extends AppCompatActivity {
         @OnClick(R.id.tweetButton)
         public void statusUpdate() {
             if (tweetEditText.length() != 0) {
-                TwinownHelper.updateStatus(userPreference, tweetEditText.getText().toString(), toReplyStatus);
+                TwinownHelper.updateStatus(userPreferenceList.get(currentUserIndex), tweetEditText.getText().toString(), toReplyStatus);
                 toReplyStatus = null;
-                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                Drawable[] drawables = tweetEditText.getCompoundDrawables();
+                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawables[2], null);
                 tweetEditText.setText("");
             }
         }
@@ -113,7 +132,8 @@ public class MainActivity extends AppCompatActivity {
         public void updateTweetEditText(CharSequence changedText) {
             if (changedText.length() == 0) {
                 toReplyStatus = null;
-                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+                Drawable[] drawables = tweetEditText.getCompoundDrawables();
+                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawables[2], null);
             }
         }
 
@@ -123,7 +143,7 @@ public class MainActivity extends AppCompatActivity {
             setRetainInstance(true);
             tabList = Tab.getALL();
             Globals.debugLog(String.valueOf(tabList.size()));
-            userPreference = UserPreference.get(tabList.get(0).userId);
+            userPreferenceList = UserPreference.getAll();
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
             context.startService(new Intent(context, TwinownService.class));
@@ -137,6 +157,7 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragmentManager = this.getFragmentManager();
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager, tabList);
             timelineViewPager.setAdapter(timelinePagerAdapter);
+            TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
             return view;
         }
 
@@ -160,7 +181,29 @@ public class MainActivity extends AppCompatActivity {
             tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
             tweetEditText.setSelection(tweetEditText.getText().toString().length());
             // TODO TextInputLayoutでうまいこと表現したかったけど無理だった（ライブラリのバグが治ったら挑戦する）
-            tweetEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.abc_ic_menu_copy_mtrl_am_alpha, 0, 0, 0);
+            Drawable replyIconDrawable = ((MainActivity) getActivity()).getDrawableResource(R.drawable.ic_reply_white);
+            Drawable[] drawables = tweetEditText.getCompoundDrawables();
+            tweetEditText.setCompoundDrawablesWithIntrinsicBounds(replyIconDrawable, null, drawables[2], null);
+        }
+
+        @SuppressWarnings("unused")
+        public void onEventMainThread(Component.UserEvent userEvent) {
+            Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
+                    bitmapDrawable.setAlpha(128);
+                    tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, bitmapDrawable, null);
+                }
+
+                @Override
+                public void onBitmapFailed(final Drawable errorDrawable) {
+                }
+
+                @Override
+                public void onPrepareLoad(final Drawable placeHolderDrawable) {
+                }
+            });
         }
     }
 }

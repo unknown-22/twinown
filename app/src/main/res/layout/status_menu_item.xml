@@ -4,5 +4,5 @@
     android:padding="@dimen/menu_horizontal_margin"
     android:drawablePadding="@dimen/menu_icon_margin"
     android:textAppearance="?android:attr/textAppearanceMedium"
-    android:drawableLeft="@drawable/abc_ic_menu_share_mtrl_alpha"
+    android:drawableLeft="@drawable/ic_reply_white"
     android:id="@+id/statusMenuItemText"/>

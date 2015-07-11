@@ -4,6 +4,7 @@ package jp.unknown.works.twinown.twinown_twitter;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.User;
 
 
 public class Component {
@@ -29,6 +30,13 @@ public class Component {
         public final Status toReplyStatus;
         public MenuActionReply(Status toReplyStatus) {
             this.toReplyStatus = toReplyStatus;
+        }
+    }
+
+    public static class UserEvent {
+        public final User user;
+        public UserEvent(User user) {
+            this.user = user;
         }
     }
 }

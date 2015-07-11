@@ -56,11 +56,12 @@
                       android:hint="@string/tweet_hint"
                       android:layout_toStartOf="@+id/tweetButton"/>
         </android.support.design.widget.TextInputLayout>
-        <Button android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/tweet"
-                android:id="@+id/tweetButton"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"/>
+        <ImageButton android:layout_width="wrap_content"
+                     android:layout_height="wrap_content"
+                     android:id="@+id/tweetButton"
+                     android:src="@drawable/ic_send_white"
+                     android:contentDescription="@string/tweet"
+                     android:layout_centerVertical="true"
+                     android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 </LinearLayout>

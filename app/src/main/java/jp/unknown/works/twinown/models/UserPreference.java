@@ -21,7 +21,6 @@ public class UserPreference extends Model implements Serializable {
         return Select.from(UserPreference.class).where(String.format("%s=%d", "user_id", userId)).fetchSingle();
     }
 
-    @SuppressWarnings("unused")  // TODO 設定画面とかで使うはず
     public static List<UserPreference> getAll() {
         return Select.from(UserPreference.class).fetch();
     }

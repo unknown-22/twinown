@@ -43,6 +43,16 @@ public class TwinownHelper {
         twitter.updateStatus(statusUpdate);
     }
 
+    public static void getUser(UserPreference userPreference) {
+        AsyncTwitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
+        }
+        twitter.showUser(userPreference.userId);
+    }
+
     public static void createFavorite(UserPreference userPreference, Status status) {
         AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
