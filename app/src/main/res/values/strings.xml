@@ -22,4 +22,6 @@
     <string name="menu_action_open_browser">ブラウザで開く</string>
     <string name="menu_action_share">ツイートを共有する</string>
     <string name="menu_icon">MenuIcon</string>
+    <string name="title_activity_setting">SettingActivity</string>
+    <string name="hello_world">Hello world!</string>
 </resources>

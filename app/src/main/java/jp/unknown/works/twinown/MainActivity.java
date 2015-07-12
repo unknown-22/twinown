@@ -137,12 +137,19 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
+        @SuppressWarnings("unused")
+        @OnClick(R.id.action_a)  // TODO 名前を変える
+        public void onClickActionA() {
+            Intent intent = new Intent();
+            intent.setClass(getActivity(), SettingActivity.class);
+            startActivity(intent);
+        }
+
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
             tabList = Tab.getALL();
-            Globals.debugLog(String.valueOf(tabList.size()));
             userPreferenceList = UserPreference.getAll();
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
