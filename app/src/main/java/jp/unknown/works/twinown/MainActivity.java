@@ -138,8 +138,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @SuppressWarnings("unused")
-        @OnClick(R.id.action_a)  // TODO 名前を変える
-        public void onClickActionA() {
+        @OnClick(R.id.fab_setting)
+        public void onClickFabSetting() {
             Intent intent = new Intent();
             intent.setClass(getActivity(), SettingActivity.class);
             startActivity(intent);

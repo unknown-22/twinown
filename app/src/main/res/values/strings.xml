@@ -15,6 +15,7 @@
     <string name="user_stream_notification_text">Twitterストリーム接続中です</string>
     <string name="tweet_hint">ついーとする</string>
     <string name="tweet">TWEET</string>
+    <string name="add">ADD</string>
     <string name="menu_action_reply">返信する</string>
     <string name="menu_action_rt">リツイート</string>
     <string name="menu_action_favorite">お気にい入りに追加する</string>

@@ -37,6 +37,10 @@
             android:name=".SettingActivity"
             android:label="@string/title_activity_setting" >
         </activity>
+        <activity
+            android:name=".AccountControlActivity"
+            android:label="@string/setting_action_account" >
+        </activity>
     </application>
 
 </manifest>

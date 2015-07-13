@@ -29,19 +29,12 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true">
             <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_a"
+                android:id="@+id/fab_setting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 fab:fab_colorNormal="?attr/accent_color_1"
                 fab:fab_colorPressed="?attr/accent_color_1"
-                fab:fab_title="Action A"/>
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/action_b"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                fab:fab_colorNormal="?attr/accent_color_1"
-                fab:fab_colorPressed="?attr/accent_color_1"
-                fab:fab_title="Action B"/>
+                fab:fab_title="Setting"/>
         </com.getbase.floatingactionbutton.FloatingActionsMenu>
     </RelativeLayout>
     <RelativeLayout android:layout_width="match_parent"

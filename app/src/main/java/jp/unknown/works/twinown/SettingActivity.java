@@ -1,6 +1,7 @@
 package jp.unknown.works.twinown;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -27,7 +28,7 @@ public class SettingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_setting);
     }
 
-    public static class SettingActivityFragment extends Fragment {
+    public static class SettingFragment extends Fragment {
         private LayoutInflater layoutInflater;
         @Bind(android.R.id.list) ListView settingListView;
 
@@ -47,6 +48,9 @@ public class SettingActivity extends AppCompatActivity {
                     switch (settingMenuItem.actionType) {
                         case SETTING_ACTION_TYPE_ACCOUNT:
                             Globals.debugLog("アカウント設定");
+                            Intent intent = new Intent();
+                            intent.setClass(getActivity(), AccountControlActivity.class);
+                            startActivity(intent);
                             break;
                     }
                 }
