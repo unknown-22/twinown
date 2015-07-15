@@ -10,11 +10,15 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -48,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Base.initDataBase(getApplicationContext());
         if (Tab.getCount() < 1) {
             Intent intent = new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
@@ -56,27 +61,8 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setTheme(R.style.AppThemeDark);  // TODO テーマの設定
         setContentView(R.layout.activity_main);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 
     public Drawable getDrawableResource(int id){
@@ -100,6 +86,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onServiceDisconnected(ComponentName name) {}
         };
+        @Bind(R.id.mainDrawerLayout) DrawerLayout mainDrawerLayout;
+        @Bind(R.id.mainNavigation) NavigationView navigationView;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
 
@@ -140,9 +128,7 @@ public class MainActivity extends AppCompatActivity {
         @SuppressWarnings("unused")
         @OnClick(R.id.fab_setting)
         public void onClickFabSetting() {
-            Intent intent = new Intent();
-            intent.setClass(getActivity(), SettingActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(getActivity(), SettingActivity.class));
         }
 
         @Override
@@ -165,6 +151,37 @@ public class MainActivity extends AppCompatActivity {
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager, tabList);
             timelineViewPager.setAdapter(timelinePagerAdapter);
             TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
+            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+            toolbar.setTitle(getString(R.string.app_name));
+            toolbar.setNavigationIcon(android.R.drawable.ic_menu_info_details);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mainDrawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    if (menuItem.getGroupId() == R.id.menu_tab) {
+                        timelineViewPager.setCurrentItem(menuItem.getItemId());
+                        mainDrawerLayout.closeDrawers();
+                        return true;
+                    } else if (menuItem.getGroupId() == R.id.menu_other) {
+                        switch (menuItem.getItemId()) {
+                            case R.id.action_settings:
+                                startActivity(new Intent(getActivity(), SettingActivity.class));
+                                return true;
+                        }
+                    }
+                    return false;
+                }
+            });
+            Menu menu = navigationView.getMenu();
+            for(int i = 0; i < tabList.size(); i++) {
+                menu.add(R.id.menu_tab, i, i, tabList.get(i).name);
+            }
+
             return view;
         }
 
