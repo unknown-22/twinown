@@ -104,11 +104,16 @@ public class AuthActivity extends AppCompatActivity {
                 userPreference.tokenSecret = token.getTokenSecret();
                 userPreference.clientId = client.id;
                 userPreference.save();
-                Tab tab = new Tab();
-                tab.name = String.format("@%s stream", userPreference.screenName);
-                tab.userId = userPreference.userId;
-                tab.type = Tab.TAB_TYPE_STREAM;
-                tab.save();
+                Tab streamTab = new Tab();
+                streamTab.name = String.format("@%s stream", userPreference.screenName);
+                streamTab.userId = userPreference.userId;
+                streamTab.type = Tab.TAB_TYPE_STREAM;
+                streamTab.save();
+                Tab mentionTab = new Tab();
+                mentionTab.name = String.format("@%s mention", userPreference.screenName);
+                mentionTab.userId = userPreference.userId;
+                mentionTab.type = Tab.TAB_TYPE_MENTION;
+                mentionTab.save();
                 handler.post(new Runnable() {
                     @Override
                     public void run() {

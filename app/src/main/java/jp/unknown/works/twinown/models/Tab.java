@@ -12,6 +12,7 @@ import ollie.query.Select;
 @Table("tab")
 public class Tab extends Model implements Serializable {
     public static final int TAB_TYPE_STREAM = 0;
+    public static final int TAB_TYPE_MENTION = 1;
 
     @Column("name") public String name;
     @Column("user_id") public Long userId;

@@ -8,10 +8,19 @@ import twitter4j.User;
 
 
 public class Component {
-    public static class StatusListEvent {
+    public static class HomeStatusListEvent {
         public final ResponseList<Status> statuses;
         public final UserPreference userPreference;
-        public StatusListEvent(ResponseList<Status> statuses, UserPreference userPreference) {
+        public HomeStatusListEvent(ResponseList<Status> statuses, UserPreference userPreference) {
+            this.statuses = statuses;
+            this.userPreference = userPreference;
+        }
+    }
+
+    public static class MentionStatusListEvent {
+        public final ResponseList<Status> statuses;
+        public final UserPreference userPreference;
+        public MentionStatusListEvent(ResponseList<Status> statuses, UserPreference userPreference) {
             this.statuses = statuses;
             this.userPreference = userPreference;
         }

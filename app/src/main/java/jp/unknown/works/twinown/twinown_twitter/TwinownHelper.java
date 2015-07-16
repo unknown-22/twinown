@@ -73,6 +73,16 @@ public class TwinownHelper {
         twitter.getHomeTimeline();
     }
 
+    public static void getMentionTimeline(UserPreference userPreference) {
+        AsyncTwitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
+        }
+        twitter.getMentions();
+    }
+
     private static TwitterStream createUserStream(UserPreference userPreference) {
         Client client = Client.get(userPreference.clientId);
         ConfigurationBuilder conf  = new ConfigurationBuilder()
