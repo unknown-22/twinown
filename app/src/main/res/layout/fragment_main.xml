@@ -41,12 +41,12 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true">
                 <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_setting"
+                    android:id="@+id/fab_change_account"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     fab:fab_colorNormal="?attr/accent_color_1"
                     fab:fab_colorPressed="?attr/accent_color_1"
-                    fab:fab_title="Setting"/>
+                    fab:fab_title="@string/action_change_account"/>
             </com.getbase.floatingactionbutton.FloatingActionsMenu>
         </RelativeLayout>
         <RelativeLayout android:layout_width="match_parent"

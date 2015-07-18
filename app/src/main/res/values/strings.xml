@@ -2,6 +2,8 @@
     <string name="app_name">Twinown</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_change_account">アカウント変更</string>
+    <string name="notice_change_account">アカウントを変更しました(%s)</string>
 
     <string name="title_activity_auth">AuthActivity</string>
     <string name="pin_code_edit_text_hint">PINコードを入力してください</string>

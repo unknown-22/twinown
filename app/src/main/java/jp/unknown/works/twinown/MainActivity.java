@@ -3,6 +3,7 @@ package jp.unknown.works.twinown;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -16,6 +17,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -126,9 +128,26 @@ public class MainActivity extends AppCompatActivity {
         }
 
         @SuppressWarnings("unused")
-        @OnClick(R.id.fab_setting)
-        public void onClickFabSetting() {
-            startActivity(new Intent(getActivity(), SettingActivity.class));
+        @OnClick(R.id.fab_change_account)
+        public void onChangeAccount() {
+            final String[] userScreenNameList = new String[userPreferenceList.size()];
+            for(int i = 0; i < userPreferenceList.size(); i++) {
+                userScreenNameList[i] = String.format("@%s", userPreferenceList.get(i).screenName);
+            }
+            new AlertDialog.Builder(getActivity())
+                    .setTitle(getString(R.string.action_change_account))
+                    .setItems(userScreenNameList, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            currentUserIndex = which;
+                            TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
+                            Globals.showToast(
+                                    getActivity(),
+                                    String.format(getString(R.string.notice_change_account), userScreenNameList[which])
+                            );
+                        }
+                    })
+                    .show();
         }
 
         @Override

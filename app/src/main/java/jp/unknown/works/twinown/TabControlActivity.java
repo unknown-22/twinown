@@ -91,7 +91,7 @@ public class TabControlActivity extends AppCompatActivity {
         final List<UserPreference> userPreferenceList = UserPreference.getAll();
         String[] userScreenNameList = new String[userPreferenceList.size()];
         for(int i = 0; i < userPreferenceList.size(); i++) {
-            userScreenNameList[i] = userPreferenceList.get(i).screenName;
+            userScreenNameList[i] = String.format("@%s", userPreferenceList.get(i).screenName);
         }
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.dialog_title_choose_account))
