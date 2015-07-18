@@ -17,6 +17,7 @@ public class Tab extends Model implements Serializable {
     @Column("name") public String name;
     @Column("user_id") public Long userId;
     @Column("type") public Integer type;
+    @Column("extra") public String extra;  // typeによって使う付加情報。直接参照/代入はしない。
 
     public static List<Tab> getALL() {
         return Select.from(Tab.class).fetch();
@@ -24,5 +25,25 @@ public class Tab extends Model implements Serializable {
 
     public static int getCount() {
         return Select.columns("COUNT(*)").from(Tab.class).fetchValue(Integer.class);
+    }
+
+    public static Tab createStreamTab(UserPreference userPreference) {
+        Tab streamTab = new Tab();
+        streamTab.name = String.format("@%s stream", userPreference.screenName);
+        streamTab.userId = userPreference.userId;
+        streamTab.type = Tab.TAB_TYPE_STREAM;
+        streamTab.extra = "";
+        streamTab.save();
+        return streamTab;
+    }
+
+    public static Tab createMentionTab(UserPreference userPreference) {
+        Tab mentionTab = new Tab();
+        mentionTab.name = String.format("@%s mention", userPreference.screenName);
+        mentionTab.userId = userPreference.userId;
+        mentionTab.type = Tab.TAB_TYPE_MENTION;
+        mentionTab.extra = "";
+        mentionTab.save();
+        return mentionTab;
     }
 }

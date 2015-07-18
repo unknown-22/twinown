@@ -25,4 +25,13 @@ public class Client extends Model implements Serializable{
     public static int getCount() {
         return Select.columns("COUNT(*)").from(Client.class).fetchValue(Integer.class);
     }
+
+    public static Client createClient(String name, String consumerKey, String consumerSecret) {
+        Client client = new Client();
+        client.name = name;
+        client.consumerKey = consumerKey;
+        client.consumerSecret = consumerSecret;
+        client.save();
+        return client;
+    }
 }

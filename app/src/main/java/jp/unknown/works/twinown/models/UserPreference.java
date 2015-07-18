@@ -28,4 +28,16 @@ public class UserPreference extends Model implements Serializable {
     public static int getCount() {
         return Select.columns("COUNT(*)").from(UserPreference.class).fetchValue(Integer.class);
     }
+
+    public static UserPreference createUserPreference(Long userId, String screenName, String tokenKey,
+                                                      String tokenSecret, Long clientId) {
+        UserPreference userPreference = new UserPreference();
+        userPreference.userId = userId;
+        userPreference.screenName = screenName;
+        userPreference.tokenKey = tokenKey;
+        userPreference.tokenSecret = tokenSecret;
+        userPreference.clientId = clientId;
+        userPreference.save();
+        return userPreference;
+    }
 }

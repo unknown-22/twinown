@@ -68,11 +68,11 @@ public class AuthActivity extends AppCompatActivity {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
             if (Client.getCount() == 0) {
-                client = new Client();
-                client.name = getResources().getString(R.string.default_client_name);
-                client.consumerKey = getResources().getString(R.string.default_consumer_key);
-                client.consumerSecret = getResources().getString(R.string.default_consumer_secret);
-                client.save();
+                client = Client.createClient(
+                        getResources().getString(R.string.default_client_name),
+                        getResources().getString(R.string.default_consumer_key),
+                        getResources().getString(R.string.default_consumer_secret)
+                );
             } else {
                 client = Client.get();
             }
@@ -97,23 +97,11 @@ public class AuthActivity extends AppCompatActivity {
 
             @Override
             public void gotOAuthAccessToken(AccessToken token) {
-                UserPreference userPreference = new UserPreference();
-                userPreference.userId = token.getUserId();
-                userPreference.screenName = token.getScreenName();
-                userPreference.tokenKey = token.getToken();
-                userPreference.tokenSecret = token.getTokenSecret();
-                userPreference.clientId = client.id;
-                userPreference.save();
-                Tab streamTab = new Tab();
-                streamTab.name = String.format("@%s stream", userPreference.screenName);
-                streamTab.userId = userPreference.userId;
-                streamTab.type = Tab.TAB_TYPE_STREAM;
-                streamTab.save();
-                Tab mentionTab = new Tab();
-                mentionTab.name = String.format("@%s mention", userPreference.screenName);
-                mentionTab.userId = userPreference.userId;
-                mentionTab.type = Tab.TAB_TYPE_MENTION;
-                mentionTab.save();
+                UserPreference userPreference = UserPreference.createUserPreference(
+                        token.getUserId(), token.getScreenName(), token.getToken(), token.getTokenSecret(), client.id
+                );
+                Tab.createStreamTab(userPreference);
+                Tab.createMentionTab(userPreference);
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
