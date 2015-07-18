@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,11 +22,14 @@ import butterknife.ButterKnife;
 
 public class SettingActivity extends AppCompatActivity {
     private static final int SETTING_ACTION_TYPE_ACCOUNT = 0;
+    private static final int SETTING_ACTION_TYPE_TAB = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setting);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle(getString(R.string.action_settings));
     }
 
     public static class SettingFragment extends Fragment {
@@ -39,6 +43,7 @@ public class SettingActivity extends AppCompatActivity {
             ButterKnife.bind(this, view);
             final ArrayList<SettingMenuItem> settingMenuItems = new ArrayList<>();
             settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_account), SETTING_ACTION_TYPE_ACCOUNT));
+            settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_tab), SETTING_ACTION_TYPE_TAB));
             final SettingAdapter settingAdapter = new SettingAdapter(getActivity(), 0, settingMenuItems);
             settingListView.setAdapter(settingAdapter);
             settingListView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -47,10 +52,10 @@ public class SettingActivity extends AppCompatActivity {
                     SettingMenuItem settingMenuItem = settingMenuItems.get(position);
                     switch (settingMenuItem.actionType) {
                         case SETTING_ACTION_TYPE_ACCOUNT:
-                            Globals.debugLog("アカウント設定");
-                            Intent intent = new Intent();
-                            intent.setClass(getActivity(), AccountControlActivity.class);
-                            startActivity(intent);
+                            startActivity(new Intent(getActivity(), AccountControlActivity.class));
+                            break;
+                        case SETTING_ACTION_TYPE_TAB:
+                            startActivity(new Intent(getActivity(), TabControlActivity.class));
                             break;
                     }
                 }

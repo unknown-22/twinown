@@ -19,7 +19,7 @@ public class Tab extends Model implements Serializable {
     @Column("type") public Integer type;
     @Column("extra") public String extra;  // typeによって使う付加情報。直接参照/代入はしない。
 
-    public static List<Tab> getALL() {
+    public static List<Tab> getAll() {
         return Select.from(Tab.class).fetch();
     }
 

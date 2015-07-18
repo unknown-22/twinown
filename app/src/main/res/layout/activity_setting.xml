@@ -1,7 +1,17 @@
-<fragment xmlns:android="http://schemas.android.com/apk/res/android"
-          xmlns:tools="http://schemas.android.com/tools"
-          android:id="@+id/fragment"
-          android:name="jp.unknown.works.twinown.SettingActivity$SettingFragment"
-          tools:layout="@android:layout/list_content"
-          android:layout_width="match_parent"
-          android:layout_height="match_parent"/>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="5dp"
+        android:background="?attr/colorPrimary"/>
+    <fragment android:id="@+id/fragment"
+              android:name="jp.unknown.works.twinown.SettingActivity$SettingFragment"
+              tools:layout="@android:layout/list_content"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:layout_below="@+id/toolbar"/>
+</RelativeLayout>

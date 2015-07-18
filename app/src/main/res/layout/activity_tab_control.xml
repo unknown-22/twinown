@@ -9,7 +9,7 @@
         android:elevation="5dp"
         android:background="?attr/colorPrimary"/>
     <fragment android:id="@+id/fragment"
-              android:name="jp.unknown.works.twinown.AccountControlActivity$AccountControlFragment"
+              android:name="jp.unknown.works.twinown.TabControlActivity$TabControlFragment"
               tools:layout="@android:layout/list_content"
               android:layout_width="match_parent"
               android:layout_height="match_parent"

@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setRetainInstance(true);
-            tabList = Tab.getALL();
+            tabList = Tab.getAll();
             userPreferenceList = UserPreference.getAll();
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
