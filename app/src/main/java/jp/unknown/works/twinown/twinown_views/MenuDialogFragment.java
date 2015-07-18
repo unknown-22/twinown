@@ -29,15 +29,19 @@ import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
+import twitter4j.MediaEntity;
 import twitter4j.Status;
+import twitter4j.URLEntity;
 
 public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_REPLY = 0;
     private static final int MENU_ACTION_TYPE_RT = 1;
     private static final int MENU_ACTION_TYPE_FAVORITE = 2;
     private static final int MENU_ACTION_TYPE_LIST = 3;
-    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 4;
-    private static final int MENU_ACTION_TYPE_SHARE = 5;
+    private static final int MENU_ACTION_TYPE_LINK_URL = 4;
+    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 5;
+    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 6;
+    private static final int MENU_ACTION_TYPE_SHARE = 7;
 
     private LayoutInflater layoutInflater;
     private UserPreference userPreference;
@@ -60,6 +64,12 @@ public class MenuDialogFragment extends DialogFragment {
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_list), MENU_ACTION_TYPE_LIST));
+        for (URLEntity urlEntity : status.getURLEntities()) {
+            statusMenuItemList.add(new StatusMenuItem(urlEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_URL, urlEntity.getExpandedURL()));
+        }
+        for (MediaEntity mediaEntity : status.getMediaEntities()) {
+            statusMenuItemList.add(new StatusMenuItem(mediaEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_MEDIA, mediaEntity.getExpandedURL()));
+        }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_open_browser), MENU_ACTION_TYPE_OPEN_BROWSER));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_share), MENU_ACTION_TYPE_SHARE));
         StatusMenuAdapter statusMenuAdapter = new StatusMenuAdapter(getActivity(), 0, statusMenuItemList);
@@ -81,10 +91,23 @@ public class MenuDialogFragment extends DialogFragment {
                     case MENU_ACTION_TYPE_LIST:
                         Globals.showToast(getActivity(), "リストは甘え");  // TODO 修正
                         break;
+                    case MENU_ACTION_TYPE_LINK_URL:
+                        startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(statusMenuItem.url)
+                        ));
+                        break;
+                    case MENU_ACTION_TYPE_LINK_MEDIA:
+                        startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(statusMenuItem.url)
+                        ));
+                        break;
                     case MENU_ACTION_TYPE_OPEN_BROWSER:
-                        Uri uri = Uri.parse(String.format("https://twitter.com/%s/status/%d", status.getUser().getScreenName(), status.getId()));
-                        Intent i = new Intent(Intent.ACTION_VIEW, uri);
-                        startActivity(i);
+                        startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(String.format("https://twitter.com/%s/status/%d", status.getUser().getScreenName(), status.getId()))
+                        ));
                         break;
                     case MENU_ACTION_TYPE_SHARE:
                         Globals.showToast(getActivity(), "まだ");  // TODO 修正
@@ -104,10 +127,17 @@ public class MenuDialogFragment extends DialogFragment {
     class StatusMenuItem {
         public String statusMenuItemText;
         public int actionType;
+        public String url;
 
         public StatusMenuItem(String statusMenuItemText, int actionType) {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
+        }
+
+        public StatusMenuItem(String statusMenuItemText, int actionType, String url) {
+            this.statusMenuItemText = statusMenuItemText;
+            this.actionType = actionType;
+            this.url = url;
         }
     }
 
