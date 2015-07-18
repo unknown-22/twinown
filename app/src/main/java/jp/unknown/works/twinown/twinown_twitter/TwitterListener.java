@@ -7,6 +7,7 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterAdapter;
 import twitter4j.User;
+import twitter4j.UserList;
 
 public class TwitterListener extends TwitterAdapter{
     private final UserPreference userPreference;
@@ -31,5 +32,17 @@ public class TwitterListener extends TwitterAdapter{
     public void gotUserDetail(User user) {
         super.gotUserDetail(user);
         EventBus.getDefault().post(new Component.UserEvent(user));
+    }
+
+    @Override
+    public void gotUserLists(ResponseList<UserList> userLists) {
+        super.gotUserLists(userLists);
+        EventBus.getDefault().post(new Component.UserListsEvent(userLists));
+    }
+
+    @Override
+    public void gotUserListStatuses(ResponseList<Status> statuses) {
+        super.gotUserListStatuses(statuses);
+        EventBus.getDefault().post(new Component.UserListStatusesEvent(statuses, userPreference));
     }
 }

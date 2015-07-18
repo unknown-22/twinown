@@ -21,6 +21,8 @@ import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.ResponseList;
+import twitter4j.Status;
 
 
 public class TimelineFragment extends Fragment {
@@ -53,6 +55,9 @@ public class TimelineFragment extends Fragment {
                 break;
             case Tab.TAB_TYPE_MENTION:
                 TwinownHelper.getMentionTimeline(userPreference);
+                break;
+            case Tab.TAB_TYPE_LIST:
+                TwinownHelper.getTabTimeline(userPreference, tab.getListId());
                 break;
         }
     }
@@ -106,25 +111,31 @@ public class TimelineFragment extends Fragment {
     @SuppressWarnings("unused")
     public void onEvent(final Component.HomeStatusListEvent homeStatusListEvent) {
         if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(homeStatusListEvent.userPreference.userId, userPreference.userId)) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    timelineAdapter.addStatusList(homeStatusListEvent.statuses);
-                }
-            });
+            addStatusList(homeStatusListEvent.statuses);
         }
     }
 
     @SuppressWarnings("unused")
     public void onEvent(final Component.MentionStatusListEvent mentionStatusListEvent) {
         if (tab.type == Tab.TAB_TYPE_MENTION && Objects.equals(mentionStatusListEvent.userPreference.userId, userPreference.userId)) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    timelineAdapter.addStatusList(mentionStatusListEvent.statuses);
-                }
-            });
+            addStatusList(mentionStatusListEvent.statuses);
         }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEvent(final Component.UserListStatusesEvent userListStatusesEvent) {
+        if (tab.type == Tab.TAB_TYPE_LIST && Objects.equals(userListStatusesEvent.userPreference.userId, userPreference.userId)) {
+            addStatusList(userListStatusesEvent.statuses);
+        }
+    }
+
+    private void addStatusList(final ResponseList<Status> statuses) {
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                timelineAdapter.addStatusList(statuses);
+            }
+        });
     }
 
     private void refreshTimelineView() {

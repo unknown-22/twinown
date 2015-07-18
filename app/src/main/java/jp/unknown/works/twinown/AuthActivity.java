@@ -34,7 +34,9 @@ public class AuthActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_auth);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.title_activity_auth));
+        setSupportActionBar(toolbar);
+        //noinspection ConstantConditions
+        getSupportActionBar().setTitle(getString(R.string.title_activity_auth));
     }
 
     public static class AuthActivityFragment extends Fragment {

@@ -8,6 +8,7 @@ import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
 import twitter4j.AsyncTwitterFactory;
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.StatusUpdate;
 import twitter4j.TwitterStream;
@@ -81,6 +82,26 @@ public class TwinownHelper {
             twitter = createTwitter(userPreference);
         }
         twitter.getMentions();
+    }
+
+    public static void getUserLists(UserPreference userPreference) {
+        AsyncTwitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
+        }
+        twitter.getUserLists(userPreference.userId);
+    }
+
+    public static void getTabTimeline(UserPreference userPreference, Long listId) {
+        AsyncTwitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            twitter = createTwitter(userPreference);
+        }
+        twitter.getUserListStatuses(listId, new Paging());
     }
 
     private static TwitterStream createUserStream(UserPreference userPreference) {

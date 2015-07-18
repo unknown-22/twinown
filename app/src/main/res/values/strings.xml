@@ -26,6 +26,9 @@
     <string name="title_activity_setting">SettingActivity</string>
     <string name="setting_action_account">アカウント設定</string>
     <string name="setting_action_tab">タブ設定</string>
+    <string name="dialog_title_choose_tab_type">タブの種類を設定してください</string>
+    <string name="dialog_title_choose_account">アカウントを選択してください</string>
+    <string name="dialog_title_choose_list">リストを選択してください</string>
     <string name="hello_world">Hello world!</string>
     <string name="title_activity_tab_control">TabControlActivity</string>
 </resources>

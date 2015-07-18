@@ -5,6 +5,7 @@ import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.User;
+import twitter4j.UserList;
 
 
 public class Component {
@@ -46,6 +47,22 @@ public class Component {
         public final User user;
         public UserEvent(User user) {
             this.user = user;
+        }
+    }
+
+    public static class UserListsEvent {
+        public final ResponseList<UserList> userLists;
+        public UserListsEvent(ResponseList<UserList> userLists) {
+            this.userLists = userLists;
+        }
+    }
+
+    public static class UserListStatusesEvent {
+        public final ResponseList<Status> statuses;
+        public final UserPreference userPreference;
+        public UserListStatusesEvent(ResponseList<Status> statuses, UserPreference userPreference) {
+            this.statuses = statuses;
+            this.userPreference = userPreference;
         }
     }
 }

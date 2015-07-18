@@ -1,7 +1,9 @@
 package jp.unknown.works.twinown;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -19,9 +21,14 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.models.Tab;
+import jp.unknown.works.twinown.models.UserPreference;
+import jp.unknown.works.twinown.twinown_twitter.Component;
+import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 
 public class TabControlActivity extends AppCompatActivity {
+    private UserPreference userPreference;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,6 +38,13 @@ public class TabControlActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //noinspection ConstantConditions
         getSupportActionBar().setTitle(getString(R.string.setting_action_tab));
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -43,12 +57,52 @@ public class TabControlActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_add) {
+            showSelectTypeDialog();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSelectTypeDialog() {
+        final String[] items = {"Stream", "Mention", "List"};
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title_choose_tab_type))
+                .setItems(items, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 0: // Stream
+                                break;
+                            case 1: // Mention
+                                break;
+                            case 2: // List
+                                showSelectListAccountDialog();
+                                break;
+                        }
+                    }
+
+                })
+                .show();
+    }
+
+    private void showSelectListAccountDialog() {
+        final List<UserPreference> userPreferenceList = UserPreference.getAll();
+        String[] userScreenNameList = new String[userPreferenceList.size()];
+        for(int i = 0; i < userPreferenceList.size(); i++) {
+            userScreenNameList[i] = userPreferenceList.get(i).screenName;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title_choose_account))
+                .setItems(userScreenNameList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userPreference = userPreferenceList.get(which);
+                        TwinownHelper.getUserLists(userPreference);
+                    }
+                })
+                .show();
     }
 
     static class TabMenuItem {
@@ -78,6 +132,10 @@ public class TabControlActivity extends AppCompatActivity {
         @Override
         public void onResume() {
             super.onResume();
+            refreshTabAdapter();
+        }
+
+        public void refreshTabAdapter() {
             tabMenuItems.clear();
             for (Tab tab : Tab.getAll()) {
                 tabMenuItems.add(new TabMenuItem(tab.name));
@@ -114,5 +172,24 @@ public class TabControlActivity extends AppCompatActivity {
                 }
             }
         }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.UserListsEvent userListsEvent) {
+        final String[] userListFullNameList = new String[userListsEvent.userLists.size()];
+        for(int i = 0; i < userListsEvent.userLists.size(); i++) {
+            userListFullNameList[i] = userListsEvent.userLists.get(i).getFullName();
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title_choose_list))
+                .setItems(userListFullNameList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Tab.createListTab(userPreference, userListsEvent.userLists.get(which));
+                        TabControlFragment tabControlFragment = (TabControlFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+                        tabControlFragment.refreshTabAdapter();
+                    }
+                })
+                .show();
     }
 }

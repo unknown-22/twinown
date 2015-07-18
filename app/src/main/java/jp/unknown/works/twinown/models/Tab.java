@@ -8,11 +8,13 @@ import ollie.Model;
 import ollie.annotation.Column;
 import ollie.annotation.Table;
 import ollie.query.Select;
+import twitter4j.UserList;
 
 @Table("tab")
 public class Tab extends Model implements Serializable {
     public static final int TAB_TYPE_STREAM = 0;
     public static final int TAB_TYPE_MENTION = 1;
+    public static final int TAB_TYPE_LIST = 2;
 
     @Column("name") public String name;
     @Column("user_id") public Long userId;
@@ -45,5 +47,19 @@ public class Tab extends Model implements Serializable {
         mentionTab.extra = "";
         mentionTab.save();
         return mentionTab;
+    }
+
+    public static Tab createListTab(UserPreference userPreference, UserList userList) {
+        Tab listTab = new Tab();
+        listTab.name = userList.getFullName();
+        listTab.userId = userPreference.userId;
+        listTab.type = Tab.TAB_TYPE_LIST;
+        listTab.extra = String.valueOf(userList.getId());
+        listTab.save();
+        return listTab;
+    }
+
+    public Long getListId() {
+        return Long.valueOf(extra);
     }
 }
