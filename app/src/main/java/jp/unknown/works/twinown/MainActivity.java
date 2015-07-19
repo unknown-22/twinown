@@ -65,7 +65,15 @@ public class MainActivity extends AppCompatActivity {
             finish();
             return;
         }
-        setTheme(R.style.AppThemeDark);  // TODO テーマの設定
+        String theme = Globals.getPreferenceString(this, getString(R.string.preference_key_theme), "AppThemeDark");
+        switch (theme) {
+            case "AppThemeDark":
+                setTheme(R.style.AppThemeDark);
+                break;
+            case "AppThemeLight":
+                setTheme(R.style.AppThemeLight);
+                break;
+        }
         setContentView(R.layout.activity_main);
         fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
     }
@@ -183,14 +191,19 @@ public class MainActivity extends AppCompatActivity {
             timelineViewPager.setAdapter(timelinePagerAdapter);
             TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
             Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-            toolbar.setTitle(getString(R.string.app_name));
-            toolbar.setNavigationIcon(android.R.drawable.ic_menu_info_details);
-            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mainDrawerLayout.openDrawer(GravityCompat.START);
-                }
-            });
+            if (Globals.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
+                toolbar.setTitle(getString(R.string.app_name));
+                toolbar.setNavigationIcon(android.R.drawable.ic_menu_info_details);
+                toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        mainDrawerLayout.openDrawer(GravityCompat.START);
+                    }
+                });
+            } else {
+                toolbar.setVisibility(Toolbar.GONE);
+            }
+
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {

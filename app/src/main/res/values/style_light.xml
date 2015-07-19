@@ -1,5 +1,7 @@
 <resources>
     <style name="AppThemeLight" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimaryDark">@color/primary_dark_material_light</item>
+        <item name="colorPrimary">@color/primary_material_light</item>
         <item name="fabLabelStyle">@style/menu_labels_style_black</item>
         <item name="base_color_1">#71ff462e</item>
         <item name="base_color_2">#E8E8E7</item>

@@ -15,9 +15,11 @@
     <string name="user_stream_notification_ticker">Twitterストリームを起動しました</string>
     <string name="user_stream_notification_title">Twinown</string>
     <string name="user_stream_notification_text">Twitterストリーム接続中です</string>
+
     <string name="tweet_hint">ついーとする</string>
     <string name="tweet">TWEET</string>
     <string name="add">ADD</string>
+
     <string name="menu_action_reply">返信する</string>
     <string name="menu_action_rt">リツイート</string>
     <string name="menu_action_favorite">お気にい入りに追加する</string>
@@ -25,12 +27,24 @@
     <string name="menu_action_open_browser">ブラウザで開く</string>
     <string name="menu_action_share">ツイートを共有する</string>
     <string name="menu_icon">MenuIcon</string>
+
     <string name="title_activity_setting">SettingActivity</string>
     <string name="setting_action_account">アカウント設定</string>
     <string name="setting_action_tab">タブ設定</string>
+    <string name="setting_action_appearance">外観設定</string>
+
     <string name="dialog_title_choose_tab_type">タブの種類を設定してください</string>
     <string name="dialog_title_choose_account">アカウントを選択してください</string>
     <string name="dialog_title_choose_list">リストを選択してください</string>
+
+    <string name="dialog_title_choose_theme">テーマを選択してください</string>
+    <string name="setting_item_title_bar">タイトルバーを表示する</string>
+
     <string name="hello_world">Hello world!</string>
+
     <string name="title_activity_tab_control">TabControlActivity</string>
+    <string name="title_activity_appearance_control">AppearanceControlActivity</string>
+
+    <string name="preference_key_theme">preference_key_theme</string>
+    <string name="preference_key_title_bar">preference_key_title_bar</string>
 </resources>

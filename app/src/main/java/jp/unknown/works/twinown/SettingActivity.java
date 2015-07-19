@@ -23,6 +23,7 @@ import butterknife.ButterKnife;
 public class SettingActivity extends AppCompatActivity {
     private static final int SETTING_ACTION_TYPE_ACCOUNT = 0;
     private static final int SETTING_ACTION_TYPE_TAB = 1;
+    private static final int SETTING_ACTION_TYPE_APPEARANCE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +45,7 @@ public class SettingActivity extends AppCompatActivity {
             final ArrayList<SettingMenuItem> settingMenuItems = new ArrayList<>();
             settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_account), SETTING_ACTION_TYPE_ACCOUNT));
             settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_tab), SETTING_ACTION_TYPE_TAB));
+            settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_appearance), SETTING_ACTION_TYPE_APPEARANCE));
             final SettingAdapter settingAdapter = new SettingAdapter(getActivity(), 0, settingMenuItems);
             settingListView.setAdapter(settingAdapter);
             settingListView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -56,6 +58,9 @@ public class SettingActivity extends AppCompatActivity {
                             break;
                         case SETTING_ACTION_TYPE_TAB:
                             startActivity(new Intent(getActivity(), TabControlActivity.class));
+                            break;
+                        case SETTING_ACTION_TYPE_APPEARANCE:
+                            startActivity(new Intent(getActivity(), AppearanceControlActivity.class));
                             break;
                     }
                 }

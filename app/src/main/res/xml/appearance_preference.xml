@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="@string/preference_key_theme"
+        android:title="@string/dialog_title_choose_theme"
+        android:entries="@array/entries_list_preference"
+        android:entryValues="@array/entry_values_list_preference"
+        android:dialogTitle="@string/dialog_title_choose_theme" />
+    <SwitchPreference
+        android:key="@string/preference_key_title_bar"
+        android:title="@string/setting_item_title_bar"
+        android:defaultValue="true"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"/>
+</PreferenceScreen>

@@ -1,6 +1,7 @@
 package jp.unknown.works.twinown;
 
 import android.content.Context;
+import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
@@ -31,5 +32,13 @@ public class Globals {
 
     public static void showToast(Context context, CharSequence message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
+    static String getPreferenceString(Context context, String preferenceKey, String defaultString) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getString(preferenceKey, defaultString);
+    }
+
+    static boolean getPreferenceBoolean(Context context, String preferenceKey, boolean defaultValue) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(preferenceKey, defaultValue);
     }
 }

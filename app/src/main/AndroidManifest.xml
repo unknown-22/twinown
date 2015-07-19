@@ -45,6 +45,10 @@
             android:name=".TabControlActivity"
             android:label="@string/title_activity_tab_control" >
         </activity>
+        <activity
+            android:name=".AppearanceControlActivity"
+            android:label="@string/title_activity_appearance_control" >
+        </activity>
     </application>
 
 </manifest>
