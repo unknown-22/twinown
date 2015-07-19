@@ -51,6 +51,8 @@ import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.Status;
 
 public class MainActivity extends AppCompatActivity {
+    MainFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +67,16 @@ public class MainActivity extends AppCompatActivity {
         }
         setTheme(R.style.AppThemeDark);  // TODO テーマの設定
         setContentView(R.layout.activity_main);
+        fragment = (MainFragment) getSupportFragmentManager().findFragmentById(R.id.fragment);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!fragment.mainDrawerLayout.isDrawerVisible(GravityCompat.START)) {
+            fragment.mainDrawerLayout.openDrawer(GravityCompat.START);
+            return;
+        }
+        super.onBackPressed();
     }
 
     public Drawable getDrawableResource(int id){

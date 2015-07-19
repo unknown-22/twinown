@@ -51,7 +51,7 @@ public class TimelineFragment extends Fragment {
             case Tab.TAB_TYPE_STREAM:
                 TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
                 TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
-                TwinownHelper.getHomeTimeline(userPreference);
+                TwinownHelper.getHomeTimeline(userPreference);  // TODO 読み込み中フラグをつけてオートロードの仕組みを作る
                 break;
             case Tab.TAB_TYPE_MENTION:
                 TwinownHelper.getMentionTimeline(userPreference);
