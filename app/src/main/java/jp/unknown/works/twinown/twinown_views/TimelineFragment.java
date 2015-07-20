@@ -22,6 +22,7 @@ import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 
@@ -53,19 +54,39 @@ public class TimelineFragment extends Fragment {
             TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
             TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
         }
-        newLoad();
+        headUpdate(0);
     }
 
-    private void newLoad() {
+    private void headUpdate(long sinceId) {
+        Paging paging = new Paging();
+        if (sinceId > 0) {
+            paging.setSinceId(sinceId);
+        }
         switch (tab.type) {
             case Tab.TAB_TYPE_STREAM:
-                TwinownHelper.getHomeTimeline(userPreference);
+                TwinownHelper.getHomeTimeline(userPreference, paging);
                 break;
             case Tab.TAB_TYPE_MENTION:
-                TwinownHelper.getMentionTimeline(userPreference);
+                TwinownHelper.getMentionTimeline(userPreference, paging);
                 break;
             case Tab.TAB_TYPE_LIST:
-                TwinownHelper.getTabTimeline(userPreference, tab.getListId());
+                TwinownHelper.getTabTimeline(userPreference, tab.getListId(), paging);
+                break;
+        }
+    }
+
+    private void tailUpdate(long maxId) {
+        Paging paging = new Paging();
+        paging.setMaxId(maxId);
+        switch (tab.type) {
+            case Tab.TAB_TYPE_STREAM:
+                TwinownHelper.getHomeTimeline(userPreference, paging);
+                break;
+            case Tab.TAB_TYPE_MENTION:
+                TwinownHelper.getMentionTimeline(userPreference, paging);
+                break;
+            case Tab.TAB_TYPE_LIST:
+                TwinownHelper.getTabTimeline(userPreference, tab.getListId(), paging);
                 break;
         }
     }
@@ -78,10 +99,14 @@ public class TimelineFragment extends Fragment {
         timelineView.setLayoutManager(linearLayoutManager);
         timelineView.setAdapter(timelineAdapter);
         timelineView.addItemDecoration(new TimelineItemDecoration(getActivity()));
+        timelineView.addOnScrollListener(new InfiniteScrollListener());
+        if (tab.type == Tab.TAB_TYPE_STREAM) {
+            swipeRefreshLayout.setEnabled(false);
+        }
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                newLoad();
+                headUpdate(timelineAdapter.getStatus(0).getId());
             }
         });
         return view;
@@ -159,6 +184,16 @@ public class TimelineFragment extends Fragment {
         if (timelineView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE
                 && linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
             linearLayoutManager.scrollToPosition(0);
+        }
+    }
+
+    private class InfiniteScrollListener extends RecyclerView.OnScrollListener {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            if (!swipeRefreshLayout.isRefreshing() && timelineAdapter.getItemCount()-1 == linearLayoutManager.findLastVisibleItemPosition()) {
+                swipeRefreshLayout.setRefreshing(true);
+                tailUpdate(timelineAdapter.getStatus(timelineAdapter.getItemCount() - 1).getId());
+            }
         }
     }
 }

@@ -64,24 +64,24 @@ public class TwinownHelper {
         twitter.createFavorite(status.getId());
     }
 
-    public static void getHomeTimeline(UserPreference userPreference) {
+    public static void getHomeTimeline(UserPreference userPreference, Paging paging) {
         AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
             twitter = userIdTwitterHashMap.get(userPreference.userId);
         } else {
             twitter = createTwitter(userPreference);
         }
-        twitter.getHomeTimeline();
+        twitter.getHomeTimeline(paging);
     }
 
-    public static void getMentionTimeline(UserPreference userPreference) {
+    public static void getMentionTimeline(UserPreference userPreference, Paging paging) {
         AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
             twitter = userIdTwitterHashMap.get(userPreference.userId);
         } else {
             twitter = createTwitter(userPreference);
         }
-        twitter.getMentions();
+        twitter.getMentions(paging);
     }
 
     public static void getUserLists(UserPreference userPreference) {
@@ -94,14 +94,14 @@ public class TwinownHelper {
         twitter.getUserLists(userPreference.userId);
     }
 
-    public static void getTabTimeline(UserPreference userPreference, Long listId) {
+    public static void getTabTimeline(UserPreference userPreference, Long listId, Paging paging) {
         AsyncTwitter twitter;
         if (userIdTwitterHashMap.containsKey(userPreference.userId)){
             twitter = userIdTwitterHashMap.get(userPreference.userId);
         } else {
             twitter = createTwitter(userPreference);
         }
-        twitter.getUserListStatuses(listId, new Paging());
+        twitter.getUserListStatuses(listId, paging);
     }
 
     private static TwitterStream createUserStream(UserPreference userPreference) {

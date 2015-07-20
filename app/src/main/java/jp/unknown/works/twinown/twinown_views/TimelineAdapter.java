@@ -48,6 +48,10 @@ class TimelineAdapter extends RecyclerView.Adapter{
         timelineList.addAll(statuses);
     }
 
+    public Status getStatus(int position) {
+        return timelineList.get(position);
+    }
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         return new StatusViewHolder(inflater.inflate(R.layout.status, viewGroup, false));
