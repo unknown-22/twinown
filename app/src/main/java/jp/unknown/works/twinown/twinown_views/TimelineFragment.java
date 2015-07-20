@@ -3,6 +3,7 @@ package jp.unknown.works.twinown.twinown_views;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -32,6 +33,7 @@ public class TimelineFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private TimelineAdapter timelineAdapter;
     private Pattern userScreenNamePattern;
+    @Bind(R.id.swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.timelineView) RecyclerView timelineView;
 
     @Override
@@ -47,11 +49,17 @@ public class TimelineFragment extends Fragment {
     }
 
     private void initializeTwitter() {
+        if (tab.type == Tab.TAB_TYPE_STREAM) {
+            TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
+            TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
+        }
+        newLoad();
+    }
+
+    private void newLoad() {
         switch (tab.type) {
             case Tab.TAB_TYPE_STREAM:
-                TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
-                TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
-                TwinownHelper.getHomeTimeline(userPreference);  // TODO 読み込み中フラグをつけてオートロードの仕組みを作る
+                TwinownHelper.getHomeTimeline(userPreference);
                 break;
             case Tab.TAB_TYPE_MENTION:
                 TwinownHelper.getMentionTimeline(userPreference);
@@ -70,6 +78,12 @@ public class TimelineFragment extends Fragment {
         timelineView.setLayoutManager(linearLayoutManager);
         timelineView.setAdapter(timelineAdapter);
         timelineView.addItemDecoration(new TimelineItemDecoration(getActivity()));
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                newLoad();
+            }
+        });
         return view;
     }
 
@@ -97,7 +111,7 @@ public class TimelineFragment extends Fragment {
                 @Override
                 public void run() {
                     timelineAdapter.addStatus(statusEvent.status);
-                    refreshTimelineView();
+                    followOnTop();
                 }
             });
         }
@@ -134,11 +148,14 @@ public class TimelineFragment extends Fragment {
             @Override
             public void run() {
                 timelineAdapter.addStatusList(statuses);
+                if (swipeRefreshLayout.isRefreshing()) {
+                    swipeRefreshLayout.setRefreshing(false);
+                }
             }
         });
     }
 
-    private void refreshTimelineView() {
+    private void followOnTop() {
         if (timelineView.getScrollState() == RecyclerView.SCROLL_STATE_IDLE
                 && linearLayoutManager.findFirstCompletelyVisibleItemPosition() == 0) {
             linearLayoutManager.scrollToPosition(0);
