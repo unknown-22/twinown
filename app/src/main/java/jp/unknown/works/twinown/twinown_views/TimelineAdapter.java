@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -25,10 +26,10 @@ import twitter4j.ResponseList;
 import twitter4j.Status;
 
 class TimelineAdapter extends RecyclerView.Adapter{
-    private final FragmentManager fragmentManager;
+    private FragmentManager fragmentManager;
     private final UserPreference userPreference;
     private RecyclerView recyclerView;
-    private final LayoutInflater inflater;
+    private LayoutInflater inflater;
     @SuppressWarnings("unchecked")
     private final SortedList<Status> timelineList = new SortedList(Status.class, new TimelineCallback(this));
     private final RoundedTransformation transform;
@@ -38,6 +39,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
         this.userPreference = userPreference;
         inflater = LayoutInflater.from(context);
         transform = new RoundedTransformation((int) (context.getResources().getDimension(R.dimen.icon_size) / 8));
+    }
+
+    public void refreshActivity(FragmentManager fragmentManager, Context context) {
+        this.fragmentManager = fragmentManager;
+        inflater = LayoutInflater.from(context);
     }
 
     public void addStatus(Status status) {
