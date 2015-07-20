@@ -27,7 +27,7 @@ public class AppearanceControlActivity extends AppCompatActivity {
         toolbar.setTitle(getString(R.string.setting_action_appearance));
     }
 
-    public class AppearanceControlFragment extends PreferenceFragment {
+    public static class AppearanceControlFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);

@@ -10,7 +10,7 @@ public class Base {
         Ollie.with(context)
                 .setName(Globals.DATABASE_NAME)
                 .setVersion(1)
-                .setLogLevel(Ollie.LogLevel.FULL)
+                .setLogLevel(Ollie.LogLevel.NONE)
                 .init();
     }
 }
