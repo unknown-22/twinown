@@ -28,7 +28,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
@@ -103,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
         List<UserPreference> userPreferenceList;
         int currentUserIndex = 0;
         TimelinePagerAdapter timelinePagerAdapter;
+        Animation inAnimation;
+        Animation outAnimation;
         ServiceConnection serviceConnection = new ServiceConnection() {
             @Override
             public void onServiceConnected(ComponentName name, IBinder service) {}
@@ -112,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
         @Bind(R.id.mainDrawerLayout) DrawerLayout mainDrawerLayout;
         @Bind(R.id.mainNavigation) NavigationView navigationView;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
+        @Bind(R.id.quick_post_view) RelativeLayout quickPostView;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
 
         Status toReplyStatus;
@@ -183,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-            View view = inflater.inflate(R.layout.fragment_main, container, false);
+            final View view = inflater.inflate(R.layout.fragment_main, container, false);
             ButterKnife.bind(this, view);
             FragmentManager fragmentManager = this.getFragmentManager();
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager, tabList);
@@ -202,7 +209,11 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 toolbar.setVisibility(Toolbar.GONE);
             }
-
+            inAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.in_animation);
+            outAnimation= AnimationUtils.loadAnimation(getActivity(), R.anim.out_animation);
+            if (Globals.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post), false)) {
+                togglePostView();
+            }
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -217,8 +228,13 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     } else {
                         switch (menuItem.getItemId()) {
+                            case R.id.action_toggle_quick_post:
+                                togglePostView();
+                                mainDrawerLayout.closeDrawers();
+                                return true;
                             case R.id.action_change_account:
                                 onChangeAccount();
+                                mainDrawerLayout.closeDrawers();
                                 return true;
                             case R.id.action_settings:
                                 startActivity(new Intent(getActivity(), SettingActivity.class));
@@ -246,6 +262,18 @@ public class MainActivity extends AppCompatActivity {
             context.stopService(new Intent(context, TwinownService.class));
             TwinownHelper.StreamSingleton.getInstance().stopAllUserStream();
             EventBus.getDefault().unregister(this);
+        }
+
+        private void togglePostView() {
+            if(quickPostView.getVisibility() == View.GONE){
+                quickPostView.startAnimation(inAnimation);
+                quickPostView.setVisibility(View.VISIBLE);
+            } else{
+                quickPostView.startAnimation(outAnimation);
+                quickPostView.setVisibility(View.GONE);
+                InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(quickPostView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+            }
         }
 
         @SuppressWarnings("unused")

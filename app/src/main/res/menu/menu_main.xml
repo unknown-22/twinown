@@ -6,6 +6,9 @@
         android:id="@+id/menu_action"
         android:checkableBehavior="single"
         android:orderInCategory="0">
+        <item android:id="@+id/action_toggle_quick_post"
+              android:title="@string/action_toggle_quick_post"
+              app:showAsAction="never"/>
         <item android:id="@+id/action_change_account"
             android:title="@string/action_change_account"
             app:showAsAction="never"/>

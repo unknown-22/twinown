@@ -12,4 +12,10 @@
         android:defaultValue="true"
         android:switchTextOff="OFF"
         android:switchTextOn="ON"/>
+    <SwitchPreference
+        android:key="@string/preference_key_quick_post"
+        android:title="@string/setting_item_quick_post"
+        android:defaultValue="false"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"/>
 </PreferenceScreen>
