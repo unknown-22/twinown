@@ -187,6 +187,10 @@ public class TimelineFragment extends Fragment {
         }
     }
 
+    public void moveOnTop() {
+        timelineView.smoothScrollToPosition(0);
+    }
+
     private class InfiniteScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {

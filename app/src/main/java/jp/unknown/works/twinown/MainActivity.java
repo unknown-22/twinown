@@ -45,6 +45,7 @@ import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.twinown_twitter.TwinownService;
+import jp.unknown.works.twinown.twinown_views.TimelineFragment;
 import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -206,7 +207,12 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
                     if (menuItem.getGroupId() == R.id.menu_tab) {
-                        timelineViewPager.setCurrentItem(menuItem.getItemId());
+                        if (timelineViewPager.getCurrentItem() == menuItem.getItemId()) {
+                            TimelineFragment hoge = timelinePagerAdapter.findFragmentByPosition(timelineViewPager, menuItem.getItemId());
+                            hoge.moveOnTop();
+                        } else {
+                            timelineViewPager.setCurrentItem(menuItem.getItemId());
+                        }
                         mainDrawerLayout.closeDrawers();
                         return true;
                     } else {

@@ -107,8 +107,8 @@
     <orderEntry type="library" exported="" name="auto-common-0.3" level="project" />
     <orderEntry type="library" exported="" name="support-v4-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="javawriter-2.5.1" level="project" />
-    <orderEntry type="library" exported="" name="twitter4j-core-4.0.4" level="project" />
     <orderEntry type="library" exported="" name="auto-service-1.0-rc2" level="project" />
+    <orderEntry type="library" exported="" name="twitter4j-core-4.0.4" level="project" />
     <orderEntry type="library" exported="" name="appcompat-v7-22.2.1" level="project" />
     <orderEntry type="library" exported="" name="ollie-compiler-0.3.2-SNAPSHOT" level="project" />
   </component>

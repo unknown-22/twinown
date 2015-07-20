@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 
 import java.util.List;
 
@@ -32,5 +33,9 @@ public class TimelinePagerAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         return tabList.size();
+    }
+
+    public TimelineFragment findFragmentByPosition(ViewPager viewPager, int position) {
+        return (TimelineFragment) instantiateItem(viewPager, position);
     }
 }
