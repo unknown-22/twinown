@@ -2,7 +2,6 @@
     <style name="AppThemeDark" parent="Theme.AppCompat.NoActionBar">
         <item name="colorPrimaryDark">@color/primary_dark_material_dark</item>
         <item name="colorPrimary">@color/primary_material_dark</item>
-        <item name="fabLabelStyle">@style/menu_labels_style_black</item>
         <item name="base_color_1">#666666</item>
         <item name="base_color_2">#303030</item>
         <item name="impact_color">#00D6B7</item>

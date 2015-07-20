@@ -6,5 +6,4 @@
     <attr name="accent_color_2" format="color" />
     <attr name="text_color_1" format="color" />
     <attr name="text_color_2" format="color" />
-    <attr name="fabLabelStyle" format="reference" />
 </resources>

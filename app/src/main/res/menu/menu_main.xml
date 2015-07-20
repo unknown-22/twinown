@@ -3,15 +3,24 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context=".MainActivity">
     <group
+        android:id="@+id/menu_action"
+        android:checkableBehavior="single"
+        android:orderInCategory="0">
+        <item android:id="@+id/action_change_account"
+            android:title="@string/action_change_account"
+            app:showAsAction="never"/>
+    </group>
+    <group
         android:id="@+id/menu_tab"
-        android:checkableBehavior="single">
+        android:checkableBehavior="single"
+        android:orderInCategory="50">
     </group>
     <group
           android:id="@+id/menu_other"
-          android:checkableBehavior="single">
+          android:checkableBehavior="single"
+          android:orderInCategory="100">
           <item android:id="@+id/action_settings"
                 android:title="@string/action_settings"
-                android:orderInCategory="100"
                 app:showAsAction="never"/>
     </group>
 </menu>

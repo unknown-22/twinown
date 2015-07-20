@@ -147,8 +147,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        @SuppressWarnings("unused")
-        @OnClick(R.id.fab_change_account)
         public void onChangeAccount() {
             final String[] userScreenNameList = new String[userPreferenceList.size()];
             for(int i = 0; i < userPreferenceList.size(); i++) {
@@ -211,8 +209,11 @@ public class MainActivity extends AppCompatActivity {
                         timelineViewPager.setCurrentItem(menuItem.getItemId());
                         mainDrawerLayout.closeDrawers();
                         return true;
-                    } else if (menuItem.getGroupId() == R.id.menu_other) {
+                    } else {
                         switch (menuItem.getItemId()) {
+                            case R.id.action_change_account:
+                                onChangeAccount();
+                                return true;
                             case R.id.action_settings:
                                 startActivity(new Intent(getActivity(), SettingActivity.class));
                                 return true;
@@ -223,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             });
             Menu menu = navigationView.getMenu();
             for(int i = 0; i < tabList.size(); i++) {
-                menu.add(R.id.menu_tab, i, i, tabList.get(i).name);
+                menu.add(R.id.menu_tab, i, 50+i, tabList.get(i).name);
             }
 
             return view;

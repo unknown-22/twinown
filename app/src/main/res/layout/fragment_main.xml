@@ -5,7 +5,6 @@
     android:layout_height="match_parent"
     android:id="@+id/mainDrawerLayout">
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:fab="http://schemas.android.com/apk/res-auto"
                   android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
@@ -17,7 +16,6 @@
             android:elevation="5dp"
             android:background="?attr/colorPrimary"/>
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                        xmlns:fab="http://schemas.android.com/apk/res-auto"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">
@@ -28,25 +26,6 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentEnd="true"/>
-            <com.getbase.floatingactionbutton.FloatingActionsMenu
-                android:id="@+id/timelineFab"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                fab:fab_addButtonColorNormal="?attr/accent_color_2"
-                fab:fab_addButtonColorPressed="?attr/accent_color_2"
-                fab:fab_labelStyle="?attr/fabLabelStyle"
-                android:layout_alignParentBottom="true"
-                android:layout_alignParentEnd="true">
-                <com.getbase.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/fab_change_account"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    fab:fab_colorNormal="?attr/accent_color_1"
-                    fab:fab_colorPressed="?attr/accent_color_1"
-                    fab:fab_title="@string/action_change_account"/>
-            </com.getbase.floatingactionbutton.FloatingActionsMenu>
         </RelativeLayout>
         <RelativeLayout android:layout_width="match_parent"
                         android:layout_height="wrap_content">
@@ -61,12 +40,13 @@
                           android:layout_toStartOf="@+id/tweetButton"/>
             </android.support.design.widget.TextInputLayout>
             <ImageButton android:layout_width="wrap_content"
-                         android:layout_height="wrap_content"
+                         android:layout_height="48dp"
                          android:id="@+id/tweetButton"
                          android:src="@drawable/ic_send_white"
                          android:contentDescription="@string/tweet"
                          android:layout_centerVertical="true"
-                         android:layout_alignParentEnd="true"/>
+                         android:layout_alignParentEnd="true"
+                         android:layout_gravity="center"/>
         </RelativeLayout>
     </LinearLayout>
     <android.support.design.widget.NavigationView
