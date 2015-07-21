@@ -39,10 +39,4 @@ public class TwitterListener extends TwitterAdapter{
         super.gotUserLists(userLists);
         EventBus.getDefault().post(new Component.UserListsEvent(userLists));
     }
-
-    @Override
-    public void gotUserListStatuses(ResponseList<Status> statuses) {
-        super.gotUserListStatuses(statuses);
-        EventBus.getDefault().post(new Component.UserListStatusesEvent(statuses, userPreference));
-    }
 }

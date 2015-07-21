@@ -71,7 +71,7 @@ public class TimelineFragment extends Fragment {
                 TwinownHelper.getMentionTimeline(userPreference, paging);
                 break;
             case Tab.TAB_TYPE_LIST:
-                TwinownHelper.getTabTimeline(userPreference, tab.getListId(), paging);
+                TwinownHelper.getUserListStatuses(userPreference, tab.getListId(), paging);
                 break;
         }
     }
@@ -87,7 +87,7 @@ public class TimelineFragment extends Fragment {
                 TwinownHelper.getMentionTimeline(userPreference, paging);
                 break;
             case Tab.TAB_TYPE_LIST:
-                TwinownHelper.getTabTimeline(userPreference, tab.getListId(), paging);
+                TwinownHelper.getUserListStatuses(userPreference, tab.getListId(), paging);
                 break;
         }
     }
@@ -194,7 +194,8 @@ public class TimelineFragment extends Fragment {
 
     @SuppressWarnings("unused")
     public void onEvent(final Component.UserListStatusesEvent userListStatusesEvent) {
-        if (tab.type == Tab.TAB_TYPE_LIST && Objects.equals(userListStatusesEvent.userPreference.userId, userPreference.userId)) {
+        if (tab.type == Tab.TAB_TYPE_LIST && tab.getListId() == userListStatusesEvent.listId
+                && Objects.equals(userListStatusesEvent.userPreference.userId, userPreference.userId)) {
             addStatusList(userListStatusesEvent.statuses);
         }
     }
