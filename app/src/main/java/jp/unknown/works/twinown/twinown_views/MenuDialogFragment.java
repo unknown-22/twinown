@@ -83,13 +83,13 @@ public class MenuDialogFragment extends DialogFragment {
                         EventBus.getDefault().post(new Component.MenuActionReply(status));
                         break;
                     case MENU_ACTION_TYPE_RT:
-                        Globals.showToast(getActivity(), "RTやめろ");  // TODO 修正
+                        Globals.showToastLong(getActivity(), "RTやめろ");  // TODO 修正
                         break;
                     case MENU_ACTION_TYPE_FAVORITE:
                         TwinownHelper.createFavorite(userPreference, status);
                         break;
                     case MENU_ACTION_TYPE_LIST:
-                        Globals.showToast(getActivity(), "リストは甘え");  // TODO 修正
+                        Globals.showToastLong(getActivity(), "リストは甘え");  // TODO 修正
                         break;
                     case MENU_ACTION_TYPE_LINK_URL:
                         startActivity(new Intent(
@@ -110,7 +110,7 @@ public class MenuDialogFragment extends DialogFragment {
                         ));
                         break;
                     case MENU_ACTION_TYPE_SHARE:
-                        Globals.showToast(getActivity(), "まだ");  // TODO 修正
+                        Globals.showToastLong(getActivity(), "まだ");  // TODO 修正
                         break;
                 }
                 dismiss();

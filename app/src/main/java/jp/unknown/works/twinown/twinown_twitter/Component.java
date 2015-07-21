@@ -36,6 +36,28 @@ public class Component {
         }
     }
 
+    public static class FavoritedEvent {
+        public final User source;
+        public final Status status;
+        public final UserPreference userPreference;
+        public FavoritedEvent(User source, Status status, UserPreference userPreference) {
+            this.source = source;
+            this.status = status;
+            this.userPreference = userPreference;
+        }
+    }
+
+    public static class FavoriteEvent {
+        public final User target;
+        public final Status status;
+        public final UserPreference userPreference;
+        public FavoriteEvent(User target, Status status, UserPreference userPreference) {
+            this.target = target;
+            this.status = status;
+            this.userPreference = userPreference;
+        }
+    }
+
     public static class MenuActionReply {
         public final Status toReplyStatus;
         public MenuActionReply(Status toReplyStatus) {

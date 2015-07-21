@@ -164,6 +164,28 @@ public class TimelineFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.FavoriteEvent favoriteEvent) {
+        if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(favoriteEvent.userPreference.userId, userPreference.userId)) {
+            String text = favoriteEvent.status.getText();
+            if (text.length() > 31) {
+                text = String.format("%s...", text.substring(0, 30));
+            }
+            Globals.showToastShort(getActivity(), String.format("お気に入りに追加しました(@%s %s)", favoriteEvent.target.getScreenName(), text));
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.FavoritedEvent favoritedEvent) {
+        if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(favoritedEvent.userPreference.userId, userPreference.userId)) {
+            String text = favoritedEvent.status.getText();
+            if (text.length() > 31) {
+                text = String.format("%s...", text.substring(0, 30));
+            }
+            Globals.showToastShort(getActivity(), String.format("@%sさんがお気に入りに追加しました(%s)", favoritedEvent.source.getScreenName(), text));
+        }
+    }
+
+    @SuppressWarnings("unused")
     public void onEvent(final Component.MentionStatusListEvent mentionStatusListEvent) {
         if (tab.type == Tab.TAB_TYPE_MENTION && Objects.equals(mentionStatusListEvent.userPreference.userId, userPreference.userId)) {
             addStatusList(mentionStatusListEvent.statuses);

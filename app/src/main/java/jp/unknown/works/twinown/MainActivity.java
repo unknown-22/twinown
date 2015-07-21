@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             currentUserIndex = which;
                             TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
-                            Globals.showToast(
+                            Globals.showToastLong(
                                     getActivity(),
                                     String.format(getString(R.string.notice_change_account), userScreenNameList[which])
                             );

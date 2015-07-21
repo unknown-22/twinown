@@ -110,7 +110,7 @@ public class AuthActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Globals.showToast(getActivity(), getResources().getText(R.string.added_user_preference));
+                        Globals.showToastLong(getActivity(), getResources().getText(R.string.added_user_preference));
                         getActivity().finish();
                     }
                 });

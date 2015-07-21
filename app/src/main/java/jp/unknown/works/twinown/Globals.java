@@ -30,8 +30,12 @@ public class Globals {
         snackbar.show();
     }
 
-    public static void showToast(Context context, CharSequence message) {
+    public static void showToastLong(Context context, CharSequence message) {
         Toast.makeText(context, message, Toast.LENGTH_LONG).show();
+    }
+
+    public static void showToastShort(Context context, CharSequence message) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
     }
 
     static String getPreferenceString(Context context, String preferenceKey, String defaultString) {
