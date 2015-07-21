@@ -81,7 +81,7 @@ public class MenuDialogFragment extends DialogFragment {
         statusMenuListVew.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                StatusMenuItem statusMenuItem = statusMenuItemList.get(position);
+                StatusMenuItem statusMenuItem = statusMenuItemList.get(position - 1);
                 switch (statusMenuItem.actionType) {
                     case MENU_ACTION_TYPE_REPLY:
                         EventBus.getDefault().post(new Component.MenuActionReply(status));

@@ -226,7 +226,7 @@ public class TimelineFragment extends Fragment {
     private class InfiniteScrollListener extends RecyclerView.OnScrollListener {
         @Override
         public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            if (!swipeRefreshLayout.isRefreshing() && timelineAdapter.getItemCount()-1 == linearLayoutManager.findLastVisibleItemPosition()) {
+            if (!swipeRefreshLayout.isRefreshing() && timelineAdapter.getItemCount()-(1 + 3) <= linearLayoutManager.findLastVisibleItemPosition()) {
                 swipeRefreshLayout.setRefreshing(true);
                 tailUpdate(timelineAdapter.getStatus(timelineAdapter.getItemCount() - 1).getId());
             }
