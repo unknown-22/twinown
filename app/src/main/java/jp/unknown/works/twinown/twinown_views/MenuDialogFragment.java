@@ -15,8 +15,11 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +62,7 @@ public class MenuDialogFragment extends DialogFragment {
         View dialogView = layoutInflater.inflate(R.layout.status_menu, null);
         builder.setView(dialogView);
         ButterKnife.bind(this, dialogView);
+        setHeaderView();
         final ArrayList<StatusMenuItem> statusMenuItemList = new ArrayList<>();
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
@@ -122,6 +126,20 @@ public class MenuDialogFragment extends DialogFragment {
         lp.width = dialogWidth;
         alertDialog.getWindow().setAttributes(lp);
         return alertDialog;
+    }
+
+    private void setHeaderView() {
+        View headerView = layoutInflater.inflate(R.layout.status, null);
+        headerView.setClickable(false);
+        ImageView statusIconView = (ImageView) headerView.findViewById(R.id.statusIconView);
+        TextView statusNameView = (TextView) headerView.findViewById(R.id.statusNameView);
+        TextView statusTextView = (TextView) headerView.findViewById(R.id.statusTextView);
+        RoundedTransformation transform = new RoundedTransformation((int) (getActivity().getResources().getDimension(R.dimen.icon_size) / 8));
+        Picasso.with(getActivity()).load(status.getUser().getBiggerProfileImageURL())
+                .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
+        statusNameView.setText(status.getUser().getScreenName());
+        statusTextView.setText(status.getText());
+        statusMenuListVew.addHeaderView(headerView, null, false);
     }
 
     class StatusMenuItem {
