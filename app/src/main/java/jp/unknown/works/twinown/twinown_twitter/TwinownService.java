@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.v7.app.NotificationCompat;
 
-import jp.unknown.works.twinown.Globals;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.MainActivity;
 import jp.unknown.works.twinown.R;
 
@@ -30,8 +30,8 @@ public class TwinownService extends Service {
         Notification notification = builder.build();
         notification.flags |= Notification.FLAG_NO_CLEAR | Notification.FLAG_ONGOING_EVENT;
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(Globals.USER_STREAM_NOTIFICATION_TAG, Globals.USER_STREAM_NOTIFICATION_ID, notification);
-        startForeground(Globals.USER_STREAM_NOTIFICATION_ID, notification);
+        notificationManager.notify(Utils.USER_STREAM_NOTIFICATION_TAG, Utils.USER_STREAM_NOTIFICATION_ID, notification);
+        startForeground(Utils.USER_STREAM_NOTIFICATION_ID, notification);
         return null;
     }
 
@@ -39,7 +39,7 @@ public class TwinownService extends Service {
     public void onTaskRemoved(Intent intent) {
         super.onTaskRemoved(intent);
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.cancel(Globals.USER_STREAM_NOTIFICATION_TAG, Globals.USER_STREAM_NOTIFICATION_ID);
+        notificationManager.cancel(Utils.USER_STREAM_NOTIFICATION_TAG, Utils.USER_STREAM_NOTIFICATION_ID);
         TwinownHelper.StreamSingleton.getInstance().stopAllUserStream();
     }
 

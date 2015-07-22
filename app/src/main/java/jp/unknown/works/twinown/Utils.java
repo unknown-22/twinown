@@ -7,7 +7,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
-public class Globals {
+public class Utils {
     public static final String DATABASE_NAME = "twinown.db";
 
     public static final String ACTION_KEYWORD_AUTHORIZATION = "action_keyword_authorization";

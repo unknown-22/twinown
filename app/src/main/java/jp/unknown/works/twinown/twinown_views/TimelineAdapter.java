@@ -18,7 +18,7 @@ import com.squareup.picasso.Picasso;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import jp.unknown.works.twinown.Globals;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.ResponseList;
@@ -96,8 +96,8 @@ class TimelineAdapter extends RecyclerView.Adapter{
             Status status = timelineList.get(recyclerView.getChildAdapterPosition(itemView));
             MenuDialogFragment menuDialogFragment = new MenuDialogFragment();
             Bundle bundle = new Bundle();
-            bundle.putSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference);
-            bundle.putSerializable(Globals.ARGUMENTS_KEYWORD_STATUS, status);
+            bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference);
+            bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_STATUS, status);
             menuDialogFragment.setArguments(bundle);
             menuDialogFragment.show(fragmentManager, "hoge");
         }

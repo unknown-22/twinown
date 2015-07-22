@@ -8,9 +8,8 @@ import android.support.v4.view.ViewPager;
 
 import java.util.List;
 
-import jp.unknown.works.twinown.Globals;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.Tab;
-import jp.unknown.works.twinown.models.UserPreference;
 
 
 public class TimelinePagerAdapter extends FragmentPagerAdapter {
@@ -25,7 +24,7 @@ public class TimelinePagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         TimelineFragment timelineFragment = new TimelineFragment();
         Bundle args = new Bundle();
-        args.putSerializable(Globals.ARGUMENTS_KEYWORD_TAB, tabList.get(position));
+        args.putSerializable(Utils.ARGUMENTS_KEYWORD_TAB, tabList.get(position));
         timelineFragment.setArguments(args);
         return timelineFragment;
     }

@@ -64,13 +64,13 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Base.initDataBase(getApplicationContext());
         if (Tab.getCount() < 1) {
-            Intent intent = new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
+            Intent intent = new Intent(Utils.ACTION_KEYWORD_AUTHORIZATION);
             intent.setClass(this, AuthActivity.class);
             startActivity(intent);
             finish();
             return;
         }
-        String theme = Globals.getPreferenceString(this, getString(R.string.preference_key_theme), "AppThemeDark");
+        String theme = Utils.getPreferenceString(this, getString(R.string.preference_key_theme), "AppThemeDark");
         switch (theme) {
             case "AppThemeDark":
                 setTheme(R.style.AppThemeDark);
@@ -167,7 +167,7 @@ public class MainActivity extends AppCompatActivity {
                         public void onClick(DialogInterface dialog, int which) {
                             currentUserIndex = which;
                             TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
-                            Globals.showToastLong(
+                            Utils.showToastLong(
                                     getActivity(),
                                     String.format(getString(R.string.notice_change_account), userScreenNameList[which])
                             );
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
             timelineViewPager.setAdapter(timelinePagerAdapter);
             TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
             Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
-            if (Globals.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
+            if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
                 toolbar.setTitle(getString(R.string.app_name));
                 toolbar.setNavigationIcon(android.R.drawable.ic_menu_info_details);
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
@@ -211,7 +211,7 @@ public class MainActivity extends AppCompatActivity {
             }
             inAnimation = AnimationUtils.loadAnimation(getActivity(), R.anim.in_animation);
             outAnimation= AnimationUtils.loadAnimation(getActivity(), R.anim.out_animation);
-            if (Globals.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post), false)) {
+            if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post), false)) {
                 togglePostView();
             }
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
@@ -256,7 +256,7 @@ public class MainActivity extends AppCompatActivity {
         public void onDestroy() {
             super.onDestroy();
             NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
-            notificationManager.cancel(Globals.USER_STREAM_NOTIFICATION_TAG, Globals.USER_STREAM_NOTIFICATION_ID);
+            notificationManager.cancel(Utils.USER_STREAM_NOTIFICATION_TAG, Utils.USER_STREAM_NOTIFICATION_ID);
             Context context = getActivity().getApplicationContext();
             context.unbindService(serviceConnection);
             context.stopService(new Intent(context, TwinownService.class));

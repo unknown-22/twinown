@@ -45,7 +45,7 @@ public class AccountControlActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_add) {
-            Intent intent = new Intent(Globals.ACTION_KEYWORD_AUTHORIZATION);
+            Intent intent = new Intent(Utils.ACTION_KEYWORD_AUTHORIZATION);
             intent.setClass(this, AuthActivity.class);
             startActivity(intent);
             return true;

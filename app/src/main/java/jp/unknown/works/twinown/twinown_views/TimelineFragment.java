@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.Globals;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
@@ -42,7 +42,7 @@ public class TimelineFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        tab = (Tab) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_TAB);
+        tab = (Tab) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_TAB);
         userPreference = UserPreference.get(tab != null ? tab.userId : null);
         initializeTwitter();
         timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
@@ -170,7 +170,7 @@ public class TimelineFragment extends Fragment {
             if (text.length() > 31) {
                 text = String.format("%s...", text.substring(0, 30));
             }
-            Globals.showToastShort(getActivity(), String.format("お気に入りに追加しました(@%s %s)", favoriteEvent.target.getScreenName(), text));
+            Utils.showToastShort(getActivity(), String.format("お気に入りに追加しました(@%s %s)", favoriteEvent.target.getScreenName(), text));
         }
     }
 
@@ -181,7 +181,7 @@ public class TimelineFragment extends Fragment {
             if (text.length() > 31) {
                 text = String.format("%s...", text.substring(0, 30));
             }
-            Globals.showToastShort(getActivity(), String.format("@%sさんがお気に入りに追加しました(%s)", favoritedEvent.source.getScreenName(), text));
+            Utils.showToastShort(getActivity(), String.format("@%sさんがお気に入りに追加しました(%s)", favoritedEvent.source.getScreenName(), text));
         }
     }
 

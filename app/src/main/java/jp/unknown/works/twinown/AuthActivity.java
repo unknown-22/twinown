@@ -50,7 +50,7 @@ public class AuthActivity extends AppCompatActivity {
         @OnClick(R.id.open_authorization_button)
         public void openAuthorization(Button button) {
             if (mRequestToken == null) {
-                Globals.showSnackBar(button, getResources().getText(R.string.error));
+                Utils.showSnackBar(button, getResources().getText(R.string.error));
             } else {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(mRequestToken.getAuthorizationURL()));
                 startActivity(intent);
@@ -61,7 +61,7 @@ public class AuthActivity extends AppCompatActivity {
         @OnClick(R.id.pin_code_ok_button)
         public void pinCodeOk(Button button) {
             if (pinCodeEditText.getText().toString().length() == 0) {
-                Globals.showSnackBar(button, getResources().getText(R.string.please_enter_pin_code));
+                Utils.showSnackBar(button, getResources().getText(R.string.please_enter_pin_code));
             } else {
                 String pinCode = pinCodeEditText.getText().toString();
                 twitter.getOAuthAccessTokenAsync(mRequestToken, pinCode);
@@ -110,7 +110,7 @@ public class AuthActivity extends AppCompatActivity {
                 handler.post(new Runnable() {
                     @Override
                     public void run() {
-                        Globals.showToastLong(getActivity(), getResources().getText(R.string.added_user_preference));
+                        Utils.showToastLong(getActivity(), getResources().getText(R.string.added_user_preference));
                         getActivity().finish();
                     }
                 });

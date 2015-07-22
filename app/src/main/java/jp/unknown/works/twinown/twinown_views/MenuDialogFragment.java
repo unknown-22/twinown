@@ -27,7 +27,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.Globals;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_twitter.Component;
@@ -54,8 +54,8 @@ public class MenuDialogFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        userPreference = (UserPreference) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_USER_PREFERENCE);
-        status = (Status) getArguments().getSerializable(Globals.ARGUMENTS_KEYWORD_STATUS);
+        userPreference = (UserPreference) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE);
+        status = (Status) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_STATUS);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         layoutInflater = getActivity().getLayoutInflater();
@@ -87,13 +87,13 @@ public class MenuDialogFragment extends DialogFragment {
                         EventBus.getDefault().post(new Component.MenuActionReply(status));
                         break;
                     case MENU_ACTION_TYPE_RT:
-                        Globals.showToastLong(getActivity(), "RTやめろ");  // TODO 修正
+                        Utils.showToastLong(getActivity(), "RTやめろ");  // TODO 修正
                         break;
                     case MENU_ACTION_TYPE_FAVORITE:
                         TwinownHelper.createFavorite(userPreference, status);
                         break;
                     case MENU_ACTION_TYPE_LIST:
-                        Globals.showToastLong(getActivity(), "リストは甘え");  // TODO 修正
+                        Utils.showToastLong(getActivity(), "リストは甘え");  // TODO 修正
                         break;
                     case MENU_ACTION_TYPE_LINK_URL:
                         startActivity(new Intent(
@@ -114,7 +114,7 @@ public class MenuDialogFragment extends DialogFragment {
                         ));
                         break;
                     case MENU_ACTION_TYPE_SHARE:
-                        Globals.showToastLong(getActivity(), "まだ");  // TODO 修正
+                        Utils.showToastLong(getActivity(), "まだ");  // TODO 修正
                         break;
                 }
                 dismiss();
