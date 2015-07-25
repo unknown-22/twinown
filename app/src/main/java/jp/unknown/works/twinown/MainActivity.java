@@ -21,12 +21,14 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.transition.Fade;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -60,8 +62,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+            getWindow().setExitTransition(new Fade());
+            getWindow().setEnterTransition(new Fade());
+        }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        super.onCreate(savedInstanceState);
         Base.initDataBase(getApplicationContext());
         if (Tab.getCount() < 1) {
             Intent intent = new Intent(Utils.ACTION_KEYWORD_AUTHORIZATION);
@@ -219,8 +226,8 @@ public class MainActivity extends AppCompatActivity {
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
                     if (menuItem.getGroupId() == R.id.menu_tab) {
                         if (timelineViewPager.getCurrentItem() == menuItem.getItemId()) {
-                            TimelineFragment hoge = timelinePagerAdapter.findFragmentByPosition(timelineViewPager, menuItem.getItemId());
-                            hoge.moveOnTop();
+                            TimelineFragment timelineFragment = timelinePagerAdapter.findFragmentByPosition(timelineViewPager, menuItem.getItemId());
+                            timelineFragment.moveOnTop();
                         } else {
                             timelineViewPager.setCurrentItem(menuItem.getItemId());
                         }
@@ -279,7 +286,6 @@ public class MainActivity extends AppCompatActivity {
         @SuppressWarnings("unused")
         public void onEvent(final Component.MenuActionReply menuActionReply) {
             toReplyStatus = menuActionReply.toReplyStatus;
-            Long inReplyToId = toReplyStatus.getId();
             final String userScreenName = toReplyStatus.getUser().getScreenName();
             tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
             tweetEditText.setSelection(tweetEditText.getText().toString().length());

@@ -49,6 +49,10 @@
             android:name=".AppearanceControlActivity"
             android:label="@string/title_activity_appearance_control" >
         </activity>
+        <activity
+            android:name=".UserActivity"
+            android:label="@string/title_activity_user" >
+        </activity>
     </application>
 
 </manifest>

@@ -5,8 +5,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -27,6 +30,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.UserActivity;
 import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -40,11 +44,12 @@ public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_REPLY = 0;
     private static final int MENU_ACTION_TYPE_RT = 1;
     private static final int MENU_ACTION_TYPE_FAVORITE = 2;
-    private static final int MENU_ACTION_TYPE_LIST = 3;
-    private static final int MENU_ACTION_TYPE_LINK_URL = 4;
-    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 5;
-    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 6;
-    private static final int MENU_ACTION_TYPE_SHARE = 7;
+    private static final int MENU_ACTION_TYPE_USER = 3;
+    private static final int MENU_ACTION_TYPE_LIST = 4;
+    private static final int MENU_ACTION_TYPE_LINK_URL = 5;
+    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 6;
+    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 7;
+    private static final int MENU_ACTION_TYPE_SHARE = 8;
 
     private LayoutInflater layoutInflater;
     private UserPreference userPreference;
@@ -62,11 +67,13 @@ public class MenuDialogFragment extends DialogFragment {
         View dialogView = layoutInflater.inflate(R.layout.status_menu, null);
         builder.setView(dialogView);
         ButterKnife.bind(this, dialogView);
-        setHeaderView();
+        View headerView = layoutInflater.inflate(R.layout.status, null);
+        final ImageView statusIconView = setHeaderView(headerView);
         final ArrayList<StatusMenuItem> statusMenuItemList = new ArrayList<>();
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
+        statusMenuItemList.add(new StatusMenuItem(String.format("@%s", status.getUser().getScreenName()), MENU_ACTION_TYPE_USER, status.getUser().getId()));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_list), MENU_ACTION_TYPE_LIST));
         for (URLEntity urlEntity : status.getURLEntities()) {
             statusMenuItemList.add(new StatusMenuItem(urlEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_URL, urlEntity.getExpandedURL()));
@@ -76,7 +83,7 @@ public class MenuDialogFragment extends DialogFragment {
         }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_open_browser), MENU_ACTION_TYPE_OPEN_BROWSER));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_share), MENU_ACTION_TYPE_SHARE));
-        StatusMenuAdapter statusMenuAdapter = new StatusMenuAdapter(getActivity(), 0, statusMenuItemList);
+        final StatusMenuAdapter statusMenuAdapter = new StatusMenuAdapter(getActivity(), 0, statusMenuItemList);
         statusMenuListVew.setAdapter(statusMenuAdapter);
         statusMenuListVew.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
@@ -92,6 +99,28 @@ public class MenuDialogFragment extends DialogFragment {
                     case MENU_ACTION_TYPE_FAVORITE:
                         TwinownHelper.createFavorite(userPreference, status);
                         break;
+                    case MENU_ACTION_TYPE_USER:
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getActivity().startActivity(
+                                    new Intent(getActivity(), UserActivity.class).putExtra("user", status.getUser()),
+                                    ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                            getActivity(),
+                                            statusIconView,
+                                            Utils.SHARED_ELEMENT_NAME_STATUS_ICON).toBundle()
+                            );
+                            AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+                                @Override
+                                protected Void doInBackground(Void... params) {
+                                    dismiss();
+                                    return null;
+                                }
+                            };
+                            task.execute();
+                        } else {
+                            startActivity(new Intent(getActivity(), UserActivity.class));
+                            dismiss();
+                        }
+                        return;
                     case MENU_ACTION_TYPE_LIST:
                         Utils.showToastLong(getActivity(), "リストは甘え");  // TODO 修正
                         break;
@@ -128,8 +157,7 @@ public class MenuDialogFragment extends DialogFragment {
         return alertDialog;
     }
 
-    private void setHeaderView() {
-        View headerView = layoutInflater.inflate(R.layout.status, null);
+    private ImageView setHeaderView(View headerView) {
         headerView.setClickable(false);
         ImageView statusIconView = (ImageView) headerView.findViewById(R.id.statusIconView);
         TextView statusNameView = (TextView) headerView.findViewById(R.id.statusNameView);
@@ -140,11 +168,13 @@ public class MenuDialogFragment extends DialogFragment {
         statusNameView.setText(status.getUser().getScreenName());
         statusTextView.setText(status.getText());
         statusMenuListVew.addHeaderView(headerView, null, false);
+        return statusIconView;
     }
 
     class StatusMenuItem {
         public String statusMenuItemText;
         public int actionType;
+        public long userId;
         public String url;
 
         public StatusMenuItem(String statusMenuItemText, int actionType) {
@@ -156,6 +186,12 @@ public class MenuDialogFragment extends DialogFragment {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
             this.url = url;
+        }
+
+        public StatusMenuItem(String statusMenuItemText, int actionType, long userId) {
+            this.statusMenuItemText = statusMenuItemText;
+            this.actionType = actionType;
+            this.userId = userId;
         }
     }
 

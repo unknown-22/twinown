@@ -16,6 +16,8 @@ public class Utils {
     public static final String ARGUMENTS_KEYWORD_TAB = "arguments_keyword_tab";
     public static final String ARGUMENTS_KEYWORD_STATUS = "arguments_keyword_status";
 
+    public static final String SHARED_ELEMENT_NAME_STATUS_ICON = "shared_element_name_status_icon";
+
     public static final String USER_STREAM_NOTIFICATION_TAG = "user_stream_notification_tag";
     public static final int USER_STREAM_NOTIFICATION_ID = 0;
 

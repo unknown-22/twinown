@@ -99,7 +99,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
             bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference);
             bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_STATUS, status);
             menuDialogFragment.setArguments(bundle);
-            menuDialogFragment.show(fragmentManager, "hoge");
+            menuDialogFragment.show(fragmentManager, "menu_dialog_fragment");
         }
 
         public StatusViewHolder(final View itemView) {
