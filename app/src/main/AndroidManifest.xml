@@ -50,7 +50,7 @@
             android:label="@string/title_activity_appearance_control" >
         </activity>
         <activity
-            android:name=".UserActivity"
+            android:name=".twinown_views.UserActivity"
             android:label="@string/title_activity_user" >
         </activity>
     </application>

@@ -26,11 +26,11 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.UserActivity;
 import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -39,12 +39,14 @@ import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import twitter4j.MediaEntity;
 import twitter4j.Status;
 import twitter4j.URLEntity;
+import twitter4j.User;
+import twitter4j.UserMentionEntity;
 
 public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_REPLY = 0;
     private static final int MENU_ACTION_TYPE_RT = 1;
     private static final int MENU_ACTION_TYPE_FAVORITE = 2;
-    private static final int MENU_ACTION_TYPE_USER = 3;
+    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 3;
     private static final int MENU_ACTION_TYPE_LIST = 4;
     private static final int MENU_ACTION_TYPE_LINK_URL = 5;
     private static final int MENU_ACTION_TYPE_LINK_MEDIA = 6;
@@ -73,7 +75,10 @@ public class MenuDialogFragment extends DialogFragment {
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
-        statusMenuItemList.add(new StatusMenuItem(String.format("@%s", status.getUser().getScreenName()), MENU_ACTION_TYPE_USER, status.getUser().getId()));
+        statusMenuItemList.add(new StatusMenuItem(String.format("@%s", status.getUser().getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, status.getUser().getScreenName()));
+        for (UserMentionEntity userMentionEntity : status.getUserMentionEntities()) {
+            statusMenuItemList.add(new StatusMenuItem(String.format("@%s", userMentionEntity.getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, userMentionEntity.getScreenName()));
+        }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_list), MENU_ACTION_TYPE_LIST));
         for (URLEntity urlEntity : status.getURLEntities()) {
             statusMenuItemList.add(new StatusMenuItem(urlEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_URL, urlEntity.getExpandedURL()));
@@ -88,7 +93,7 @@ public class MenuDialogFragment extends DialogFragment {
         statusMenuListVew.setOnItemClickListener(new ListView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                StatusMenuItem statusMenuItem = statusMenuItemList.get(position - 1);
+                final StatusMenuItem statusMenuItem = statusMenuItemList.get(position - 1);
                 switch (statusMenuItem.actionType) {
                     case MENU_ACTION_TYPE_REPLY:
                         EventBus.getDefault().post(new Component.MenuActionReply(status));
@@ -99,27 +104,47 @@ public class MenuDialogFragment extends DialogFragment {
                     case MENU_ACTION_TYPE_FAVORITE:
                         TwinownHelper.createFavorite(userPreference, status);
                         break;
-                    case MENU_ACTION_TYPE_USER:
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            getActivity().startActivity(
-                                    new Intent(getActivity(), UserActivity.class).putExtra("user", status.getUser()),
-                                    ActivityOptionsCompat.makeSceneTransitionAnimation(
-                                            getActivity(),
-                                            statusIconView,
-                                            Utils.SHARED_ELEMENT_NAME_STATUS_ICON).toBundle()
-                            );
-                            AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
-                                @Override
-                                protected Void doInBackground(Void... params) {
-                                    dismiss();
-                                    return null;
+                    case MENU_ACTION_TYPE_USER_SCREEN_NAME:
+                        new AsyncTask<Void, Void, User>() {
+                            @Override
+                            protected User doInBackground(Void... params) {
+                                if (Objects.equals(statusMenuItem.text, userPreference.screenName)) {
+                                    return status.getUser();
+                                } else {
+                                    return TwinownHelper.getUserSync(userPreference, statusMenuItem.text);
                                 }
-                            };
-                            task.execute();
-                        } else {
-                            startActivity(new Intent(getActivity(), UserActivity.class));
-                            dismiss();
-                        }
+                            }
+
+                            @Override
+                            protected void onPostExecute(User user) {
+                                if (user == null) {
+                                    Utils.showToastLong(getActivity(), String.format(getString(R.string.error_user_show), statusMenuItem.statusMenuItemText));
+                                    return;
+                                }
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                                    getActivity().startActivity(
+                                            new Intent(getActivity(), UserActivity.class)
+                                                    .putExtra(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference)
+                                                    .putExtra(Utils.ARGUMENTS_KEYWORD_USER, user),
+                                            ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                                    getActivity(),
+                                                    statusIconView,
+                                                    Utils.SHARED_ELEMENT_NAME_STATUS_ICON).toBundle()
+                                    );
+                                } else {
+                                    startActivity(new Intent(getActivity(), UserActivity.class)
+                                            .putExtra(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference)
+                                            .putExtra(Utils.ARGUMENTS_KEYWORD_USER, user));
+                                }
+                                new AsyncTask<Void, Void, Void>() {
+                                    @Override
+                                    protected Void doInBackground(Void... params) {
+                                        dismiss();
+                                        return null;
+                                    }
+                                }.execute();
+                            }
+                        }.execute();
                         return;
                     case MENU_ACTION_TYPE_LIST:
                         Utils.showToastLong(getActivity(), "リストは甘え");  // TODO 修正
@@ -127,13 +152,13 @@ public class MenuDialogFragment extends DialogFragment {
                     case MENU_ACTION_TYPE_LINK_URL:
                         startActivity(new Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(statusMenuItem.url)
+                                Uri.parse(statusMenuItem.text)
                         ));
                         break;
                     case MENU_ACTION_TYPE_LINK_MEDIA:
                         startActivity(new Intent(
                                 Intent.ACTION_VIEW,
-                                Uri.parse(statusMenuItem.url)
+                                Uri.parse(statusMenuItem.text)
                         ));
                         break;
                     case MENU_ACTION_TYPE_OPEN_BROWSER:
@@ -174,24 +199,17 @@ public class MenuDialogFragment extends DialogFragment {
     class StatusMenuItem {
         public String statusMenuItemText;
         public int actionType;
-        public long userId;
-        public String url;
+        public String text;
 
         public StatusMenuItem(String statusMenuItemText, int actionType) {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
         }
 
-        public StatusMenuItem(String statusMenuItemText, int actionType, String url) {
+        public StatusMenuItem(String statusMenuItemText, int actionType, String text) {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
-            this.url = url;
-        }
-
-        public StatusMenuItem(String statusMenuItemText, int actionType, long userId) {
-            this.statusMenuItemText = statusMenuItemText;
-            this.actionType = actionType;
-            this.userId = userId;
+            this.text = text;
         }
     }
 

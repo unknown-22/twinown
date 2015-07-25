@@ -28,6 +28,8 @@
     <string name="menu_action_open_browser">ブラウザで開く</string>
     <string name="menu_action_share">ツイートを共有する</string>
 
+    <string name="error_user_show">"エラーが発生しました(ユーザ %s は表示できません)"</string>
+
     <string name="title_activity_setting">SettingActivity</string>
     <string name="setting_action_account">アカウント設定</string>
     <string name="setting_action_tab">タブ設定</string>

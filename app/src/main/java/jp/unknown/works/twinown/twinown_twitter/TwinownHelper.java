@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
@@ -18,6 +19,7 @@ import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
+import twitter4j.User;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
@@ -37,12 +39,17 @@ public class TwinownHelper {
         return twitter;
     }
 
-    private static Twitter createTwitter(UserPreference userPreference) {
-        Client client = Client.get(userPreference.clientId);
-        Twitter twitter = twitterFactory.getInstance();
-        twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
-        twitter.setOAuthAccessToken(new AccessToken(userPreference.tokenKey, userPreference.tokenSecret));
-        userIdTwitterHashMap.put(userPreference.userId, twitter);
+    private static Twitter getOrCreateTwitter(UserPreference userPreference) {
+        Twitter twitter;
+        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+            twitter = userIdTwitterHashMap.get(userPreference.userId);
+        } else {
+            Client client = Client.get(userPreference.clientId);
+            twitter = twitterFactory.getInstance();
+            twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
+            twitter.setOAuthAccessToken(new AccessToken(userPreference.tokenKey, userPreference.tokenSecret));
+            userIdTwitterHashMap.put(userPreference.userId, twitter);
+        }
         return twitter;
     }
 
@@ -68,6 +75,15 @@ public class TwinownHelper {
             twitter = createAsyncTwitter(userPreference);
         }
         twitter.showUser(userPreference.userId);
+    }
+
+    public static User getUserSync(UserPreference userPreference, String screenName) {
+        Twitter twitter = getOrCreateTwitter(userPreference);
+        try {
+            return twitter.showUser(screenName);
+        } catch (TwitterException e) {
+            return null;
+        }
     }
 
     public static void createFavorite(UserPreference userPreference, Status status) {
@@ -100,6 +116,23 @@ public class TwinownHelper {
         twitter.getMentions(paging);
     }
 
+    public static void getUserTimeLine(final UserPreference userPreference, final Long userId, final Paging paging) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    ResponseList<twitter4j.Status> statuses = twitter.getUserTimeline(userId, paging);
+                    EventBus.getDefault().post(new Component.UserTimeLineEvent(statuses, userPreference, userId));
+                } catch (TwitterException e) {
+                    EventBus.getDefault().post(new Component.UserTimeLineEvent(null, userPreference, userId));
+                }
+                return null;
+            }
+        };
+        task.execute();
+    }
+
     public static void getUserLists(UserPreference userPreference) {
         AsyncTwitter twitter;
         if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
@@ -111,12 +144,7 @@ public class TwinownHelper {
     }
 
     public static void getUserListStatuses(final UserPreference userPreference, final Long listId, final Paging paging) {
-        final Twitter twitter;
-        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createTwitter(userPreference);
-        }
+        final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {

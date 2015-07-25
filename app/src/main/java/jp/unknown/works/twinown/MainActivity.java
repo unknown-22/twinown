@@ -11,6 +11,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -192,7 +193,19 @@ public class MainActivity extends AppCompatActivity {
             Context context = getActivity().getApplicationContext();
             context.bindService(new Intent(context, TwinownService.class), serviceConnection, BIND_AUTO_CREATE);
             context.startService(new Intent(context, TwinownService.class));
+        }
+
+        @Override
+        public void onResume() {
+            super.onResume();
             EventBus.getDefault().register(this);
+            TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
+        }
+
+        @Override
+        public void onPause() {
+            super.onPause();
+            EventBus.getDefault().unregister(this);
         }
 
         @Override
@@ -202,7 +215,6 @@ public class MainActivity extends AppCompatActivity {
             FragmentManager fragmentManager = this.getFragmentManager();
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager, tabList);
             timelineViewPager.setAdapter(timelinePagerAdapter);
-            TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
             Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
                 toolbar.setTitle(getString(R.string.app_name));
@@ -268,7 +280,6 @@ public class MainActivity extends AppCompatActivity {
             context.unbindService(serviceConnection);
             context.stopService(new Intent(context, TwinownService.class));
             TwinownHelper.StreamSingleton.getInstance().stopAllUserStream();
-            EventBus.getDefault().unregister(this);
         }
 
         private void togglePostView() {

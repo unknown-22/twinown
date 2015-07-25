@@ -6,9 +6,9 @@
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
                 android:paddingBottom="@dimen/activity_vertical_margin"
-                tools:context="jp.unknown.works.twinown.UserActivity">
+                tools:context="jp.unknown.works.twinown.twinown_views.UserActivity">
     <fragment android:id="@+id/fragment"
-              android:name="jp.unknown.works.twinown.UserActivity$UserFragment"
+              android:name="jp.unknown.works.twinown.twinown_views.UserActivity$UserFragment"
               tools:layout="@android:layout/list_content"
               android:layout_width="match_parent"
               android:layout_height="match_parent"/>

@@ -23,6 +23,7 @@ import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.ResponseList;
 import twitter4j.Status;
+import twitter4j.User;
 
 class TimelineAdapter extends RecyclerView.Adapter{
     private FragmentManager fragmentManager;
@@ -88,6 +89,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
         private final Context context;
         @Bind(R.id.statusIconView) ImageView statusIconView;
         @Bind(R.id.statusNameView) TextView statusNameView;
+        @Bind(R.id.statusScreenNameView) TextView statusScreenNameView;
         @Bind(R.id.statusTextView) TextView statusTextView;
 
         @SuppressWarnings("unused")
@@ -111,7 +113,9 @@ class TimelineAdapter extends RecyclerView.Adapter{
         public void setStatus(Status status) {
             Picasso.with(context).load(status.getUser().getBiggerProfileImageURL())
                 .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
-            statusNameView.setText(status.getUser().getScreenName());
+            User user = status.getUser();
+            statusNameView.setText(user.getName());
+            statusScreenNameView.setText(String.format("@%s", user.getScreenName()));
             statusTextView.setText(status.getText());
         }
     }

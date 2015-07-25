@@ -27,6 +27,17 @@ public class Component {
         }
     }
 
+    public static class UserTimeLineEvent {
+        public final ResponseList<Status> statuses;
+        public final UserPreference userPreference;
+        public final long userId;
+        public UserTimeLineEvent(ResponseList<Status> statuses, UserPreference userPreference, long userId) {
+            this.statuses = statuses;
+            this.userPreference = userPreference;
+            this.userId = userId;
+        }
+    }
+
     public static class StatusEvent {
         public final Status status;
         public final UserPreference userPreference;

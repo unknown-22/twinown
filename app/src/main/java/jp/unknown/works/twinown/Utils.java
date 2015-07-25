@@ -15,6 +15,7 @@ public class Utils {
     public static final String ARGUMENTS_KEYWORD_USER_PREFERENCE = "arguments_keyword_user_preference";
     public static final String ARGUMENTS_KEYWORD_TAB = "arguments_keyword_tab";
     public static final String ARGUMENTS_KEYWORD_STATUS = "arguments_keyword_status";
+    public static final String ARGUMENTS_KEYWORD_USER = "arguments_keyword_user";
 
     public static final String SHARED_ELEMENT_NAME_STATUS_ICON = "shared_element_name_status_icon";
 
