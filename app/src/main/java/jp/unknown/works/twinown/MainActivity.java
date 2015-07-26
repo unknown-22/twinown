@@ -7,11 +7,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -34,6 +36,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
@@ -51,11 +54,14 @@ import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.twinown_twitter.TwinownService;
+import jp.unknown.works.twinown.twinown_views.RoundedTransformation;
 import jp.unknown.works.twinown.twinown_views.TimelineFragment;
 import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
+import jp.unknown.works.twinown.twinown_views.UserActivity;
 import twitter4j.Status;
+import twitter4j.User;
 
 public class MainActivity extends AppCompatActivity {
     MainFragment fragment;
@@ -110,9 +116,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public static class MainFragment extends Fragment {
+        User user;
         List<Tab> tabList;
         List<UserPreference> userPreferenceList;
         int currentUserIndex = 0;
+        Boolean isQuickPost = false;
         TimelinePagerAdapter timelinePagerAdapter;
         Animation inAnimation;
         Animation outAnimation;
@@ -124,11 +132,36 @@ public class MainActivity extends AppCompatActivity {
         };
         @Bind(R.id.mainDrawerLayout) DrawerLayout mainDrawerLayout;
         @Bind(R.id.mainNavigation) NavigationView navigationView;
+        @Bind(R.id.drawerHeader) RelativeLayout drawerHeader;
+        @Bind(R.id.userIconView) ImageView userIconView;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
         @Bind(R.id.quick_post_view) RelativeLayout quickPostView;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
 
         Status toReplyStatus;
+
+        @SuppressWarnings("unused")
+        @OnClick(R.id.drawerHeader)
+        public void drawerHeaderClick() {
+            if (user == null) {
+                return;
+            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                getActivity().startActivity(
+                        new Intent(getActivity(), UserActivity.class)
+                                .putExtra(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreferenceList.get(currentUserIndex))
+                                .putExtra(Utils.ARGUMENTS_KEYWORD_USER, user),
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(
+                                getActivity(),
+                                userIconView,
+                                Utils.SHARED_ELEMENT_NAME_STATUS_ICON).toBundle()
+                );
+            } else {
+                startActivity(new Intent(getActivity(), UserActivity.class)
+                        .putExtra(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreferenceList.get(currentUserIndex))
+                        .putExtra(Utils.ARGUMENTS_KEYWORD_USER, user));
+            }
+        }
 
         @SuppressWarnings("unused")
         @OnClick(R.id.tweetButton)
@@ -288,28 +321,39 @@ public class MainActivity extends AppCompatActivity {
             if(quickPostView.getVisibility() == View.GONE){
                 quickPostView.startAnimation(inAnimation);
                 quickPostView.setVisibility(View.VISIBLE);
+                isQuickPost = true;
             } else{
                 quickPostView.startAnimation(outAnimation);
                 quickPostView.setVisibility(View.GONE);
                 InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                 imm.hideSoftInputFromWindow(quickPostView.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+                isQuickPost = false;
             }
         }
 
         @SuppressWarnings("unused")
         public void onEvent(final Component.MenuActionReply menuActionReply) {
-            toReplyStatus = menuActionReply.toReplyStatus;
-            final String userScreenName = toReplyStatus.getUser().getScreenName();
-            tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
-            tweetEditText.setSelection(tweetEditText.getText().toString().length());
-            // TODO TextInputLayoutでうまいこと表現したかったけど無理だった（ライブラリのバグが治ったら挑戦する）
-            Drawable replyIconDrawable = ((MainActivity) getActivity()).getDrawableResource(R.drawable.ic_reply_white);
-            Drawable[] drawables = tweetEditText.getCompoundDrawables();
-            tweetEditText.setCompoundDrawablesWithIntrinsicBounds(replyIconDrawable, null, drawables[2], null);
+            if (isQuickPost) {
+                toReplyStatus = menuActionReply.toReplyStatus;
+                final String userScreenName = toReplyStatus.getUser().getScreenName();
+                tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
+                tweetEditText.setSelection(tweetEditText.getText().toString().length());
+                // TODO TextInputLayoutでうまいこと表現したかったけど無理だった（ライブラリのバグが治ったら挑戦する）
+                Drawable replyIconDrawable = ((MainActivity) getActivity()).getDrawableResource(R.drawable.ic_reply_white);
+                Drawable[] drawables = tweetEditText.getCompoundDrawables();
+                tweetEditText.setCompoundDrawablesWithIntrinsicBounds(replyIconDrawable, null, drawables[2], null);
+            } else {
+                startActivity(new Intent(getActivity(), TweetActivity.class)
+                        .putExtra(Utils.ARGUMENTS_KEYWORD_STATUS, menuActionReply.toReplyStatus));
+            }
         }
 
         @SuppressWarnings("unused")
         public void onEventMainThread(Component.UserEvent userEvent) {
+            user = userEvent.user;
+            RoundedTransformation transform = new RoundedTransformation((int) (getActivity().getResources().getDimension(R.dimen.icon_size) / 8));
+            drawerHeader.setBackgroundColor(Color.parseColor(String.format("#%s", userEvent.user.getProfileBackgroundColor())));
+            Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).transform(transform).into(userIconView);
             Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
