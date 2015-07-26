@@ -22,6 +22,10 @@ public class Tab extends Model implements Serializable {
     @Column("extra") public String extra;  // typeによって使う付加情報。直接参照/代入はしない。
     @Column("sort_key") public Long sort_key;
 
+    public static Tab get(long tabId) {
+        return Select.from(Tab.class).where(String.format("%s=%d", Tab._ID, tabId)).fetchSingle();
+    }
+
     public static List<Tab> getAll() {
         return Select.from(Tab.class).orderBy("sort_key").fetch();
     }

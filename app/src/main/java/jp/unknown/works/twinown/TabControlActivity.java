@@ -12,6 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -106,9 +107,11 @@ public class TabControlActivity extends AppCompatActivity {
     }
 
     static class TabMenuItem {
+        public long id;
         public String tabName;
 
-        public TabMenuItem(String tabName) {
+        public TabMenuItem(long id, String tabName) {
+            this.id = id;
             this.tabName = tabName;
         }
     }
@@ -125,6 +128,25 @@ public class TabControlActivity extends AppCompatActivity {
             View view = inflater.inflate(android.R.layout.list_content, container, false);
             ButterKnife.bind(this, view);
             tabAdapter = new TabAdapter(getActivity(), 0, tabMenuItems);
+            tabListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(getString(R.string.confirm_dialog))
+                            .setMessage(String.format(getString(R.string.delete_confirm), tabMenuItems.get(position).tabName))
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    Tab.get(tabMenuItems.get(position).id).delete();
+                                    tabMenuItems.remove(position);
+                                    tabAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                    return false;
+                }
+            });
             tabListView.setAdapter(tabAdapter);
             return view;
         }
@@ -138,7 +160,7 @@ public class TabControlActivity extends AppCompatActivity {
         public void refreshTabAdapter() {
             tabMenuItems.clear();
             for (Tab tab : Tab.getAll()) {
-                tabMenuItems.add(new TabMenuItem(tab.name));
+                tabMenuItems.add(new TabMenuItem(tab.id, tab.name));
             }
             tabAdapter.notifyDataSetChanged();
         }

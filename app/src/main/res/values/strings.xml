@@ -32,6 +32,9 @@
 
     <string name="error_user_show">"エラーが発生しました(ユーザ %s は表示できません)"</string>
 
+    <string name="confirm_dialog">"確認ダイアログ"</string>
+    <string name="delete_confirm">"(%s)を削除しますか？"</string>
+
     <string name="title_activity_setting">SettingActivity</string>
     <string name="setting_action_account">アカウント設定</string>
     <string name="setting_action_tab">タブ設定</string>
