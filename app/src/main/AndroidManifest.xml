@@ -53,6 +53,11 @@
             android:name=".twinown_views.UserActivity"
             android:label="@string/title_activity_user" >
         </activity>
+        <activity
+            android:name=".TweetActivity"
+            android:label="@string/title_activity_tweet"
+            android:windowSoftInputMode="adjustResize" >
+        </activity>
     </application>
 
 </manifest>

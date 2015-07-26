@@ -11,7 +11,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
-import android.provider.Settings;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -247,6 +246,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     } else {
                         switch (menuItem.getItemId()) {
+                            case R.id.action_tweet:
+                                startActivity(new Intent(getActivity(), TweetActivity.class));
+                                return true;
                             case R.id.action_toggle_quick_post:
                                 togglePostView();
                                 mainDrawerLayout.closeDrawers();

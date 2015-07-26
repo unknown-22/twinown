@@ -120,7 +120,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
         }
     }
 
-    private static class TimelineCallback extends SortedList.Callback<Status> {
+    private class TimelineCallback extends SortedList.Callback<Status> {
         private RecyclerView.Adapter adapter;
 
         TimelineCallback(@NonNull RecyclerView.Adapter adapter) {
