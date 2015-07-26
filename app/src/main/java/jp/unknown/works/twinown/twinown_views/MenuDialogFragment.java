@@ -186,11 +186,13 @@ public class MenuDialogFragment extends DialogFragment {
         headerView.setClickable(false);
         ImageView statusIconView = (ImageView) headerView.findViewById(R.id.statusIconView);
         TextView statusNameView = (TextView) headerView.findViewById(R.id.statusNameView);
+        TextView statusScreenNameView = (TextView) headerView.findViewById(R.id.statusScreenNameView);
         TextView statusTextView = (TextView) headerView.findViewById(R.id.statusTextView);
         RoundedTransformation transform = new RoundedTransformation((int) (getActivity().getResources().getDimension(R.dimen.icon_size) / 8));
         Picasso.with(getActivity()).load(status.getUser().getBiggerProfileImageURL())
                 .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
-        statusNameView.setText(status.getUser().getScreenName());
+        statusNameView.setText(status.getUser().getName());
+        statusScreenNameView.setText(String.format("@%s", status.getUser().getScreenName()));
         statusTextView.setText(status.getText());
         statusMenuListVew.addHeaderView(headerView, null, false);
         return statusIconView;
