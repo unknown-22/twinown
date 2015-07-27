@@ -25,7 +25,7 @@
 
     <string name="menu_action_reply">返信する</string>
     <string name="menu_action_rt">リツイート</string>
-    <string name="menu_action_favorite">お気にい入りに追加する</string>
+    <string name="menu_action_favorite">お気に入りに追加する</string>
     <string name="menu_action_list">リストを管理</string>
     <string name="menu_action_open_browser">ブラウザで開く</string>
     <string name="menu_action_share">ツイートを共有する</string>

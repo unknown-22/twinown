@@ -8,7 +8,6 @@
     <ImageButton
         android:layout_width="@dimen/icon_size"
         android:layout_height="@dimen/icon_size"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:id="@+id/userIconButton"
         android:contentDescription="@android:string/untitled"
         android:layout_alignParentTop="true"
@@ -24,7 +23,7 @@
         android:inputType="textMultiLine"
         android:gravity="left|top"/>
     <ImageButton android:layout_width="wrap_content"
-                 android:layout_height="48dp"
+                 android:layout_height="wrap_content"
                  android:id="@+id/tweetButton"
                  android:src="@drawable/ic_send_white"
                  android:contentDescription="@string/tweet"

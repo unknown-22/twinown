@@ -108,11 +108,7 @@ public class MenuDialogFragment extends DialogFragment {
                         new AsyncTask<Void, Void, User>() {
                             @Override
                             protected User doInBackground(Void... params) {
-                                if (Objects.equals(statusMenuItem.text, userPreference.screenName)) {
-                                    return status.getUser();
-                                } else {
-                                    return TwinownHelper.getUserSync(userPreference, statusMenuItem.text);
-                                }
+                                return TwinownHelper.getUserSync(userPreference, statusMenuItem.text);
                             }
 
                             @Override
