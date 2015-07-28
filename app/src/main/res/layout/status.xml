@@ -22,7 +22,7 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:paddingLeft="0dp"
-        android:paddingRight="@dimen/status_text_vertical_margin"
+        android:paddingRight="@dimen/status_text_vertical_short_margin"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/app_name"
         android:id="@+id/statusNameView"
