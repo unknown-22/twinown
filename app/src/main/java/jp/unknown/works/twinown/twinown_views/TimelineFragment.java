@@ -107,6 +107,9 @@ public class TimelineFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                if (timelineAdapter.getItemCount() == 0) {
+                    headUpdate(0);
+                }
                 headUpdate(timelineAdapter.getStatus(0).getId());
             }
         });

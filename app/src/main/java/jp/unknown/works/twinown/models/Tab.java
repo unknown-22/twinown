@@ -30,6 +30,10 @@ public class Tab extends Model implements Serializable {
         return Select.from(Tab.class).orderBy("sort_key").fetch();
     }
 
+    public static List<Tab> getUserTab(long userId) {
+        return Select.from(Tab.class).where(String.format("user_id=%d", userId)).fetch();
+    }
+
     public static int getCount() {
         return Select.columns("COUNT(*)").from(Tab.class).fetchValue(Integer.class);
     }

@@ -1,8 +1,10 @@
 package jp.unknown.works.twinown;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -20,7 +23,9 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.User;
 
 public class AccountControlActivity extends AppCompatActivity {
 
@@ -55,9 +60,11 @@ public class AccountControlActivity extends AppCompatActivity {
     }
 
     static class AccountMenuItem {
+        public long userId;
         public String screenName;
 
-        public AccountMenuItem(String screenName) {
+        public AccountMenuItem(long userId, String screenName) {
+            this.userId = userId;
             this.screenName = screenName;
         }
     }
@@ -74,6 +81,28 @@ public class AccountControlActivity extends AppCompatActivity {
             View view = inflater.inflate(android.R.layout.list_content, container, false);
             ButterKnife.bind(this, view);
             accountAdapter = new AccountAdapter(getActivity(), 0, accountMenuItems);
+            accountListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(getString(R.string.confirm_dialog))
+                            .setMessage(String.format(getString(R.string.delete_confirm), accountMenuItems.get(position).screenName))
+                            .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    UserPreference.get(accountMenuItems.get(position).userId).delete();
+                                    for (Tab tab : Tab.getUserTab(accountMenuItems.get(position).userId)) {
+                                        tab.delete();
+                                    }
+                                    accountMenuItems.remove(position);
+                                    accountAdapter.notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("Cancel", null)
+                            .show();
+                    return false;
+                }
+            });
             accountListView.setAdapter(accountAdapter);
             return view;
         }
@@ -83,7 +112,7 @@ public class AccountControlActivity extends AppCompatActivity {
             super.onResume();
             accountMenuItems.clear();
             for (UserPreference userPreference : UserPreference.getAll()) {
-                accountMenuItems.add(new AccountMenuItem(String.format("@%s", userPreference.screenName)));
+                accountMenuItems.add(new AccountMenuItem(userPreference.userId, String.format("@%s", userPreference.screenName)));
             }
             accountAdapter.notifyDataSetChanged();
         }

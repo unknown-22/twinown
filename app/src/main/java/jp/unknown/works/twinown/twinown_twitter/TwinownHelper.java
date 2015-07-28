@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
@@ -67,14 +66,31 @@ public class TwinownHelper {
         twitter.updateStatus(statusUpdate);
     }
 
-    public static void getUser(UserPreference userPreference) {
-        AsyncTwitter twitter;
-        if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createAsyncTwitter(userPreference);
-        }
-        twitter.showUser(userPreference.userId);
+    public static void getUser(final UserPreference userPreference) {
+        new AsyncTask<Void, Void, User>() {
+            Twitter twitter;
+
+            @Override
+            protected void onPreExecute() {
+                twitter = getOrCreateTwitter(userPreference);
+            }
+
+            @Override
+            protected User doInBackground(Void... params) {
+                try {
+                    return twitter.showUser(userPreference.userId);
+                } catch (TwitterException e) {
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(User user) {
+                if (user != null) {
+                    EventBus.getDefault().post(new Component.UserEvent(user));
+                }
+            }
+        };
     }
 
     public static User getUserSync(UserPreference userPreference, String screenName) {
