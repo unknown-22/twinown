@@ -90,7 +90,7 @@ public class TwinownHelper {
                     EventBus.getDefault().post(new Component.UserEvent(user));
                 }
             }
-        };
+        }.execute();
     }
 
     public static User getUserSync(UserPreference userPreference, String screenName) {
