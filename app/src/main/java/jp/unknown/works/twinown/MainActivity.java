@@ -3,7 +3,6 @@ package jp.unknown.works.twinown;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Bitmap;
@@ -19,10 +18,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatSpinner;
 import android.support.v7.widget.Toolbar;
+import android.transition.Explode;
 import android.transition.Fade;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -35,6 +35,8 @@ import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
@@ -71,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
             getWindow().setExitTransition(new Fade());
-            getWindow().setEnterTransition(new Fade());
+            getWindow().setEnterTransition(new Explode());
         }
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         super.onCreate(savedInstanceState);
@@ -132,7 +134,9 @@ public class MainActivity extends AppCompatActivity {
         };
         @Bind(R.id.mainDrawerLayout) DrawerLayout mainDrawerLayout;
         @Bind(R.id.mainNavigation) NavigationView navigationView;
+        @Bind(R.id.headerSpinner) AppCompatSpinner headerSpinner;
         @Bind(R.id.drawerHeader) RelativeLayout drawerHeader;
+        @Bind(R.id.userBannerView) ImageView userBannerView;
         @Bind(R.id.userIconView) ImageView userIconView;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
         @Bind(R.id.quick_post_view) RelativeLayout quickPostView;
@@ -195,27 +199,6 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        public void onChangeAccount() {
-            final String[] userScreenNameList = new String[userPreferenceList.size()];
-            for(int i = 0; i < userPreferenceList.size(); i++) {
-                userScreenNameList[i] = String.format("@%s", userPreferenceList.get(i).screenName);
-            }
-            new AlertDialog.Builder(getActivity())
-                    .setTitle(getString(R.string.action_change_account))
-                    .setItems(userScreenNameList, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            currentUserIndex = which;
-                            TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
-                            Utils.showToastLong(
-                                    getActivity(),
-                                    String.format(getString(R.string.notice_change_account), userScreenNameList[which])
-                            );
-                        }
-                    })
-                    .show();
-        }
-
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -265,6 +248,23 @@ public class MainActivity extends AppCompatActivity {
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post), false)) {
                 togglePostView();
             }
+            final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+            for (UserPreference userPreference : userPreferenceList) {
+                adapter.add(String.format("@%s", userPreference.screenName));
+            }
+            headerSpinner.setAdapter(adapter);
+            headerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    currentUserIndex = position;
+                    TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
+                    Utils.showToastLong(getActivity(), String.format(getString(R.string.notice_change_account), adapter.getItem(position)));
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
             navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -284,10 +284,6 @@ public class MainActivity extends AppCompatActivity {
                                 return true;
                             case R.id.action_toggle_quick_post:
                                 togglePostView();
-                                mainDrawerLayout.closeDrawers();
-                                return true;
-                            case R.id.action_change_account:
-                                onChangeAccount();
                                 mainDrawerLayout.closeDrawers();
                                 return true;
                             case R.id.action_settings:
@@ -353,6 +349,7 @@ public class MainActivity extends AppCompatActivity {
             user = userEvent.user;
             RoundedTransformation transform = new RoundedTransformation((int) (getActivity().getResources().getDimension(R.dimen.icon_size) / 8));
             drawerHeader.setBackgroundColor(Color.parseColor(String.format("#%s", userEvent.user.getProfileBackgroundColor())));
+            Picasso.with(getActivity()).load(userEvent.user.getProfileBannerMobileURL()).into(userBannerView);
             Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).transform(transform).into(userIconView);
             Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).into(new Target() {
                 @Override
