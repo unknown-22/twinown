@@ -4,8 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/mainDrawerLayout">
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                  android:orientation="vertical"
+    <LinearLayout android:orientation="vertical"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
                   android:background="?attr/base_color_2"
@@ -35,6 +34,7 @@
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:id="@+id/tweetTextInputLayout"
                 android:layout_toStartOf="@+id/tweetButton">
                 <EditText android:layout_width="match_parent"
                           android:layout_height="wrap_content"

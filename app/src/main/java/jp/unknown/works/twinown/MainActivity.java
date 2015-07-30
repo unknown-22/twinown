@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -140,6 +141,7 @@ public class MainActivity extends AppCompatActivity {
         @Bind(R.id.userIconView) ImageView userIconView;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
         @Bind(R.id.quick_post_view) RelativeLayout quickPostView;
+        @Bind(R.id.tweetTextInputLayout) TextInputLayout tweetTextInputLayout;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
 
         Status toReplyStatus;
@@ -176,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 Drawable[] drawables = tweetEditText.getCompoundDrawables();
                 tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawables[2], null);
                 tweetEditText.setText("");
+                tweetTextInputLayout.setHint(getString(R.string.tweet_hint));
             }
         }
 
@@ -192,11 +195,23 @@ public class MainActivity extends AppCompatActivity {
         @SuppressWarnings("unused")
         @OnTextChanged(R.id.tweetEditText)
         public void updateTweetEditText(CharSequence changedText) {
+            String tweetHint;
             if (changedText.length() == 0) {
                 toReplyStatus = null;
                 Drawable[] drawables = tweetEditText.getCompoundDrawables();
                 tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawables[2], null);
+                tweetHint = getString(R.string.tweet_hint);
+            } else {
+                if (toReplyStatus != null) {
+                    tweetHint = String.format("↩ @%s:%s", toReplyStatus.getUser().getScreenName(), toReplyStatus.getText());
+                } else {
+                    tweetHint = getString(R.string.tweet_hint);
+                }
             }
+            if (tweetHint.length() > 25) {
+                tweetHint = tweetHint.substring(0, 25) + "…";
+            }
+            tweetTextInputLayout.setHint(String.format("%s (%s)", tweetHint, String.valueOf(140 - changedText.length())));
         }
 
         @Override
@@ -248,7 +263,7 @@ public class MainActivity extends AppCompatActivity {
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post), false)) {
                 togglePostView();
             }
-            final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_list_item_1);
+            final ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_dropdown_item);
             for (UserPreference userPreference : userPreferenceList) {
                 adapter.add(String.format("@%s", userPreference.screenName));
             }
@@ -333,8 +348,9 @@ public class MainActivity extends AppCompatActivity {
                 toReplyStatus = menuActionReply.toReplyStatus;
                 final String userScreenName = toReplyStatus.getUser().getScreenName();
                 tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
+                String tweetHint = String.format("↩ @%s:%s", toReplyStatus.getUser().getScreenName(), toReplyStatus.getText());
+                tweetTextInputLayout.setHint(String.format("%s (%s)", tweetHint, String.valueOf(140 - tweetEditText.getText().length())));
                 tweetEditText.setSelection(tweetEditText.getText().toString().length());
-                // TODO TextInputLayoutでうまいこと表現したかったけど無理だった（ライブラリのバグが治ったら挑戦する）
                 Drawable replyIconDrawable = ((MainActivity) getActivity()).getDrawableResource(R.drawable.ic_reply_white);
                 Drawable[] drawables = tweetEditText.getCompoundDrawables();
                 tweetEditText.setCompoundDrawablesWithIntrinsicBounds(replyIconDrawable, null, drawables[2], null);
