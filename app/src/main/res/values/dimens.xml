@@ -9,7 +9,7 @@
     <dimen name="icon_size">48dp</dimen>
     <dimen name="icon_vertical_margin">8dp</dimen>
     <dimen name="status_text_vertical_margin">8dp</dimen>
-    <dimen name="status_text_vertical_short_margin">8dp</dimen>
+    <dimen name="status_text_vertical_short_margin">4dp</dimen>
 
     <dimen name="user_page_margin">16dp</dimen>
 

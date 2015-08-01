@@ -271,9 +271,11 @@ public class MainActivity extends AppCompatActivity {
             headerSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                    currentUserIndex = position;
-                    TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
-                    Utils.showToastLong(getActivity(), String.format(getString(R.string.notice_change_account), adapter.getItem(position)));
+                    if (currentUserIndex != position) {
+                        currentUserIndex = position;
+                        TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
+                        Utils.showToastLong(getActivity(), String.format(getString(R.string.notice_change_account), adapter.getItem(position)));
+                    }
                 }
 
                 @Override

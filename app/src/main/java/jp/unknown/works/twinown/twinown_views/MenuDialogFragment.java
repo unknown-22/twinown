@@ -12,6 +12,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,9 +25,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -52,6 +56,10 @@ public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_LINK_MEDIA = 6;
     private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 7;
     private static final int MENU_ACTION_TYPE_SHARE = 8;
+
+
+    static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+    static final Pattern clientNamePattern = Pattern.compile("^<.*>(.*?)</.*?>$");
 
     private LayoutInflater layoutInflater;
     private UserPreference userPreference;
@@ -184,12 +192,52 @@ public class MenuDialogFragment extends DialogFragment {
         TextView statusNameView = (TextView) headerView.findViewById(R.id.statusNameView);
         TextView statusScreenNameView = (TextView) headerView.findViewById(R.id.statusScreenNameView);
         TextView statusTextView = (TextView) headerView.findViewById(R.id.statusTextView);
+        TextView statusCreatedAt = (TextView) headerView.findViewById(R.id.statusCreatedAt);
+        TextView statusClientName = (TextView) headerView.findViewById(R.id.statusClientName);
+        TextView statusRetweetedScreenName = (TextView) headerView.findViewById(R.id.statusRetweetedScreenName);
+        float textSizeSmall = statusTextView.getTextSize() * 0.8f;
         RoundedTransformation transform = new RoundedTransformation((int) (getActivity().getResources().getDimension(R.dimen.icon_size) / 8));
+
         Picasso.with(getActivity()).load(status.getUser().getBiggerProfileImageURL())
                 .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
         statusNameView.setText(status.getUser().getName());
         statusScreenNameView.setText(String.format("@%s", status.getUser().getScreenName()));
         statusTextView.setText(status.getText());
+
+        if (!status.isRetweet()) {
+            User user = status.getUser();
+            Picasso.with(getActivity()).load(user.getBiggerProfileImageURL())
+                    .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
+            statusNameView.setText(user.getName());
+            statusScreenNameView.setText(String.format("@%s", user.getScreenName()));
+            statusTextView.setText(status.getText());
+            statusCreatedAt.setText(fullDateFormat.format(status.getCreatedAt()));
+            Matcher matcher = clientNamePattern.matcher(status.getSource());
+            while (matcher.find()) {
+                statusClientName.setText(String.format("from %s", matcher.group(1)));
+            }
+            statusRetweetedScreenName.setVisibility(View.GONE);
+        } else {
+            Status retweetedStatus = status.getRetweetedStatus();
+            User user = retweetedStatus.getUser();
+            Picasso.with(getActivity()).load(user.getBiggerProfileImageURL())
+                    .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
+            statusNameView.setText(user.getName());
+            statusScreenNameView.setText(String.format("@%s", user.getScreenName()));
+            statusTextView.setText(retweetedStatus.getText());
+            statusCreatedAt.setText(fullDateFormat.format(retweetedStatus.getCreatedAt()));
+            Matcher matcher = clientNamePattern.matcher(retweetedStatus.getSource());
+            while (matcher.find()) {
+                statusClientName.setText(String.format("from %s", matcher.group(1)));
+            }
+            statusRetweetedScreenName.setVisibility(View.VISIBLE);
+            statusRetweetedScreenName.setText(String.format("@%s", status.getUser().getScreenName()));
+        }
+        statusScreenNameView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+        statusCreatedAt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+        statusClientName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+        statusRetweetedScreenName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+
         statusMenuListVew.addHeaderView(headerView, null, false);
         return statusIconView;
     }

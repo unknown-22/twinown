@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,6 +15,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,6 +40,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
     @SuppressWarnings("unchecked")
     private final SortedList<Status> timelineList = new SortedList(Status.class, new TimelineCallback(this));
     private final RoundedTransformation transform;
+
+
+    static final SimpleDateFormat todayDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+    static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
+    static final Pattern clientNamePattern = Pattern.compile("^<.*>(.*?)</.*?>$");
 
     public TimelineAdapter(FragmentManager fragmentManager, Context context, UserPreference userPreference) {
         this.fragmentManager = fragmentManager;
@@ -91,6 +103,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
         @Bind(R.id.statusNameView) TextView statusNameView;
         @Bind(R.id.statusScreenNameView) TextView statusScreenNameView;
         @Bind(R.id.statusTextView) TextView statusTextView;
+        @Bind(R.id.statusCreatedAt) TextView statusCreatedAt;
+        @Bind(R.id.statusClientName) TextView statusClientName;
+        @Bind(R.id.statusRetweetedScreenName) TextView statusRetweetedScreenName;
+        // private final float textSize;
+        private final float textSizeSmall;
 
         @SuppressWarnings("unused")
         @OnClick(R.id.itemView)
@@ -108,15 +125,57 @@ class TimelineAdapter extends RecyclerView.Adapter{
             super(itemView);
             ButterKnife.bind(this, itemView);
             context = itemView.getContext();
+            // textSize = statusTextView.getTextSize();
+            textSizeSmall = statusTextView.getTextSize() * 0.8f;
         }
 
         public void setStatus(Status status) {
-            Picasso.with(context).load(status.getUser().getBiggerProfileImageURL())
-                .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
-            User user = status.getUser();
-            statusNameView.setText(user.getName());
-            statusScreenNameView.setText(String.format("@%s", user.getScreenName()));
-            statusTextView.setText(status.getText());
+            Calendar calendar = Calendar.getInstance();
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            if (!status.isRetweet()) {
+                User user = status.getUser();
+                Picasso.with(context).load(user.getBiggerProfileImageURL())
+                        .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
+                statusNameView.setText(user.getName());
+                statusScreenNameView.setText(String.format("@%s", user.getScreenName()));
+                statusTextView.setText(status.getText());
+                if (status.getCreatedAt().after(calendar.getTime())) {
+                    statusCreatedAt.setText(todayDateFormat.format(status.getCreatedAt()));
+                } else {
+                    statusCreatedAt.setText(fullDateFormat.format(status.getCreatedAt()));
+                }
+                Matcher matcher = clientNamePattern.matcher(status.getSource());
+                while (matcher.find()) {
+                    statusClientName.setText(String.format("from %s", matcher.group(1)));
+                }
+                statusRetweetedScreenName.setVisibility(View.GONE);
+            } else {
+                Status retweetedStatus = status.getRetweetedStatus();
+                User user = retweetedStatus.getUser();
+                Picasso.with(context).load(user.getBiggerProfileImageURL())
+                        .resizeDimen(R.dimen.icon_size, R.dimen.icon_size).transform(transform).into(statusIconView);
+                statusNameView.setText(user.getName());
+                statusScreenNameView.setText(String.format("@%s", user.getScreenName()));
+                statusTextView.setText(retweetedStatus.getText());
+                if (retweetedStatus.getCreatedAt().after(calendar.getTime())) {
+                    statusCreatedAt.setText(todayDateFormat.format(retweetedStatus.getCreatedAt()));
+                } else {
+                    statusCreatedAt.setText(fullDateFormat.format(retweetedStatus.getCreatedAt()));
+                }
+                Matcher matcher = clientNamePattern.matcher(retweetedStatus.getSource());
+                while (matcher.find()) {
+                    statusClientName.setText(String.format("from %s", matcher.group(1)));
+                }
+                statusRetweetedScreenName.setVisibility(View.VISIBLE);
+                statusRetweetedScreenName.setText(String.format("@%s", status.getUser().getScreenName()));
+            }
+            statusScreenNameView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+            statusCreatedAt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+            statusClientName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+            statusRetweetedScreenName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
         }
     }
 
