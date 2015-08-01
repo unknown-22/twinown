@@ -13,9 +13,33 @@
         android:switchTextOff="OFF"
         android:switchTextOn="ON"/>
     <SwitchPreference
+        android:key="@string/preference_key_tab_layout"
+        android:title="@string/setting_item_tab_layout"
+        android:defaultValue="false"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"/>
+    <SwitchPreference
         android:key="@string/preference_key_quick_post"
         android:title="@string/setting_item_quick_post"
         android:defaultValue="false"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"/>
+    <SwitchPreference
+        android:key="@string/preference_key_quick_post_on_top"
+        android:title="@string/setting_item_quick_post_on_top"
+        android:defaultValue="false"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"/>
+    <SwitchPreference
+        android:key="@string/preference_key_show_created_at"
+        android:title="@string/setting_item_show_created_at"
+        android:defaultValue="true"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"/>
+    <SwitchPreference
+        android:key="@string/preference_key_show_client_name"
+        android:title="@string/setting_item_show_client_name"
+        android:defaultValue="true"
         android:switchTextOff="OFF"
         android:switchTextOn="ON"/>
 </PreferenceScreen>

@@ -126,7 +126,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
             ButterKnife.bind(this, itemView);
             context = itemView.getContext();
             // textSize = statusTextView.getTextSize();
-            textSizeSmall = statusTextView.getTextSize() * 0.8f;
+            textSizeSmall = statusTextView.getTextSize() * 0.9f;
         }
 
         public void setStatus(Status status) {
@@ -176,6 +176,12 @@ class TimelineAdapter extends RecyclerView.Adapter{
             statusCreatedAt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
             statusClientName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
             statusRetweetedScreenName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
+            if (!Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_created_at), true)) {
+                statusCreatedAt.setVisibility(View.GONE);
+            }
+            if (!Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_client_name), true)) {
+                statusClientName.setVisibility(View.GONE);
+            }
         }
     }
 

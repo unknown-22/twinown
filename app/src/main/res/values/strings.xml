@@ -46,14 +46,23 @@
 
     <string name="dialog_title_choose_theme">テーマを選択してください</string>
     <string name="setting_item_title_bar">タイトルバーを表示する</string>
+    <string name="setting_item_tab_layout">タブを表示する</string>
     <string name="setting_item_quick_post">起動時にクイック投稿をオンにする</string>
+    <string name="setting_item_quick_post_on_top">クイック投稿を上部に表示する</string>
+    <string name="setting_item_show_created_at">投稿時間を表示する</string>
+    <string name="setting_item_show_client_name">クライアント名を表示する</string>
 
     <string name="title_activity_tab_control">TabControlActivity</string>
     <string name="title_activity_appearance_control">AppearanceControlActivity</string>
 
     <string name="preference_key_theme">preference_key_theme</string>
     <string name="preference_key_title_bar">preference_key_title_bar</string>
+    <string name="preference_key_tab_layout">preference_key_tab_layout</string>
     <string name="preference_key_quick_post">preference_key_quick_post</string>
+    <string name="preference_key_quick_post_on_top">preference_key_quick_post_on_top</string>
+    <string name="preference_key_show_created_at">preference_show_created_at</string>
+    <string name="preference_key_show_client_name">preference_show_client_name</string>
+
     <string name="title_activity_user">UserActivity</string>
     <string name="title_activity_tweet">TweetActivity</string>
 

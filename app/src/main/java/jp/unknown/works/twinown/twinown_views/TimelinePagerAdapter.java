@@ -34,6 +34,11 @@ public class TimelinePagerAdapter extends FragmentPagerAdapter {
         return tabList.size();
     }
 
+    @Override
+    public CharSequence getPageTitle(int position) {
+        return tabList.get(position).name;
+    }
+
     public TimelineFragment findFragmentByPosition(ViewPager viewPager, int position) {
         return (TimelineFragment) instantiateItem(viewPager, position);
     }

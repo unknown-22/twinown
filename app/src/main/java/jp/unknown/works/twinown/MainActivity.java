@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -40,6 +41,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
@@ -139,8 +141,11 @@ public class MainActivity extends AppCompatActivity {
         @Bind(R.id.drawerHeader) RelativeLayout drawerHeader;
         @Bind(R.id.userBannerView) ImageView userBannerView;
         @Bind(R.id.userIconView) ImageView userIconView;
+        @Bind(R.id.mainLinearLayout) LinearLayout mainLinearLayout;
+        @Bind(R.id.toolbar) Toolbar toolbar;
+        @Bind(R.id.tabLayout) TabLayout tabLayout;
         @Bind(R.id.timelinePager) ViewPager timelineViewPager;
-        @Bind(R.id.quick_post_view) RelativeLayout quickPostView;
+        @Bind(R.id.quickPostView) RelativeLayout quickPostView;
         @Bind(R.id.tweetTextInputLayout) TextInputLayout tweetTextInputLayout;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
 
@@ -242,10 +247,17 @@ public class MainActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
             final View view = inflater.inflate(R.layout.fragment_main, container, false);
             ButterKnife.bind(this, view);
+            if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post_on_top), false)) {
+                mainLinearLayout.removeView(quickPostView);
+                mainLinearLayout.addView(quickPostView, 1);
+            }
             FragmentManager fragmentManager = this.getFragmentManager();
             timelinePagerAdapter = new TimelinePagerAdapter(fragmentManager, tabList);
             timelineViewPager.setAdapter(timelinePagerAdapter);
-            Toolbar toolbar = (Toolbar) view.findViewById(R.id.toolbar);
+            if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_tab_layout), false)) {
+                tabLayout.setupWithViewPager(timelineViewPager);
+                tabLayout.setVisibility(View.VISIBLE);
+            }
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
                 toolbar.setTitle(getString(R.string.app_name));
                 toolbar.setNavigationIcon(android.R.drawable.ic_menu_info_details);
@@ -350,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
                 toReplyStatus = menuActionReply.toReplyStatus;
                 final String userScreenName = toReplyStatus.getUser().getScreenName();
                 tweetEditText.setText(String.format("@%s %s", userScreenName, tweetEditText.getText().toString()));
-                String tweetHint = String.format("↩ @%s:%s", toReplyStatus.getUser().getScreenName(), toReplyStatus.getText());
+                String tweetHint = String.format("@%s:%s", toReplyStatus.getUser().getScreenName(), toReplyStatus.getText());
                 tweetTextInputLayout.setHint(String.format("%s (%s)", tweetHint, String.valueOf(140 - tweetEditText.getText().length())));
                 tweetEditText.setSelection(tweetEditText.getText().toString().length());
                 Drawable replyIconDrawable = ((MainActivity) getActivity()).getDrawableResource(R.drawable.ic_reply_white);
