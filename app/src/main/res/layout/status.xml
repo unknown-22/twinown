@@ -29,12 +29,12 @@
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/statusIconView"/>
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:singleLine="true"
         android:alpha="0.7"
-        android:gravity="center"
+        android:gravity="center|left"
         android:paddingLeft="0dp"
         android:paddingRight="@dimen/status_text_vertical_margin"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -42,7 +42,8 @@
         android:textStyle="bold"
         android:id="@+id/statusScreenNameView"
         android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/statusNameView"/>
+        android:layout_toRightOf="@+id/statusNameView"
+        android:layout_toLeftOf="@+id/statusCreatedAt"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

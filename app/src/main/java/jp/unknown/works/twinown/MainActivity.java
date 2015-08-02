@@ -256,6 +256,7 @@ public class MainActivity extends AppCompatActivity {
             timelineViewPager.setAdapter(timelinePagerAdapter);
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_tab_layout), false)) {
                 tabLayout.setupWithViewPager(timelineViewPager);
+                tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
                 tabLayout.setVisibility(View.VISIBLE);
             }
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
