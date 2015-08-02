@@ -28,6 +28,7 @@ import butterknife.OnClick;
 import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
+import jp.unknown.works.twinown.twinown_twitter.Component;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.User;
@@ -64,6 +65,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
 
     public void addStatusList(ResponseList<Status> statuses) {
         timelineList.addAll(statuses);
+    }
+
+    public void deleteStatus(long statusId) {
+        Component.DummyStatus dummyStatus = new Component.DummyStatus(statusId);
+        timelineList.remove(dummyStatus);
     }
 
     public Status getStatus(int position) {
@@ -204,7 +210,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onRemoved(int position, int count) {
-            adapter.notifyItemRangeInserted(position, count);
+            adapter.notifyItemRangeRemoved(position, count);
         }
 
         @Override

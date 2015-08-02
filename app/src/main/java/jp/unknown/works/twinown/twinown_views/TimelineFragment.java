@@ -160,6 +160,11 @@ public class TimelineFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.DeleteEvent deleteEvent) {
+        timelineAdapter.deleteStatus(deleteEvent.statusId);
+    }
+
+    @SuppressWarnings("unused")
     public void onEvent(final Component.HomeStatusListEvent homeStatusListEvent) {
         if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(homeStatusListEvent.userPreference.userId, userPreference.userId)) {
             addStatusList(homeStatusListEvent.statuses);

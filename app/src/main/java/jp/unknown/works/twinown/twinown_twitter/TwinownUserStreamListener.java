@@ -3,6 +3,7 @@ package jp.unknown.works.twinown.twinown_twitter;
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.Status;
+import twitter4j.StatusDeletionNotice;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
@@ -25,5 +26,11 @@ class TwinownUserStreamListener extends UserStreamAdapter {
         } else if (target.getId() == userPreference.userId) {
             EventBus.getDefault().post(new Component.FavoritedEvent(source, target, favoritedStatus, userPreference));
         }
+    }
+
+    @Override
+    public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
+        super.onDeletionNotice(statusDeletionNotice);
+        EventBus.getDefault().post(new Component.DeleteEvent(statusDeletionNotice.getStatusId()));
     }
 }
