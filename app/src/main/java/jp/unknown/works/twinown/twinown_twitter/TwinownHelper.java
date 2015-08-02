@@ -2,9 +2,11 @@ package jp.unknown.works.twinown.twinown_twitter;
 
 import android.os.AsyncTask;
 
+import java.io.InputStream;
 import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
@@ -52,7 +54,7 @@ public class TwinownHelper {
         return twitter;
     }
 
-    public static void updateStatus(UserPreference userPreference, String statusText, Status toReplyStatus) {
+    public static void updateStatus(UserPreference userPreference, String statusText, Status toReplyStatus, InputStream imageInputStream) {
         AsyncTwitter twitter;
         if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
             twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
@@ -62,6 +64,9 @@ public class TwinownHelper {
         StatusUpdate statusUpdate = new StatusUpdate(statusText);
         if (toReplyStatus != null) {
             statusUpdate.setInReplyToStatusId(toReplyStatus.getId());
+        }
+        if (imageInputStream != null) {
+            statusUpdate.setMedia("upload_image", imageInputStream);
         }
         twitter.updateStatus(statusUpdate);
     }

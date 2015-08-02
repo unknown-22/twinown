@@ -49,7 +49,6 @@ import android.widget.RelativeLayout;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.Bind;
@@ -186,7 +185,7 @@ public class MainActivity extends AppCompatActivity {
         @OnClick(R.id.tweetButton)
         public void statusUpdate() {
             if (tweetEditText.length() != 0) {
-                TwinownHelper.updateStatus(userPreferenceList.get(currentUserIndex), tweetEditText.getText().toString(), toReplyStatus);
+                TwinownHelper.updateStatus(userPreferenceList.get(currentUserIndex), tweetEditText.getText().toString(), toReplyStatus, null);
                 toReplyStatus = null;
                 Drawable[] drawables = tweetEditText.getCompoundDrawables();
                 tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, drawables[2], null);
@@ -216,7 +215,7 @@ public class MainActivity extends AppCompatActivity {
                 tweetHint = getString(R.string.tweet_hint);
             } else {
                 if (toReplyStatus != null) {
-                    tweetHint = String.format("↩ @%s:%s", toReplyStatus.getUser().getScreenName(), toReplyStatus.getText());
+                    tweetHint = String.format("@%s:%s", toReplyStatus.getUser().getScreenName(), toReplyStatus.getText());
                 } else {
                     tweetHint = getString(R.string.tweet_hint);
                 }

@@ -12,16 +12,22 @@
         android:contentDescription="@android:string/untitled"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"/>
-    <EditText
+    <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText"
+        android:layout_height="match_parent"
+        android:id="@+id/tweetTextInputLayout"
         android:layout_alignParentTop="true"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/userIconButton"
-        android:inputType="textMultiLine"
-        android:gravity="left|top"/>
+        android:layout_above="@+id/tweetButton">
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/tweetEditText"
+            android:hint="@string/tweet_hint"
+            android:inputType="textMultiLine"
+            android:gravity="left|top"/>
+    </android.support.design.widget.TextInputLayout>
     <ImageButton android:layout_width="wrap_content"
                  android:layout_height="wrap_content"
                  android:id="@+id/tweetButton"
@@ -41,4 +47,22 @@
         android:layout_alignStart="@+id/tweetButton"
         android:gravity="center"
         android:layout_alignParentEnd="true"/>
+
+    <ImageView
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:id="@+id/uploadImageView"
+        android:layout_below="@+id/tweetLength"
+        android:layout_toStartOf="@+id/tweetButton"
+        android:visibility="gone"
+        android:contentDescription="@android:string/untitled"/>
+
+    <ImageButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/imageUploadButton"
+        android:src="@drawable/ic_image_white"
+        android:layout_below="@+id/tweetLength"
+        android:layout_alignParentStart="true"
+        android:contentDescription="@android:string/untitled"/>
 </RelativeLayout>
