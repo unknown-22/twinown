@@ -22,6 +22,7 @@
     <string name="tweet">TWEET</string>
     <string name="tweet_length">140</string>
     <string name="add">ADD</string>
+    <string name="twitterActivity">通知</string>
 
     <string name="menu_action_reply">返信する</string>
     <string name="menu_action_rt">リツイート</string>

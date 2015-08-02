@@ -21,9 +21,9 @@ class TwinownUserStreamListener extends UserStreamAdapter {
     @Override
     public void onFavorite(User source, User target, Status favoritedStatus) {
         if (source.getId() == userPreference.userId) {
-            EventBus.getDefault().post(new Component.FavoriteEvent(target, favoritedStatus, userPreference));
+            EventBus.getDefault().post(new Component.FavoriteEvent(source, target, favoritedStatus, userPreference));
         } else if (target.getId() == userPreference.userId) {
-            EventBus.getDefault().post(new Component.FavoritedEvent(source, favoritedStatus, userPreference));
+            EventBus.getDefault().post(new Component.FavoritedEvent(source, target, favoritedStatus, userPreference));
         }
     }
 }

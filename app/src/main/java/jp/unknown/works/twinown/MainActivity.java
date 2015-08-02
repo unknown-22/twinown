@@ -23,6 +23,8 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatSpinner;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.transition.Explode;
 import android.transition.Fade;
@@ -47,6 +49,7 @@ import android.widget.RelativeLayout;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import java.util.Calendar;
 import java.util.List;
 
 import butterknife.Bind;
@@ -56,14 +59,17 @@ import butterknife.OnEditorAction;
 import butterknife.OnTextChanged;
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.models.Tab;
+import jp.unknown.works.twinown.models.TwitterActivity;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import jp.unknown.works.twinown.twinown_twitter.TwinownService;
 import jp.unknown.works.twinown.twinown_views.RoundedTransformation;
 import jp.unknown.works.twinown.twinown_views.TimelineFragment;
+import jp.unknown.works.twinown.twinown_views.TimelineItemDecoration;
 import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
+import jp.unknown.works.twinown.twinown_views.TwitterActivityAdapter;
 import jp.unknown.works.twinown.twinown_views.UserActivity;
 import twitter4j.Status;
 import twitter4j.User;
@@ -127,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
         int currentUserIndex = 0;
         Boolean isQuickPost = false;
         TimelinePagerAdapter timelinePagerAdapter;
+        TwitterActivityAdapter twitterActivityAdapter;
         Animation inAnimation;
         Animation outAnimation;
         ServiceConnection serviceConnection = new ServiceConnection() {
@@ -136,7 +143,8 @@ public class MainActivity extends AppCompatActivity {
             public void onServiceDisconnected(ComponentName name) {}
         };
         @Bind(R.id.mainDrawerLayout) DrawerLayout mainDrawerLayout;
-        @Bind(R.id.mainNavigation) NavigationView navigationView;
+        @Bind(R.id.mainNavigation) NavigationView mainNavigation;
+        @Bind(R.id.twitterActivityRecyclerView) RecyclerView twitterActivityRecyclerView;
         @Bind(R.id.headerSpinner) AppCompatSpinner headerSpinner;
         @Bind(R.id.drawerHeader) RelativeLayout drawerHeader;
         @Bind(R.id.userBannerView) ImageView userBannerView;
@@ -261,11 +269,21 @@ public class MainActivity extends AppCompatActivity {
             }
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
                 toolbar.setTitle(getString(R.string.app_name));
-                toolbar.setNavigationIcon(android.R.drawable.ic_menu_info_details);
+                toolbar.setNavigationIcon(R.drawable.ic_menu_white);
                 toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         mainDrawerLayout.openDrawer(GravityCompat.START);
+                    }
+                });
+                toolbar.inflateMenu(R.menu.menu_main);
+                toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem item) {
+                        if (item.getItemId() == R.id.action_notification) {
+                            mainDrawerLayout.openDrawer(GravityCompat.END);
+                        }
+                        return false;
                     }
                 });
             } else {
@@ -295,7 +313,7 @@ public class MainActivity extends AppCompatActivity {
                 public void onNothingSelected(AdapterView<?> parent) {
                 }
             });
-            navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            mainNavigation.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
                 @Override
                 public boolean onNavigationItemSelected(MenuItem menuItem) {
                     if (menuItem.getGroupId() == R.id.menu_tab) {
@@ -324,11 +342,14 @@ public class MainActivity extends AppCompatActivity {
                     return false;
                 }
             });
-            Menu menu = navigationView.getMenu();
+            Menu menu = mainNavigation.getMenu();
             for(int i = 0; i < tabList.size(); i++) {
                 menu.add(R.id.menu_tab, i, 50+i, tabList.get(i).name);
             }
-
+            twitterActivityAdapter = new TwitterActivityAdapter(this);
+            twitterActivityRecyclerView.addItemDecoration(new TimelineItemDecoration(getActivity()));
+            twitterActivityRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            twitterActivityRecyclerView.setAdapter(twitterActivityAdapter);
             return view;
         }
 
@@ -382,7 +403,7 @@ public class MainActivity extends AppCompatActivity {
             drawerHeader.setBackgroundColor(Color.parseColor(String.format("#%s", userEvent.user.getProfileBackgroundColor())));
             Picasso.with(getActivity()).load(userEvent.user.getProfileBannerMobileURL()).into(userBannerView);
             Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).transform(transform).into(userIconView);
-            Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).into(new Target() {
+            Picasso.with(getActivity()).load(userEvent.user.getProfileImageURL()).into(new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
                     BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
@@ -398,6 +419,26 @@ public class MainActivity extends AppCompatActivity {
                 public void onPrepareLoad(final Drawable placeHolderDrawable) {
                 }
             });
+        }
+
+        @SuppressWarnings("unused")
+        public void onEventMainThread(final Component.FavoriteEvent favoriteEvent) {
+            twitterActivityAdapter.addTwitterActivity(new TwitterActivity(
+                    System.currentTimeMillis(),
+                    TwitterActivity.TYPE_FAVORITED,
+                    String.format("@%s: @%s: %s", favoriteEvent.source.getScreenName(), favoriteEvent.target.getScreenName(), favoriteEvent.status.getText()),
+                    favoriteEvent.target
+            ));
+        }
+
+        @SuppressWarnings("unused")
+        public void onEventMainThread(final Component.FavoritedEvent favoritedEvent) {
+            twitterActivityAdapter.addTwitterActivity(new TwitterActivity(
+                    System.currentTimeMillis(),
+                    TwitterActivity.TYPE_FAVORITED,
+                    String.format("@%s: @%s: %s", favoritedEvent.source.getScreenName(), favoritedEvent.target.getScreenName(), favoritedEvent.status.getText()),
+                    favoritedEvent.source
+            ));
         }
     }
 }

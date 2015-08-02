@@ -1,29 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
       xmlns:app="http://schemas.android.com/apk/res-auto"
       xmlns:tools="http://schemas.android.com/tools"
-      tools:context=".MainActivity">
-    <group
-        android:id="@+id/menu_action"
-        android:checkableBehavior="single"
-        android:orderInCategory="0">
-        <item android:id="@+id/action_tweet"
-              android:title="@string/action_tweet"
-              app:showAsAction="never"/>
-        <item android:id="@+id/action_toggle_quick_post"
-              android:title="@string/action_toggle_quick_post"
-              app:showAsAction="never"/>
-    </group>
-    <group
-        android:id="@+id/menu_tab"
-        android:checkableBehavior="single"
-        android:orderInCategory="50">
-    </group>
-    <group
-          android:id="@+id/menu_other"
-          android:checkableBehavior="single"
-          android:orderInCategory="100">
-          <item android:id="@+id/action_settings"
-                android:title="@string/action_settings"
-                app:showAsAction="never"/>
-    </group>
+      tools:context="jp.unknown.works.twinown.AccountControlActivity">
+    <item android:id="@+id/action_notification"
+          android:title="@string/twitterActivity"
+          android:icon="@drawable/ic_notifications_white"
+          android:orderInCategory="100"
+          app:showAsAction="always"/>
 </menu>

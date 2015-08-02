@@ -219,7 +219,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
 
         @Override
         public boolean areContentsTheSame(Status oldItem, Status newItem) {
-            return oldItem.getId() == newItem.getId();
+            return oldItem.getId() == newItem.getId(); // TODO 中身のチェック
         }
 
         @Override
