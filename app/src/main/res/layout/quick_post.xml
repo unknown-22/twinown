@@ -4,6 +4,14 @@
     android:id="@+id/quickPostView"
     android:visibility="gone"
     xmlns:android="http://schemas.android.com/apk/res/android">
+    <ImageView
+        android:layout_width="@dimen/user_icon_preview_size"
+        android:layout_height="@dimen/user_icon_preview_size"
+        android:id="@+id/quickPostUserIconView"
+        android:alpha="0.5"
+        android:contentDescription="@android:string/untitled"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/tweetButton"/>
     <android.support.design.widget.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -24,12 +32,4 @@
                  android:layout_alignParentTop="true"
                  android:layout_alignParentEnd="true"
                  android:layout_alignBottom="@+id/tweetTextInputLayout"/>
-    <ImageView
-        android:layout_width="@dimen/user_icon_preview_size"
-        android:layout_height="@dimen/user_icon_preview_size"
-        android:id="@+id/quickPostUserIconView"
-        android:alpha="0.5"
-        android:contentDescription="@android:string/untitled"
-        android:layout_centerVertical="true"
-        android:layout_toStartOf="@+id/tweetButton"/>
 </RelativeLayout>
