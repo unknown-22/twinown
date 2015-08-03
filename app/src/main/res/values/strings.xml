@@ -28,6 +28,7 @@
     <string name="menu_action_rt">リツイート</string>
     <string name="menu_action_favorite">お気に入りに追加する</string>
     <string name="menu_action_delete">ツイートを削除する</string>
+    <string name="menu_action_delete_rt">リツイートを取り消す</string>
     <string name="menu_action_open_browser">ブラウザで開く</string>
     <string name="menu_action_share">ツイートを共有する</string>
 
@@ -35,6 +36,8 @@
 
     <string name="confirm_dialog">"確認ダイアログ"</string>
     <string name="delete_confirm">"(%s)を削除しますか？"</string>
+    <string name="tweet_rt_confirm">"リツイートしますか？"</string>
+    <string name="tweet_delete_rt_confirm">"リツイートを取り消しますか？"</string>
     <string name="tweet_delete_confirm">"ツイートを削除しますか？"</string>
 
     <string name="title_activity_setting">SettingActivity</string>

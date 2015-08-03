@@ -71,6 +71,22 @@ public class TwinownHelper {
         twitter.updateStatus(statusUpdate);
     }
 
+    public static void retweetStatus(UserPreference userPreference, final Status status) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    twitter.retweetStatus(status.getId());
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
+    }
+
     public static void deleteStatus(UserPreference userPreference, final Status status) {
         final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {

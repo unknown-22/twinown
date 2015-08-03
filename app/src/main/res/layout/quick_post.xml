@@ -1,0 +1,35 @@
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/quickPostView"
+    android:visibility="gone"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tweetTextInputLayout"
+        android:layout_toStartOf="@+id/tweetButton">
+        <EditText android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:id="@+id/tweetEditText"
+                  android:hint="@string/tweet_hint"
+                  android:layout_toStartOf="@+id/tweetButton"/>
+    </android.support.design.widget.TextInputLayout>
+    <ImageButton android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/tweetButton"
+                 android:src="@drawable/ic_send_white"
+                 android:contentDescription="@string/tweet"
+                 android:layout_gravity="bottom"
+                 android:layout_alignParentTop="true"
+                 android:layout_alignParentEnd="true"
+                 android:layout_alignBottom="@+id/tweetTextInputLayout"/>
+    <ImageView
+        android:layout_width="@dimen/user_icon_preview_size"
+        android:layout_height="@dimen/user_icon_preview_size"
+        android:id="@+id/quickPostUserIconView"
+        android:alpha="0.5"
+        android:contentDescription="@android:string/untitled"
+        android:layout_centerVertical="true"
+        android:layout_toStartOf="@+id/tweetButton"/>
+</RelativeLayout>

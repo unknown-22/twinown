@@ -42,16 +42,25 @@ class TimelineAdapter extends RecyclerView.Adapter{
     private final SortedList<Status> timelineList = new SortedList(Status.class, new TimelineCallback(this));
     private final RoundedTransformation transform;
 
+    private boolean is_show_created_at;
+    private boolean is_show_client_name;
+
 
     static final SimpleDateFormat todayDateFormat = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
     static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
     static final Pattern clientNamePattern = Pattern.compile("^<.*>(.*?)</.*?>$");
+
+    static final float SMALL_TEXT_SCALE = 0.9f;
+
 
     public TimelineAdapter(FragmentManager fragmentManager, Context context, UserPreference userPreference) {
         this.fragmentManager = fragmentManager;
         this.userPreference = userPreference;
         inflater = LayoutInflater.from(context);
         transform = new RoundedTransformation((int) (context.getResources().getDimension(R.dimen.icon_size) / 8));
+
+        is_show_created_at = Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_created_at), true);
+        is_show_client_name = Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_client_name), true);
     }
 
     public void refreshActivity(FragmentManager fragmentManager, Context context) {
@@ -132,7 +141,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
             ButterKnife.bind(this, itemView);
             context = itemView.getContext();
             // textSize = statusTextView.getTextSize();
-            textSizeSmall = statusTextView.getTextSize() * 0.9f;
+            textSizeSmall = statusTextView.getTextSize() * SMALL_TEXT_SCALE;
         }
 
         public void setStatus(Status status) {
@@ -182,11 +191,15 @@ class TimelineAdapter extends RecyclerView.Adapter{
             statusCreatedAt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
             statusClientName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
             statusRetweetedScreenName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
-            if (!Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_created_at), true)) {
+            if (!is_show_created_at) {
                 statusCreatedAt.setVisibility(View.GONE);
+            } else {
+                statusCreatedAt.setVisibility(View.VISIBLE);
             }
-            if (!Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_client_name), true)) {
+            if (!is_show_client_name) {
                 statusClientName.setVisibility(View.GONE);
+            } else {
+                statusClientName.setVisibility(View.VISIBLE);
             }
         }
     }

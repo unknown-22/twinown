@@ -5,9 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.IBinder;
@@ -155,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
         @Bind(R.id.quickPostView) RelativeLayout quickPostView;
         @Bind(R.id.tweetTextInputLayout) TextInputLayout tweetTextInputLayout;
         @Bind(R.id.tweetEditText) EditText tweetEditText;
+        @Bind(R.id.quickPostUserIconView) ImageView quickPostUserIconView;
 
         Status toReplyStatus;
 
@@ -402,22 +401,7 @@ public class MainActivity extends AppCompatActivity {
             drawerHeader.setBackgroundColor(Color.parseColor(String.format("#%s", userEvent.user.getProfileBackgroundColor())));
             Picasso.with(getActivity()).load(userEvent.user.getProfileBannerMobileURL()).into(userBannerView);
             Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).transform(transform).into(userIconView);
-            Picasso.with(getActivity()).load(userEvent.user.getProfileImageURL()).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(getResources(), bitmap);
-                    bitmapDrawable.setAlpha(128);
-                    tweetEditText.setCompoundDrawablesWithIntrinsicBounds(null, null, bitmapDrawable, null);
-                }
-
-                @Override
-                public void onBitmapFailed(final Drawable errorDrawable) {
-                }
-
-                @Override
-                public void onPrepareLoad(final Drawable placeHolderDrawable) {
-                }
-            });
+            Picasso.with(getActivity()).load(userEvent.user.getBiggerProfileImageURL()).transform(transform).into(quickPostUserIconView);
         }
 
         @SuppressWarnings("unused")

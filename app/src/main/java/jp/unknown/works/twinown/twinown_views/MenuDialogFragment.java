@@ -50,13 +50,13 @@ import twitter4j.UserMentionEntity;
 public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_REPLY = 0;
     private static final int MENU_ACTION_TYPE_RT = 1;
-    private static final int MENU_ACTION_TYPE_FAVORITE = 2;
-    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 3;
-    private static final int MENU_ACTION_TYPE_DELETE = 4;
-    private static final int MENU_ACTION_TYPE_LINK_URL = 5;
-    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 6;
-    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 7;
-    private static final int MENU_ACTION_TYPE_SHARE = 8;
+    private static final int MENU_ACTION_TYPE_DELETE_RT = 2;
+    private static final int MENU_ACTION_TYPE_FAVORITE = 3;
+    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 4;
+    private static final int MENU_ACTION_TYPE_DELETE = 5;
+    private static final int MENU_ACTION_TYPE_LINK_URL = 6;
+    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 7;
+    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 8;
 
 
     static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
@@ -78,7 +78,7 @@ public class MenuDialogFragment extends DialogFragment {
         View dialogView = layoutInflater.inflate(R.layout.status_menu, null);
         builder.setView(dialogView);
         ButterKnife.bind(this, dialogView);
-        View headerView = layoutInflater.inflate(R.layout.status, null);
+        View headerView = layoutInflater.inflate(R.layout.status_detail, null);
         final ImageView statusIconView = setHeaderView(headerView);
         final ArrayList<StatusMenuItem> statusMenuItemList = new ArrayList<>();
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
@@ -89,7 +89,11 @@ public class MenuDialogFragment extends DialogFragment {
             statusMenuItemList.add(new StatusMenuItem(String.format("@%s", userMentionEntity.getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, userMentionEntity.getScreenName()));
         }
         if (status.getUser().getId() == userPreference.userId) {
-            statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete), MENU_ACTION_TYPE_DELETE));
+            if (!status.isRetweet()) {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete), MENU_ACTION_TYPE_DELETE));
+            } else {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete_rt), MENU_ACTION_TYPE_DELETE_RT));
+            }
         }
         for (URLEntity urlEntity : status.getURLEntities()) {
             statusMenuItemList.add(new StatusMenuItem(urlEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_URL, urlEntity.getExpandedURL()));
@@ -98,7 +102,6 @@ public class MenuDialogFragment extends DialogFragment {
             statusMenuItemList.add(new StatusMenuItem(mediaEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_MEDIA, mediaEntity.getExpandedURL()));
         }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_open_browser), MENU_ACTION_TYPE_OPEN_BROWSER));
-        statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_share), MENU_ACTION_TYPE_SHARE));
         final StatusMenuAdapter statusMenuAdapter = new StatusMenuAdapter(getActivity(), 0, statusMenuItemList);
         statusMenuListVew.setAdapter(statusMenuAdapter);
         statusMenuListVew.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -110,7 +113,17 @@ public class MenuDialogFragment extends DialogFragment {
                         EventBus.getDefault().post(new Component.MenuActionReply(status));
                         break;
                     case MENU_ACTION_TYPE_RT:
-                        Utils.showToastLong(getActivity(), "RTやめろ");  // TODO 修正
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(getString(R.string.confirm_dialog))
+                                .setMessage(getString(R.string.tweet_rt_confirm))
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        TwinownHelper.retweetStatus(userPreference, status);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
                         break;
                     case MENU_ACTION_TYPE_FAVORITE:
                         TwinownHelper.createFavorite(userPreference, status);
@@ -166,6 +179,19 @@ public class MenuDialogFragment extends DialogFragment {
                                 .setNegativeButton("Cancel", null)
                                 .show();
                         break;
+                    case MENU_ACTION_TYPE_DELETE_RT:
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle(getString(R.string.confirm_dialog))
+                                .setMessage(getString(R.string.tweet_delete_rt_confirm))
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        TwinownHelper.deleteStatus(userPreference, status);
+                                    }
+                                })
+                                .setNegativeButton("Cancel", null)
+                                .show();
+                        break;
                     case MENU_ACTION_TYPE_LINK_URL:
                         startActivity(new Intent(
                                 Intent.ACTION_VIEW,
@@ -183,9 +209,6 @@ public class MenuDialogFragment extends DialogFragment {
                                 Intent.ACTION_VIEW,
                                 Uri.parse(String.format("https://twitter.com/%s/status/%d", status.getUser().getScreenName(), status.getId()))
                         ));
-                        break;
-                    case MENU_ACTION_TYPE_SHARE:
-                        Utils.showToastLong(getActivity(), "まだ");  // TODO 修正
                         break;
                 }
                 dismiss();
@@ -291,31 +314,31 @@ public class MenuDialogFragment extends DialogFragment {
             StatusMenuItem item = (StatusMenuItem) getItem(position);
             switch (item.actionType) {
                 case MENU_ACTION_TYPE_REPLY:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_reply_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reply_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_RT:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_autorenew_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_autorenew_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_FAVORITE:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_star_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_star_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_USER_SCREEN_NAME:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_person_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_DELETE:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_delete_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white, 0, 0, 0);
+                    break;
+                case MENU_ACTION_TYPE_DELETE_RT:
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_LINK_URL:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_link_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_link_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_LINK_MEDIA:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_image_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_OPEN_BROWSER:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_open_in_browser_white, 0, 0, 0);
-                    break;
-                case MENU_ACTION_TYPE_SHARE:
-                    holder.statusMenuItemText.setCompoundDrawablesRelativeWithIntrinsicBounds(R.drawable.ic_share_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_open_in_browser_white, 0, 0, 0);
                     break;
             }
             holder.statusMenuItemText.setText(item.statusMenuItemText);

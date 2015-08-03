@@ -49,8 +49,8 @@
         android:layout_alignParentEnd="true"/>
 
     <ImageView
-        android:layout_width="@dimen/icon_size"
-        android:layout_height="@dimen/icon_size"
+        android:layout_width="@dimen/image_preview_size"
+        android:layout_height="@dimen/image_preview_size"
         android:id="@+id/uploadImageView"
         android:layout_below="@+id/tweetLength"
         android:layout_toStartOf="@+id/tweetButton"
