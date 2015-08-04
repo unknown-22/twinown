@@ -126,6 +126,20 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
         }
     }
 
+    @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.FavoriteEvent favoriteEvent) {
+        if (Objects.equals(favoriteEvent.userPreference.userId, userPreference.userId)) {
+            timelineAdapter.addFavorite(favoriteEvent.status);
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.UnFavoriteEvent unFavoriteEvent) {
+        if (Objects.equals(unFavoriteEvent.userPreference.userId, userPreference.userId)) {
+            timelineAdapter.deleteFavorite(unFavoriteEvent.status);
+        }
+    }
+
     private void addStatusList(final ResponseList<Status> statuses) {
         handler.post(new Runnable() {
             @Override

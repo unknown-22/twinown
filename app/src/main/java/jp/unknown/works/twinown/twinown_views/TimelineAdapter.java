@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
@@ -81,6 +82,32 @@ class TimelineAdapter extends RecyclerView.Adapter{
         timelineList.remove(dummyStatus);
     }
 
+    public void addFavorite(Status status) {
+        if (timelineList.indexOf(status) != -1) {
+            try {
+                Field field = status.getClass().getDeclaredField("isFavorited");
+                field.setAccessible(true);
+                field.set(status, true);
+                timelineList.add(status);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void deleteFavorite(Status status) {
+        if (timelineList.indexOf(status) != -1) {
+            try {
+                Field field = status.getClass().getDeclaredField("isFavorited");
+                field.setAccessible(true);
+                field.set(status, false);
+                timelineList.add(status);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     public Status getStatus(int position) {
         return timelineList.get(position);
     }
@@ -121,6 +148,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
         @Bind(R.id.statusCreatedAt) TextView statusCreatedAt;
         @Bind(R.id.statusClientName) TextView statusClientName;
         @Bind(R.id.statusRetweetedScreenName) TextView statusRetweetedScreenName;
+        @Bind(R.id.colorBarView) View colorBarView;
         // private final float textSize;
         private final float textSizeSmall;
 
@@ -201,6 +229,11 @@ class TimelineAdapter extends RecyclerView.Adapter{
             } else {
                 statusClientName.setVisibility(View.VISIBLE);
             }
+            if (status.isFavorited()){
+                colorBarView.setVisibility(View.VISIBLE);
+            } else {
+                colorBarView.setVisibility(View.GONE);
+            }
         }
     }
 
@@ -238,7 +271,9 @@ class TimelineAdapter extends RecyclerView.Adapter{
 
         @Override
         public boolean areContentsTheSame(Status oldItem, Status newItem) {
-            return oldItem.getId() == newItem.getId(); // TODO 中身のチェック
+            return (oldItem.getId() == newItem.getId()
+                    && oldItem.isFavorited() == newItem.isFavorited()
+                    && oldItem.isRetweeted() == newItem.isRetweeted());
         }
 
         @Override

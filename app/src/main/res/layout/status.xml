@@ -101,4 +101,15 @@
         android:id="@+id/statusCreatedAt"
         android:layout_alignParentTop="true"
         android:layout_alignEnd="@+id/statusTextView"/>
+    <View
+        android:layout_width="6dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="1dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBottom="@+id/statusClientName"
+        android:id="@+id/colorBarView"
+        android:background="#FFEB3B"
+        android:alpha="0.4"
+        android:visibility="gone"/>
 </RelativeLayout>

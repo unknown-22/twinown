@@ -29,6 +29,14 @@ class TwinownUserStreamListener extends UserStreamAdapter {
     }
 
     @Override
+    public void onUnfavorite(User source, User target, Status unfavoritedStatus) {
+        super.onUnfavorite(source, target, unfavoritedStatus);
+        if (source.getId() == userPreference.userId) {
+            EventBus.getDefault().post(new Component.UnFavoriteEvent(source, target, unfavoritedStatus, userPreference));
+        }
+    }
+
+    @Override
     public void onDeletionNotice(StatusDeletionNotice statusDeletionNotice) {
         super.onDeletionNotice(statusDeletionNotice);
         EventBus.getDefault().post(new Component.DeleteEvent(statusDeletionNotice.getStatusId()));

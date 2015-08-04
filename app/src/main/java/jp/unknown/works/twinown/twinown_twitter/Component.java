@@ -94,6 +94,19 @@ public class Component {
         }
     }
 
+    public static class UnFavoriteEvent {
+        public final User source;
+        public final User target;
+        public final Status status;
+        public final UserPreference userPreference;
+        public UnFavoriteEvent(User source, User target, Status status, UserPreference userPreference) {
+            this.source = source;
+            this.target = target;
+            this.status = status;
+            this.userPreference = userPreference;
+        }
+    }
+
     public static class MenuActionReply {
         public final Status toReplyStatus;
         public MenuActionReply(Status toReplyStatus) {

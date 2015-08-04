@@ -27,6 +27,7 @@
     <string name="menu_action_reply">返信する</string>
     <string name="menu_action_rt">リツイート</string>
     <string name="menu_action_favorite">お気に入りに追加する</string>
+    <string name="menu_action_delete_favorite">お気に入りを取り消す</string>
     <string name="menu_action_delete">ツイートを削除する</string>
     <string name="menu_action_delete_rt">リツイートを取り消す</string>
     <string name="menu_action_open_browser">ブラウザで開く</string>

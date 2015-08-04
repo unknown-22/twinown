@@ -52,11 +52,12 @@ public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_RT = 1;
     private static final int MENU_ACTION_TYPE_DELETE_RT = 2;
     private static final int MENU_ACTION_TYPE_FAVORITE = 3;
-    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 4;
-    private static final int MENU_ACTION_TYPE_DELETE = 5;
-    private static final int MENU_ACTION_TYPE_LINK_URL = 6;
-    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 7;
-    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 8;
+    private static final int MENU_ACTION_TYPE_DELETE_FAVORITE = 4;
+    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 5;
+    private static final int MENU_ACTION_TYPE_DELETE = 6;
+    private static final int MENU_ACTION_TYPE_LINK_URL = 7;
+    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 8;
+    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 9;
 
 
     static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
@@ -69,7 +70,7 @@ public class MenuDialogFragment extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
+    public Dialog onCreateDialog(Bundle savedInstanceState) { // TODO RT時が考慮されていない。リプライとRT、ふぁぼくらい？
         userPreference = (UserPreference) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE);
         status = (Status) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_STATUS);
 
@@ -83,7 +84,11 @@ public class MenuDialogFragment extends DialogFragment {
         final ArrayList<StatusMenuItem> statusMenuItemList = new ArrayList<>();
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
-        statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
+        if (!status.isFavorited()) {
+            statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
+        } else {
+            statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete_favorite), MENU_ACTION_TYPE_DELETE_FAVORITE));
+        }
         statusMenuItemList.add(new StatusMenuItem(String.format("@%s", status.getUser().getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, status.getUser().getScreenName()));
         for (UserMentionEntity userMentionEntity : status.getUserMentionEntities()) {
             statusMenuItemList.add(new StatusMenuItem(String.format("@%s", userMentionEntity.getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, userMentionEntity.getScreenName()));
@@ -127,6 +132,9 @@ public class MenuDialogFragment extends DialogFragment {
                         break;
                     case MENU_ACTION_TYPE_FAVORITE:
                         TwinownHelper.createFavorite(userPreference, status);
+                        break;
+                    case MENU_ACTION_TYPE_DELETE_FAVORITE:
+                        TwinownHelper.deleteFavorite(userPreference, status);
                         break;
                     case MENU_ACTION_TYPE_USER_SCREEN_NAME:
                         new AsyncTask<Void, Void, User>() {
@@ -321,6 +329,9 @@ public class MenuDialogFragment extends DialogFragment {
                     break;
                 case MENU_ACTION_TYPE_FAVORITE:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_star_white, 0, 0, 0);
+                    break;
+                case MENU_ACTION_TYPE_DELETE_FAVORITE:
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_star_border_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_USER_SCREEN_NAME:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_white, 0, 0, 0);

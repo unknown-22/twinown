@@ -139,14 +139,36 @@ public class TwinownHelper {
         }
     }
 
-    public static void createFavorite(UserPreference userPreference, Status status) {
-        AsyncTwitter twitter;
-        if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createAsyncTwitter(userPreference);
-        }
-        twitter.createFavorite(status.getId());
+    public static void createFavorite(UserPreference userPreference, final Status status) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    twitter.createFavorite(status.getId());
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
+    }
+
+    public static void deleteFavorite(UserPreference userPreference, final Status status) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    twitter.destroyFavorite(status.getId());
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
     }
 
     public static void getHomeTimeline(UserPreference userPreference, Paging paging) {

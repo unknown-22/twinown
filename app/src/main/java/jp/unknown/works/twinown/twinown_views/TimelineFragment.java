@@ -173,12 +173,22 @@ public class TimelineFragment extends Fragment {
 
     @SuppressWarnings("unused")
     public void onEventMainThread(final Component.FavoriteEvent favoriteEvent) {
-        if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(favoriteEvent.userPreference.userId, userPreference.userId)) {
-            String text = favoriteEvent.status.getText();
-            if (text.length() > 31) {
-                text = String.format("%s...", text.substring(0, 30));
+        if (Objects.equals(favoriteEvent.userPreference.userId, userPreference.userId)) {
+            timelineAdapter.addFavorite(favoriteEvent.status);
+            if (tab.type == Tab.TAB_TYPE_STREAM) {
+                String text = favoriteEvent.status.getText();
+                if (text.length() > 31) {
+                    text = String.format("%s...", text.substring(0, 30));
+                }
+                Utils.showToastShort(getActivity(), String.format("お気に入りに追加しました(@%s %s)", favoriteEvent.target.getScreenName(), text));
             }
-            Utils.showToastShort(getActivity(), String.format("お気に入りに追加しました(@%s %s)", favoriteEvent.target.getScreenName(), text));
+        }
+    }
+
+    @SuppressWarnings("unused")
+    public void onEventMainThread(final Component.UnFavoriteEvent unFavoriteEvent) {
+        if (Objects.equals(unFavoriteEvent.userPreference.userId, userPreference.userId)) {
+            timelineAdapter.deleteFavorite(unFavoriteEvent.status);
         }
     }
 
