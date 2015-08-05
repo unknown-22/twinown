@@ -392,6 +392,9 @@ public class MenuDialogFragment extends DialogFragment {
                 case MENU_ACTION_TYPE_DELETE_FAVORITE:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_star_border_white, 0, 0, 0);
                     break;
+                case MENU_ACTION_TYPE_TALK:
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_chat_white, 0, 0, 0);
+                    break;
                 case MENU_ACTION_TYPE_USER_SCREEN_NAME:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_white, 0, 0, 0);
                     break;
