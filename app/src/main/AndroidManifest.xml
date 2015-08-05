@@ -51,8 +51,12 @@
             android:label="@string/title_activity_appearance_control" >
         </activity>
         <activity
-            android:name=".twinown_views.UserActivity"
+            android:name=".UserActivity"
             android:label="@string/title_activity_user" >
+        </activity>
+        <activity
+            android:name=".TalkActivity"
+            android:label="@string/title_activity_talk" >
         </activity>
         <activity
             android:name=".TweetActivity"

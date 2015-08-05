@@ -130,6 +130,15 @@ public class TwinownHelper {
         }.execute();
     }
 
+    public static Status getStatusSync(UserPreference userPreference, long statusId) {
+        Twitter twitter = getOrCreateTwitter(userPreference);
+        try {
+            return twitter.showStatus(statusId);
+        } catch (TwitterException e) {
+            return null;
+        }
+    }
+
     public static User getUserSync(UserPreference userPreference, String screenName) {
         Twitter twitter = getOrCreateTwitter(userPreference);
         try {
@@ -162,6 +171,24 @@ public class TwinownHelper {
             protected Void doInBackground(Void... params) {
                 try {
                     twitter.destroyFavorite(status.getId());
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
+    }
+
+    public static void getInReplyToStatus(final UserPreference userPreference, final Status status) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    EventBus.getDefault().post(new Component.InReplyToEvent(
+                            twitter.showStatus(status.getInReplyToStatusId()),
+                            userPreference, status));
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }

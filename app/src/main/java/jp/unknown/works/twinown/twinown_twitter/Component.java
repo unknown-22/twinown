@@ -52,6 +52,17 @@ public class Component {
         }
     }
 
+    public static class InReplyToEvent {
+        public final Status status;
+        public final UserPreference userPreference;
+        public final Status rootStatus;
+        public InReplyToEvent(Status status, UserPreference userPreference, Status rootStatus) {
+            this.status = status;
+            this.userPreference = userPreference;
+            this.rootStatus = rootStatus;
+        }
+    }
+
     public static class StatusEvent {
         public final Status status;
         public final UserPreference userPreference;

@@ -1,4 +1,4 @@
-package jp.unknown.works.twinown.twinown_views;
+package jp.unknown.works.twinown;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,11 +7,9 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.R;
-import jp.unknown.works.twinown.TweetActivity;
-import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_twitter.Component;
+import jp.unknown.works.twinown.twinown_views.UserFragment;
 import twitter4j.User;
 
 public class UserActivity extends AppCompatActivity {

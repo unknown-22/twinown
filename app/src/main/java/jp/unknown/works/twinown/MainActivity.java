@@ -45,7 +45,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.List;
 
@@ -67,7 +66,6 @@ import jp.unknown.works.twinown.twinown_views.TimelinePagerAdapter;
 import jp.unknown.works.twinown.models.Base;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_views.TwitterActivityAdapter;
-import jp.unknown.works.twinown.twinown_views.UserActivity;
 import twitter4j.Status;
 import twitter4j.User;
 

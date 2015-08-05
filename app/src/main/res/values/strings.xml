@@ -28,6 +28,7 @@
     <string name="menu_action_rt">リツイート</string>
     <string name="menu_action_favorite">お気に入りに追加する</string>
     <string name="menu_action_delete_favorite">お気に入りを取り消す</string>
+    <string name="menu_action_talk">会話を表示する</string>
     <string name="menu_action_delete">ツイートを削除する</string>
     <string name="menu_action_delete_rt">リツイートを取り消す</string>
     <string name="menu_action_open_browser">ブラウザで開く</string>
@@ -70,6 +71,7 @@
     <string name="preference_key_show_client_name">preference_show_client_name</string>
 
     <string name="title_activity_user">UserActivity</string>
+    <string name="title_activity_talk">TalkActivity</string>
     <string name="title_activity_tweet">TweetActivity</string>
 
     <string name="hello_world">Hello world!</string>

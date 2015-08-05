@@ -36,6 +36,8 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.TalkActivity;
+import jp.unknown.works.twinown.UserActivity;
 import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
@@ -53,11 +55,12 @@ public class MenuDialogFragment extends DialogFragment {
     private static final int MENU_ACTION_TYPE_DELETE_RT = 2;
     private static final int MENU_ACTION_TYPE_FAVORITE = 3;
     private static final int MENU_ACTION_TYPE_DELETE_FAVORITE = 4;
-    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 5;
-    private static final int MENU_ACTION_TYPE_DELETE = 6;
-    private static final int MENU_ACTION_TYPE_LINK_URL = 7;
-    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 8;
-    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 9;
+    private static final int MENU_ACTION_TYPE_TALK = 5;
+    private static final int MENU_ACTION_TYPE_USER_SCREEN_NAME = 6;
+    private static final int MENU_ACTION_TYPE_DELETE = 7;
+    private static final int MENU_ACTION_TYPE_LINK_URL = 8;
+    private static final int MENU_ACTION_TYPE_LINK_MEDIA = 9;
+    private static final int MENU_ACTION_TYPE_OPEN_BROWSER = 10;
 
 
     static final SimpleDateFormat fullDateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.getDefault());
@@ -84,7 +87,7 @@ public class MenuDialogFragment extends DialogFragment {
         final ArrayList<StatusMenuItem> statusMenuItemList = new ArrayList<>();
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
-        if (status.isRetweet()) {
+        if (!status.isRetweet()) {
             if (!status.isFavorited()) {
                 statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
             } else {
@@ -95,6 +98,15 @@ public class MenuDialogFragment extends DialogFragment {
                 statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
             } else {
                 statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete_favorite), MENU_ACTION_TYPE_DELETE_FAVORITE));
+            }
+        }
+        if (!status.isRetweet()) {
+            if (status.getInReplyToStatusId() != -1) {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_talk), MENU_ACTION_TYPE_TALK));
+            }
+        } else {
+            if (status.getRetweetedStatus().getInReplyToStatusId() != -1) {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_talk), MENU_ACTION_TYPE_TALK));
             }
         }
         statusMenuItemList.add(new StatusMenuItem(String.format("@%s", status.getUser().getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, status.getUser().getScreenName()));
@@ -160,6 +172,29 @@ public class MenuDialogFragment extends DialogFragment {
                             TwinownHelper.deleteFavorite(userPreference, status.getRetweetedStatus());
                         }
                         break;
+                    case MENU_ACTION_TYPE_TALK:
+                        new AsyncTask<Void, Void, Status>() {
+                            @Override
+                            protected twitter4j.Status doInBackground(Void... params) {
+                                if (!status.isRetweet()) {
+                                    return TwinownHelper.getStatusSync(userPreference, status.getId());
+                                } else {
+                                    return TwinownHelper.getStatusSync(userPreference, status.getRetweetedStatus().getId());
+                                }
+                            }
+
+                            @Override
+                            protected void onPostExecute(twitter4j.Status status) {
+                                if (status == null) {
+                                    Utils.showToastLong(getActivity(), String.format(getString(R.string.error_user_show), statusMenuItem.statusMenuItemText));
+                                    return;
+                                }
+                                startActivity(new Intent(getActivity(), TalkActivity.class)
+                                        .putExtra(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, userPreference)
+                                        .putExtra(Utils.ARGUMENTS_KEYWORD_STATUS, status));
+                            }
+                        }.execute();
+                        return;
                     case MENU_ACTION_TYPE_USER_SCREEN_NAME:
                         new AsyncTask<Void, Void, User>() {
                             @Override
