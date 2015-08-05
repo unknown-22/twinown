@@ -70,7 +70,7 @@ public class MenuDialogFragment extends DialogFragment {
 
     @NonNull
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) { // TODO RT時が考慮されていない。リプライとRT、ふぁぼくらい？
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
         userPreference = (UserPreference) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE);
         status = (Status) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_STATUS);
 
@@ -84,10 +84,18 @@ public class MenuDialogFragment extends DialogFragment {
         final ArrayList<StatusMenuItem> statusMenuItemList = new ArrayList<>();
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_reply), MENU_ACTION_TYPE_REPLY));
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_rt), MENU_ACTION_TYPE_RT));
-        if (!status.isFavorited()) {
-            statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
+        if (status.isRetweet()) {
+            if (!status.isFavorited()) {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
+            } else {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete_favorite), MENU_ACTION_TYPE_DELETE_FAVORITE));
+            }
         } else {
-            statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete_favorite), MENU_ACTION_TYPE_DELETE_FAVORITE));
+            if (!status.getRetweetedStatus().isFavorited()) {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_favorite), MENU_ACTION_TYPE_FAVORITE));
+            } else {
+                statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete_favorite), MENU_ACTION_TYPE_DELETE_FAVORITE));
+            }
         }
         statusMenuItemList.add(new StatusMenuItem(String.format("@%s", status.getUser().getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, status.getUser().getScreenName()));
         for (UserMentionEntity userMentionEntity : status.getUserMentionEntities()) {
@@ -115,7 +123,11 @@ public class MenuDialogFragment extends DialogFragment {
                 final StatusMenuItem statusMenuItem = statusMenuItemList.get(position - 1);
                 switch (statusMenuItem.actionType) {
                     case MENU_ACTION_TYPE_REPLY:
-                        EventBus.getDefault().post(new Component.MenuActionReply(status));
+                        if (!status.isRetweet()) {
+                            EventBus.getDefault().post(new Component.MenuActionReply(status));
+                        } else {
+                            EventBus.getDefault().post(new Component.MenuActionReply(status.getRetweetedStatus()));
+                        }
                         break;
                     case MENU_ACTION_TYPE_RT:
                         new AlertDialog.Builder(getActivity())
@@ -124,17 +136,29 @@ public class MenuDialogFragment extends DialogFragment {
                                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
-                                        TwinownHelper.retweetStatus(userPreference, status);
+                                        if (!status.isRetweet()) {
+                                            TwinownHelper.retweetStatus(userPreference, status);
+                                        } else {
+                                            TwinownHelper.retweetStatus(userPreference, status.getRetweetedStatus());
+                                        }
                                     }
                                 })
                                 .setNegativeButton("Cancel", null)
                                 .show();
                         break;
                     case MENU_ACTION_TYPE_FAVORITE:
-                        TwinownHelper.createFavorite(userPreference, status);
+                        if (!status.isRetweet()) {
+                            TwinownHelper.createFavorite(userPreference, status);
+                        } else {
+                            TwinownHelper.createFavorite(userPreference, status.getRetweetedStatus());
+                        }
                         break;
                     case MENU_ACTION_TYPE_DELETE_FAVORITE:
-                        TwinownHelper.deleteFavorite(userPreference, status);
+                        if (!status.isRetweet()) {
+                            TwinownHelper.deleteFavorite(userPreference, status);
+                        } else {
+                            TwinownHelper.deleteFavorite(userPreference, status.getRetweetedStatus());
+                        }
                         break;
                     case MENU_ACTION_TYPE_USER_SCREEN_NAME:
                         new AsyncTask<Void, Void, User>() {
