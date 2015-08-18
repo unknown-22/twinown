@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
-import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.AsyncTwitter;
@@ -270,7 +269,9 @@ public class TwinownHelper {
                 .setOAuthConsumerKey(client.consumerKey)
                 .setOAuthConsumerSecret(client.consumerSecret);
         TwitterStream twitterStream = new TwitterStreamFactory(conf.build()).getInstance();
-        twitterStream.addListener(new TwinownUserStreamListener(userPreference));
+        TwinownUserStreamListener twinownUserStreamListener = new TwinownUserStreamListener(userPreference);
+        twitterStream.addListener(twinownUserStreamListener);
+        twitterStream.addConnectionLifeCycleListener(twinownUserStreamListener);
         return twitterStream;
     }
 

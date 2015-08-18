@@ -54,8 +54,9 @@ public class TimelineFragment extends Fragment {
         if (tab.type == Tab.TAB_TYPE_STREAM) {
             TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
             TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
+        } else {
+            headUpdate(0);
         }
-        headUpdate(0);
     }
 
     private void headUpdate(long sinceId) {

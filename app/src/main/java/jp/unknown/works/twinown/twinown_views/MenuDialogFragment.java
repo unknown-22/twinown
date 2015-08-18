@@ -36,6 +36,7 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
+import jp.unknown.works.twinown.PreviewActivity;
 import jp.unknown.works.twinown.TalkActivity;
 import jp.unknown.works.twinown.UserActivity;
 import jp.unknown.works.twinown.Utils;
@@ -124,7 +125,7 @@ public class MenuDialogFragment extends DialogFragment {
             statusMenuItemList.add(new StatusMenuItem(urlEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_URL, urlEntity.getExpandedURL()));
         }
         for (MediaEntity mediaEntity : status.getMediaEntities()) {
-            statusMenuItemList.add(new StatusMenuItem(mediaEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_MEDIA, mediaEntity.getExpandedURL()));
+            statusMenuItemList.add(new StatusMenuItem(mediaEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_MEDIA, mediaEntity.getExpandedURL(), mediaEntity.getMediaURLHttps()));
         }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_open_browser), MENU_ACTION_TYPE_OPEN_BROWSER));
         final StatusMenuAdapter statusMenuAdapter = new StatusMenuAdapter(getActivity(), 0, statusMenuItemList);
@@ -266,10 +267,11 @@ public class MenuDialogFragment extends DialogFragment {
                         ));
                         break;
                     case MENU_ACTION_TYPE_LINK_MEDIA:
-                        startActivity(new Intent(
-                                Intent.ACTION_VIEW,
-                                Uri.parse(statusMenuItem.text)
-                        ));
+//                        startActivity(new Intent(
+//                                Intent.ACTION_VIEW,
+//                                Uri.parse(statusMenuItem.text)
+//                        ));
+                        startActivity(new Intent(getActivity(), PreviewActivity.class).putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URL, statusMenuItem.url));
                         break;
                     case MENU_ACTION_TYPE_OPEN_BROWSER:
                         startActivity(new Intent(
@@ -349,6 +351,7 @@ public class MenuDialogFragment extends DialogFragment {
         public String statusMenuItemText;
         public int actionType;
         public String text;
+        public String url;
 
         public StatusMenuItem(String statusMenuItemText, int actionType) {
             this.statusMenuItemText = statusMenuItemText;
@@ -359,6 +362,13 @@ public class MenuDialogFragment extends DialogFragment {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
             this.text = text;
+        }
+
+        public StatusMenuItem(String statusMenuItemText, int actionType, String text, String url) {
+            this.statusMenuItemText = statusMenuItemText;
+            this.actionType = actionType;
+            this.text = text;
+            this.url = url;
         }
     }
 

@@ -68,6 +68,9 @@
                 <data android:mimeType="image/*" />
             </intent-filter>
         </activity>
+        <activity android:name=".PreviewActivity"
+                  android:theme="@style/AppThemeTransparent">
+        </activity>
     </application>
 
 </manifest>

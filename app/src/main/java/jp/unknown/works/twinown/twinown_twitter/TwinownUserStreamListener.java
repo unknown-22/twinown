@@ -2,16 +2,31 @@ package jp.unknown.works.twinown.twinown_twitter;
 
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.models.UserPreference;
+import twitter4j.ConnectionLifeCycleListener;
+import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.User;
 import twitter4j.UserStreamAdapter;
 
-class TwinownUserStreamListener extends UserStreamAdapter {
+class TwinownUserStreamListener extends UserStreamAdapter implements ConnectionLifeCycleListener {
     UserPreference userPreference;
 
     public TwinownUserStreamListener(UserPreference userPreference) {
         this.userPreference = userPreference;
+    }
+
+    @Override
+    public void onConnect() {
+        TwinownHelper.getHomeTimeline(userPreference, new Paging());
+    }
+
+    @Override
+    public void onDisconnect() {
+    }
+
+    @Override
+    public void onCleanUp() {
     }
 
     @Override
