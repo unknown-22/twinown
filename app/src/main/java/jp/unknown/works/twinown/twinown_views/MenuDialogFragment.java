@@ -44,7 +44,7 @@ import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
-import twitter4j.MediaEntity;
+import twitter4j.ExtendedMediaEntity;
 import twitter4j.Status;
 import twitter4j.URLEntity;
 import twitter4j.User;
@@ -124,8 +124,13 @@ public class MenuDialogFragment extends DialogFragment {
         for (URLEntity urlEntity : status.getURLEntities()) {
             statusMenuItemList.add(new StatusMenuItem(urlEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_URL, urlEntity.getExpandedURL()));
         }
-        for (MediaEntity mediaEntity : status.getMediaEntities()) {
-            statusMenuItemList.add(new StatusMenuItem(mediaEntity.getExpandedURL(), MENU_ACTION_TYPE_LINK_MEDIA, mediaEntity.getExpandedURL(), mediaEntity.getMediaURLHttps()));
+        if (status.getExtendedMediaEntities().length > 0) {
+            ExtendedMediaEntity extendedMediaEntity = status.getExtendedMediaEntities()[0];
+            statusMenuItemList.add(new StatusMenuItem(
+                            extendedMediaEntity.getExpandedURL(),
+                            MENU_ACTION_TYPE_LINK_MEDIA,
+                            status.getExtendedMediaEntities()
+                    ));
         }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_open_browser), MENU_ACTION_TYPE_OPEN_BROWSER));
         final StatusMenuAdapter statusMenuAdapter = new StatusMenuAdapter(getActivity(), 0, statusMenuItemList);
@@ -271,7 +276,11 @@ public class MenuDialogFragment extends DialogFragment {
 //                                Intent.ACTION_VIEW,
 //                                Uri.parse(statusMenuItem.text)
 //                        ));
-                        startActivity(new Intent(getActivity(), PreviewActivity.class).putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URL, statusMenuItem.url));
+                        startActivity(new Intent(
+                                getActivity(),
+                                PreviewActivity.class)
+                                .putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS, statusMenuItem.extendedMediaEntities
+                                ));
                         break;
                     case MENU_ACTION_TYPE_OPEN_BROWSER:
                         startActivity(new Intent(
@@ -351,7 +360,7 @@ public class MenuDialogFragment extends DialogFragment {
         public String statusMenuItemText;
         public int actionType;
         public String text;
-        public String url;
+        public ExtendedMediaEntity[] extendedMediaEntities;
 
         public StatusMenuItem(String statusMenuItemText, int actionType) {
             this.statusMenuItemText = statusMenuItemText;
@@ -364,11 +373,10 @@ public class MenuDialogFragment extends DialogFragment {
             this.text = text;
         }
 
-        public StatusMenuItem(String statusMenuItemText, int actionType, String text, String url) {
+        public StatusMenuItem(String statusMenuItemText, int actionType, ExtendedMediaEntity[] extendedMediaEntities) {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
-            this.text = text;
-            this.url = url;
+            this.extendedMediaEntities = extendedMediaEntities;
         }
     }
 
