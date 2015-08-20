@@ -19,13 +19,14 @@ import twitter4j.ExtendedMediaEntity;
 
 public class PreviewActivity extends AppCompatActivity {
     @Bind(R.id.viewPager) ViewPager viewPager;
-    private ExtendedMediaEntity[] extendedMediaEntities;
+    private ArrayList<ExtendedMediaEntity> extendedMediaEntities;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (extendedMediaEntities == null) {
-            extendedMediaEntities = (ExtendedMediaEntity[]) getIntent().getSerializableExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS);
+            //noinspection unchecked
+            extendedMediaEntities = (ArrayList<ExtendedMediaEntity>) getIntent().getSerializableExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS);
         }
         setContentView(R.layout.activity_preview);
         ButterKnife.bind(this);
@@ -35,9 +36,10 @@ public class PreviewActivity extends AppCompatActivity {
     class PreviewPagerAdapter extends PagerAdapter {
         private ArrayList<ImageView> imageViewArrayList = new ArrayList<>();
 
-        public PreviewPagerAdapter(Context context, ExtendedMediaEntity[] extendedMediaEntities) {
+        public PreviewPagerAdapter(Context context, ArrayList<ExtendedMediaEntity> extendedMediaEntities) {
             for (ExtendedMediaEntity extendedMediaEntity : extendedMediaEntities) {
                 ImageView imageView = new ImageView(context);
+                imageView.setPadding(10, 10, 10, 10);
                 Picasso.with(context).load(extendedMediaEntity.getMediaURLHttps()).into(imageView);
                 imageViewArrayList.add(imageView);
             }

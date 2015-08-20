@@ -28,6 +28,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -129,7 +130,7 @@ public class MenuDialogFragment extends DialogFragment {
             statusMenuItemList.add(new StatusMenuItem(
                             extendedMediaEntity.getExpandedURL(),
                             MENU_ACTION_TYPE_LINK_MEDIA,
-                            status.getExtendedMediaEntities()
+                            new ArrayList<>(Arrays.asList(status.getExtendedMediaEntities()))
                     ));
         }
         statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_open_browser), MENU_ACTION_TYPE_OPEN_BROWSER));
@@ -279,8 +280,8 @@ public class MenuDialogFragment extends DialogFragment {
                         startActivity(new Intent(
                                 getActivity(),
                                 PreviewActivity.class)
-                                .putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS, statusMenuItem.extendedMediaEntities
-                                ));
+                                .putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS, statusMenuItem.extendedMediaEntities)
+                        );
                         break;
                     case MENU_ACTION_TYPE_OPEN_BROWSER:
                         startActivity(new Intent(
@@ -360,7 +361,7 @@ public class MenuDialogFragment extends DialogFragment {
         public String statusMenuItemText;
         public int actionType;
         public String text;
-        public ExtendedMediaEntity[] extendedMediaEntities;
+        public ArrayList<ExtendedMediaEntity> extendedMediaEntities;
 
         public StatusMenuItem(String statusMenuItemText, int actionType) {
             this.statusMenuItemText = statusMenuItemText;
@@ -373,7 +374,7 @@ public class MenuDialogFragment extends DialogFragment {
             this.text = text;
         }
 
-        public StatusMenuItem(String statusMenuItemText, int actionType, ExtendedMediaEntity[] extendedMediaEntities) {
+        public StatusMenuItem(String statusMenuItemText, int actionType, ArrayList<ExtendedMediaEntity> extendedMediaEntities) {
             this.statusMenuItemText = statusMenuItemText;
             this.actionType = actionType;
             this.extendedMediaEntities = extendedMediaEntities;
