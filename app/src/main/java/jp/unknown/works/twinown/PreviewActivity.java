@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
@@ -16,6 +15,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import twitter4j.ExtendedMediaEntity;
+import uk.co.senab.photoview.PhotoView;
 
 public class PreviewActivity extends AppCompatActivity {
     @Bind(R.id.viewPager) ViewPager viewPager;
@@ -34,12 +34,12 @@ public class PreviewActivity extends AppCompatActivity {
     }
 
     class PreviewPagerAdapter extends PagerAdapter {
-        private ArrayList<ImageView> imageViewArrayList = new ArrayList<>();
+        private ArrayList<PhotoView> imageViewArrayList = new ArrayList<>();
 
         public PreviewPagerAdapter(Context context, ArrayList<ExtendedMediaEntity> extendedMediaEntities) {
             for (ExtendedMediaEntity extendedMediaEntity : extendedMediaEntities) {
-                ImageView imageView = new ImageView(context);
-                imageView.setPadding(10, 10, 10, 10);
+                View view = getLayoutInflater().inflate(R.layout.preview_image, null);
+                PhotoView imageView = (PhotoView) view.findViewById(R.id.previewImageView);
                 Picasso.with(context).load(extendedMediaEntity.getMediaURLHttps()).into(imageView);
                 imageViewArrayList.add(imageView);
             }
@@ -47,7 +47,11 @@ public class PreviewActivity extends AppCompatActivity {
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            container.addView(imageViewArrayList.get(position));
+            PhotoView imageView = imageViewArrayList.get(position);
+            if(imageView.getParent() != null) {
+                ((ViewGroup) imageView.getParent()).removeView(imageView);
+            }
+            container.addView(imageView);
             return imageViewArrayList.get(position);
         }
 

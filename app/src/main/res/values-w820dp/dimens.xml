@@ -1,3 +1,4 @@
 <resources>
-    <dimen name="preview_margin">32dp</dimen>
+    <dimen name="preview_padding">32dp</dimen>
+    <dimen name="preview_margin">64dp</dimen>
 </resources>

@@ -21,6 +21,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -40,13 +41,17 @@ public class TweetFragment extends Fragment {
     List<UserPreference> userPreferenceList;
     int currentUserIndex = 0;
     Status toReplyStatus;
-    Uri imageUri;
-    InputStream fileInputStream;
+    ArrayList<Uri> imageUris = new ArrayList<>();
+    ArrayList<InputStream> fileInputStreams = new ArrayList<>();
     @Bind(R.id.userIconButton) ImageButton userIconButton;
     @Bind(R.id.tweetTextInputLayout) TextInputLayout tweetTextInputLayout;
     @Bind(R.id.tweetEditText) EditText tweetEditText;
     @Bind(R.id.tweetLength) TextView tweetLength;
-    @Bind(R.id.uploadImageView) ImageView uploadImageView;
+    @Bind(R.id.uploadImageView1) ImageView uploadImageView1;
+    @Bind(R.id.uploadImageView2) ImageView uploadImageView2;
+    @Bind(R.id.uploadImageView3) ImageView uploadImageView3;
+    @Bind(R.id.uploadImageView4) ImageView uploadImageView4;
+    ArrayList<ImageView> uploadImageViews = new ArrayList<>();
 
     private static final int REQUEST_GALLERY = 0;
 
@@ -56,7 +61,19 @@ public class TweetFragment extends Fragment {
         setRetainInstance(true);
         userPreferenceList = UserPreference.getAll();
         toReplyStatus = (Status) getActivity().getIntent().getSerializableExtra(Utils.ARGUMENTS_KEYWORD_STATUS);
-        imageUri = getActivity().getIntent().getParcelableExtra(Intent.EXTRA_STREAM);
+        String action = getActivity().getIntent().getAction();
+        if (Intent.ACTION_SEND.equals(action)) {
+            imageUris.add(getActivity().getIntent().<Uri>getParcelableExtra(Intent.EXTRA_STREAM));
+        } else if (Intent.ACTION_SEND_MULTIPLE.equals(action)) {
+            imageUris.addAll(getActivity().getIntent().<Uri>getParcelableArrayListExtra(Intent.EXTRA_STREAM));
+        }
+
+        if (imageUris.size() > 4) {
+            Utils.showToastLong(getActivity(), "画像は4つまでです");
+            for (int i = 4; i < imageUris.size() + 1; i++) {
+                imageUris.remove(4);
+            }
+        }
 
     }
 
@@ -72,14 +89,23 @@ public class TweetFragment extends Fragment {
             tweetEditText.setSelection(tweetEditText.getText().toString().length());
             tweetEditText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reply_white, 0, 0, 0);
         }
-        if (imageUri != null) {
-            try {
-                fileInputStream = getActivity().getContentResolver().openInputStream(imageUri);
-            } catch (FileNotFoundException ignored) {
-                // ignored
+
+        uploadImageViews.add(uploadImageView1);
+        uploadImageViews.add(uploadImageView2);
+        uploadImageViews.add(uploadImageView3);
+        uploadImageViews.add(uploadImageView4);
+
+        for (int i = 0; i < imageUris.size(); i++) {
+            Uri imageUri = imageUris.get(i);
+            if (imageUri != null) {
+                try {
+                    fileInputStreams.add(getActivity().getContentResolver().openInputStream(imageUri));
+                } catch (FileNotFoundException ignored) {
+                    // ignored
+                }
+                Picasso.with(getActivity()).load(imageUri).into(uploadImageViews.get(i));
+                uploadImageViews.get(i).setVisibility(View.VISIBLE);
             }
-            Picasso.with(getActivity()).load(imageUri).into(uploadImageView);
-            uploadImageView.setVisibility(View.VISIBLE);
         }
         return view;
     }
@@ -101,15 +127,22 @@ public class TweetFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if(requestCode == REQUEST_GALLERY && resultCode == FragmentActivity.RESULT_OK) {
-            try {
-                imageUri = intent.getData();
-                fileInputStream = getActivity().getContentResolver().openInputStream(imageUri);
-
-            } catch (Exception ignored) {
-                // ignored
+            if (imageUris.size() < 4) {
+                Uri imageUri = intent.getData();
+                if (imageUri != null) {
+                    try {
+                        fileInputStreams.add(getActivity().getContentResolver().openInputStream(imageUri));
+                    } catch (FileNotFoundException ignored) {
+                        // ignored
+                    }
+                    imageUris.add(imageUri);
+                    ImageView uploadImageView = uploadImageViews.get(imageUris.size() - 1);
+                    Picasso.with(getActivity()).load(imageUri).into(uploadImageView);
+                    uploadImageView.setVisibility(View.VISIBLE);
+                }
+            } else {
+                Utils.showToastLong(getActivity(), "画像は4つまでです");
             }
-            Picasso.with(getActivity()).load(imageUri).into(uploadImageView);
-            uploadImageView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -138,8 +171,8 @@ public class TweetFragment extends Fragment {
     @SuppressWarnings("unused")
     @OnClick(R.id.tweetButton)
     public void statusUpdate() {
-        if (tweetEditText.length() != 0) {
-            TwinownHelper.updateStatus(userPreferenceList.get(currentUserIndex), tweetEditText.getText().toString(), toReplyStatus, fileInputStream);
+        if (tweetEditText.length() != 0 || fileInputStreams.size() > 0) {
+            TwinownHelper.updateStatus(userPreferenceList.get(currentUserIndex), tweetEditText.getText().toString(), toReplyStatus, fileInputStreams);
             getActivity().finish();
         }
     }

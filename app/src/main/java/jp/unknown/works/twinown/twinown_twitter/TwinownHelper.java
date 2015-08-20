@@ -3,6 +3,7 @@ package jp.unknown.works.twinown.twinown_twitter;
 import android.os.AsyncTask;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
@@ -53,21 +54,31 @@ public class TwinownHelper {
         return twitter;
     }
 
-    public static void updateStatus(UserPreference userPreference, String statusText, Status toReplyStatus, InputStream imageInputStream) {
-        AsyncTwitter twitter;
-        if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createAsyncTwitter(userPreference);
-        }
-        StatusUpdate statusUpdate = new StatusUpdate(statusText);
-        if (toReplyStatus != null) {
-            statusUpdate.setInReplyToStatusId(toReplyStatus.getId());
-        }
-        if (imageInputStream != null) {
-            statusUpdate.setMedia("upload_image", imageInputStream);
-        }
-        twitter.updateStatus(statusUpdate);
+    public static void updateStatus(UserPreference userPreference, final String statusText, final Status toReplyStatus, final ArrayList<InputStream> imageInputStreams) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    StatusUpdate statusUpdate = new StatusUpdate(statusText);
+                    if (toReplyStatus != null) {
+                        statusUpdate.setInReplyToStatusId(toReplyStatus.getId());
+                    }
+                    if (imageInputStreams != null && imageInputStreams.size() > 0) {
+                        long[] mediaIdArray = new long[imageInputStreams.size()];
+                        for (int i=0; i < imageInputStreams.size(); i++) {
+                            mediaIdArray[i] = twitter.uploadMedia("upload_image", imageInputStreams.get(i)).getMediaId();
+                        }
+                        statusUpdate.setMediaIds(mediaIdArray);
+                    }
+                    twitter.updateStatus(statusUpdate);
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
     }
 
     public static void retweetStatus(UserPreference userPreference, final Status status) {

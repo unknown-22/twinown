@@ -49,13 +49,36 @@
         android:layout_alignParentEnd="true"/>
 
     <ImageView
-        android:layout_width="@dimen/image_preview_size"
-        android:layout_height="@dimen/image_preview_size"
-        android:id="@+id/uploadImageView"
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:id="@+id/uploadImageView1"
         android:layout_below="@+id/tweetLength"
         android:layout_toStartOf="@+id/tweetButton"
-        android:visibility="gone"
         android:contentDescription="@android:string/untitled"/>
+
+    <ImageView
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:id="@+id/uploadImageView2"
+        android:contentDescription="@android:string/untitled"
+        android:layout_alignTop="@+id/uploadImageView1"
+        android:layout_toStartOf="@+id/uploadImageView1"/>
+
+    <ImageView
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:id="@+id/uploadImageView3"
+        android:contentDescription="@android:string/untitled"
+        android:layout_alignTop="@+id/uploadImageView2"
+        android:layout_toStartOf="@+id/uploadImageView2"/>
+
+    <ImageView
+        android:layout_width="@dimen/icon_size"
+        android:layout_height="@dimen/icon_size"
+        android:id="@+id/uploadImageView4"
+        android:contentDescription="@android:string/untitled"
+        android:layout_alignTop="@+id/uploadImageView3"
+        android:layout_toStartOf="@+id/uploadImageView3"/>
 
     <ImageButton
         android:layout_width="wrap_content"
