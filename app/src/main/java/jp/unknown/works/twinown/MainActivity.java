@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.transition.Explode;
@@ -15,7 +16,6 @@ import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.models.Base;
 
 public class MainActivity extends AppCompatActivity {
-    MainFragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,16 +46,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         if(savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.main_container, new MainFragment(), "main_fragment")
+                    .replace(R.id.main_container, new MainFragment())
                     .commit();
         }
-        fragment = (MainFragment) getSupportFragmentManager().findFragmentByTag("main_fragment");
     }
 
     @Override
     public void onBackPressed() {
-        if (!fragment.mainDrawerLayout.isDrawerVisible(GravityCompat.START)) {
-            fragment.mainDrawerLayout.openDrawer(GravityCompat.START);
+        DrawerLayout mainDrawerLayout = (DrawerLayout) findViewById(R.id.mainDrawerLayout);
+        if (!mainDrawerLayout.isDrawerVisible(GravityCompat.START)) {
+            mainDrawerLayout.openDrawer(GravityCompat.START);
             return;
         }
         super.onBackPressed();

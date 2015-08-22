@@ -14,7 +14,9 @@ import java.util.Objects;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import jp.unknown.works.twinown.R;
+import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.models.TwitterActivity;
 
 public class TwitterActivityAdapter extends RecyclerView.Adapter{
@@ -34,7 +36,7 @@ public class TwitterActivityAdapter extends RecyclerView.Adapter{
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(fragment.getActivity());
-        return new TwitterActivityViewHolder(inflater.inflate(android.R.layout.simple_list_item_1, parent, false));
+        return new TwitterActivityViewHolder(inflater.inflate(R.layout.activity, parent, false));
     }
 
     @Override
@@ -60,6 +62,11 @@ public class TwitterActivityAdapter extends RecyclerView.Adapter{
                 activityTextView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_star_white, 0, 0, 0);
             }
             activityTextView.setText(twitterActivity.text);
+        }
+
+        @OnClick(android.R.id.text1)
+        public void showStatusMenu(View itemView) {
+            Utils.debugLog("hoge hoge");
         }
     }
 

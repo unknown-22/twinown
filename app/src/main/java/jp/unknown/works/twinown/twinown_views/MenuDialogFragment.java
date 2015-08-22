@@ -273,10 +273,6 @@ public class MenuDialogFragment extends DialogFragment {
                         ));
                         break;
                     case MENU_ACTION_TYPE_LINK_MEDIA:
-//                        startActivity(new Intent(
-//                                Intent.ACTION_VIEW,
-//                                Uri.parse(statusMenuItem.text)
-//                        ));
                         startActivity(new Intent(
                                 getActivity(),
                                 PreviewActivity.class)
