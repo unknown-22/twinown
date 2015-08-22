@@ -11,6 +11,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.design.widget.TabLayout.ViewPagerOnTabSelectedListener;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
@@ -262,6 +263,14 @@ public class MainActivity extends AppCompatActivity {
                 tabLayout.setupWithViewPager(timelineViewPager);
                 tabLayout.setTabMode(TabLayout.MODE_SCROLLABLE);
                 tabLayout.setVisibility(View.VISIBLE);
+                tabLayout.setOnTabSelectedListener(new ViewPagerOnTabSelectedListener(timelineViewPager){
+                    @Override
+                    public void onTabReselected(TabLayout.Tab tab) {
+                        super.onTabReselected(tab);
+                        TimelineFragment timelineFragment = timelinePagerAdapter.findFragmentByPosition(timelineViewPager, tab.getPosition());
+                        timelineFragment.moveOnTop();
+                    }
+                });
             }
             if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_title_bar), true)) {
                 toolbar.setTitle(getString(R.string.app_name));
