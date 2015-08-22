@@ -177,19 +177,13 @@ public class MainFragment extends Fragment {
         Context context = getActivity().getApplicationContext();
         context.bindService(new Intent(context, TwinownService.class), serviceConnection, AppCompatActivity.BIND_AUTO_CREATE);
         context.startService(new Intent(context, TwinownService.class));
+        EventBus.getDefault().register(this);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        EventBus.getDefault().register(this);
         TwinownHelper.getUser(userPreferenceList.get(currentUserIndex));
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
@@ -358,9 +352,12 @@ public class MainFragment extends Fragment {
     public void onEventMainThread(final Component.FavoriteEvent favoriteEvent) {
         twitterActivityAdapter.addTwitterActivity(new TwitterActivity(
                 System.currentTimeMillis(),
+                favoriteEvent.userPreference,
                 TwitterActivity.TYPE_FAVORITED,
                 String.format("@%s: @%s: %s", favoriteEvent.source.getScreenName(), favoriteEvent.target.getScreenName(), favoriteEvent.status.getText()),
-                favoriteEvent.target
+                favoriteEvent.target,
+                favoriteEvent.status
+
         ));
     }
 
@@ -368,9 +365,11 @@ public class MainFragment extends Fragment {
     public void onEventMainThread(final Component.FavoritedEvent favoritedEvent) {
         twitterActivityAdapter.addTwitterActivity(new TwitterActivity(
                 System.currentTimeMillis(),
+                favoritedEvent.userPreference,
                 TwitterActivity.TYPE_FAVORITED,
                 String.format("@%s: @%s: %s", favoritedEvent.source.getScreenName(), favoritedEvent.target.getScreenName(), favoritedEvent.status.getText()),
-                favoritedEvent.source
+                favoritedEvent.source,
+                favoritedEvent.status
         ));
     }
 }

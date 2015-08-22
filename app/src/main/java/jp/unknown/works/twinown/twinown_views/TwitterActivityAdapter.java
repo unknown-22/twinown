@@ -1,6 +1,7 @@
 package jp.unknown.works.twinown.twinown_views;
 
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.util.SortedList;
@@ -21,6 +22,7 @@ import jp.unknown.works.twinown.models.TwitterActivity;
 
 public class TwitterActivityAdapter extends RecyclerView.Adapter{
     private Fragment fragment;
+    private RecyclerView recyclerView;
     @SuppressWarnings("unchecked")
     private final SortedList<TwitterActivity> sortedList = new SortedList(TwitterActivity.class, new TwitterActivityCallback(this));
 
@@ -45,6 +47,18 @@ public class TwitterActivityAdapter extends RecyclerView.Adapter{
     }
 
     @Override
+    public void onAttachedToRecyclerView(RecyclerView recyclerView) {
+        super.onAttachedToRecyclerView(recyclerView);
+        this.recyclerView= recyclerView;
+    }
+
+    @Override
+    public void onDetachedFromRecyclerView(RecyclerView recyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView);
+        this.recyclerView = null;
+    }
+
+    @Override
     public int getItemCount() {
         return sortedList.size();
     }
@@ -64,9 +78,17 @@ public class TwitterActivityAdapter extends RecyclerView.Adapter{
             activityTextView.setText(twitterActivity.text);
         }
 
+        @SuppressWarnings("unused")
         @OnClick(android.R.id.text1)
-        public void showStatusMenu(View itemView) {
-            Utils.debugLog("hoge hoge");
+        public void showTwitterActivityMenu(View itemView) {
+            TwitterActivity twitterActivity = sortedList.get(recyclerView.getChildAdapterPosition(itemView));
+            MenuDialogFragment menuDialogFragment = new MenuDialogFragment();
+            Bundle bundle = new Bundle();
+            bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE, twitterActivity.userPreference);
+            bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_STATUS, twitterActivity.status);
+            bundle.putSerializable(Utils.ARGUMENTS_KEYWORD_USER_EXTRA, twitterActivity.user);
+            menuDialogFragment.setArguments(bundle);
+            menuDialogFragment.show(fragment.getFragmentManager(), "menu_dialog_fragment");
         }
     }
 

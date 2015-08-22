@@ -115,6 +115,10 @@ public class MenuDialogFragment extends DialogFragment {
         for (UserMentionEntity userMentionEntity : status.getUserMentionEntities()) {
             statusMenuItemList.add(new StatusMenuItem(String.format("@%s", userMentionEntity.getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, userMentionEntity.getScreenName()));
         }
+        User extraUser = (User) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_USER_EXTRA);
+        if (extraUser != null) {
+            statusMenuItemList.add(new StatusMenuItem(String.format("@%s", extraUser.getScreenName()), MENU_ACTION_TYPE_USER_SCREEN_NAME, extraUser.getScreenName()));
+        }
         if (status.getUser().getId() == userPreference.userId) {
             if (!status.isRetweet()) {
                 statusMenuItemList.add(new StatusMenuItem(getString(R.string.menu_action_delete), MENU_ACTION_TYPE_DELETE));
