@@ -1,7 +1,7 @@
 package jp.unknown.works.twinown.twinown_views;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,6 +40,7 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
     private User user;
     private LinearLayoutManager linearLayoutManager;
     private TimelineAdapter timelineAdapter;
+    private int count;
     @Bind(R.id.collapsing_toolbar) CollapsingToolbarLayout collapsingToolbarLayout;
     @Bind(R.id.appbar) AppBarLayout appBarLayout;
     @Bind(R.id.userBannerView) ImageView userBannerView;
@@ -54,18 +55,21 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
         setRetainInstance(true);
         userPreference = (UserPreference) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_USER_PREFERENCE);
         user = (User) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_USER);
+        count = Utils.getPreferenceInt(getActivity(), getString(R.string.preference_key_load_count), 50);
         if (user != null) {
-            TwinownHelper.getUserTimeLine(userPreference, user.getId(), new Paging());
+            Paging paging = new Paging();
+            paging.setCount(count);
+            TwinownHelper.getUserTimeLine(userPreference, user.getId(), paging);
         }
         timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         if (timelineAdapter != null) {
-            timelineAdapter.refreshActivity(getFragmentManager(), activity);
+            timelineAdapter.refreshActivity(getFragmentManager(), context);
         }
     }
 
@@ -159,6 +163,7 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
 
     private void headUpdate(long sinceId) {
         Paging paging = new Paging();
+        paging.setCount(count);
         if (sinceId > 0) {
             paging.setSinceId(sinceId);
         }
@@ -167,6 +172,7 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
 
     private void tailUpdate(long maxId) {
         Paging paging = new Paging();
+        paging.setCount(count);
         paging.setMaxId(maxId);
         TwinownHelper.getUserTimeLine(userPreference, user.getId(), paging);
     }

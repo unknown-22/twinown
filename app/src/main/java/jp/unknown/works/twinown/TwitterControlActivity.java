@@ -1,17 +1,17 @@
 package jp.unknown.works.twinown;
 
 import android.content.SharedPreferences;
+import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceFragment;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListAdapter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class AppearanceControlActivity extends AppCompatActivity {
+public class TwitterControlActivity extends AppCompatActivity {
     @Bind(R.id.toolbar) Toolbar toolbar;
 
     @Override
@@ -24,14 +24,14 @@ public class AppearanceControlActivity extends AppCompatActivity {
                     .replace(R.id.settings_container, new AppearanceControlFragment())
                     .commit();
         }
-        toolbar.setTitle(getString(R.string.setting_action_appearance));
+        toolbar.setTitle(getString(R.string.setting_action_twitter));
     }
 
     public static class AppearanceControlFragment extends PreferenceFragment {
         @Override
         public void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            addPreferencesFromResource(R.xml.appearance_preference);
+            addPreferencesFromResource(R.xml.twitter_preference);
         }
 
         @Override

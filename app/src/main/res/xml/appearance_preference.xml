@@ -3,8 +3,8 @@
     <ListPreference
         android:key="@string/preference_key_theme"
         android:title="@string/dialog_title_choose_theme"
-        android:entries="@array/entries_list_preference"
-        android:entryValues="@array/entry_values_list_preference"
+        android:entries="@array/entries_list_preference_theme"
+        android:entryValues="@array/entry_values_list_preference_theme"
         android:dialogTitle="@string/dialog_title_choose_theme" />
     <SwitchPreference
         android:key="@string/preference_key_title_bar"

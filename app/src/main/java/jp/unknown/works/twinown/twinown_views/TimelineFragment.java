@@ -1,6 +1,6 @@
 package jp.unknown.works.twinown.twinown_views;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -35,6 +35,7 @@ public class TimelineFragment extends Fragment {
     private LinearLayoutManager linearLayoutManager;
     private TimelineAdapter timelineAdapter;
     private Pattern userScreenNamePattern;
+    private int count;
     @Bind(R.id.swipe_refresh) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.timelineView) RecyclerView timelineView;
 
@@ -42,6 +43,7 @@ public class TimelineFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+        count = Utils.getPreferenceInt(getActivity(), getString(R.string.preference_key_load_count), 50);
         tab = (Tab) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_TAB);
         userPreference = UserPreference.get(tab != null ? tab.userId : null);
         initializeTwitter();
@@ -52,7 +54,7 @@ public class TimelineFragment extends Fragment {
 
     private void initializeTwitter() {
         if (tab.type == Tab.TAB_TYPE_STREAM) {
-            TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference);
+            TwinownHelper.StreamSingleton.getInstance().getOrCreateTwitterStream(userPreference, count);
             TwinownHelper.StreamSingleton.getInstance().startUserStream(userPreference);
         } else {
             headUpdate(0);
@@ -61,34 +63,36 @@ public class TimelineFragment extends Fragment {
 
     private void headUpdate(long sinceId) {
         Paging paging = new Paging();
+        paging.setCount(count);
         if (sinceId > 0) {
             paging.setSinceId(sinceId);
         }
         switch (tab.type) {
             case Tab.TAB_TYPE_STREAM:
-                TwinownHelper.getHomeTimeline(userPreference, paging);
+                TwinownHelper.getHomeTimeline(userPreference, paging, false);
                 break;
             case Tab.TAB_TYPE_MENTION:
                 TwinownHelper.getMentionTimeline(userPreference, paging);
                 break;
             case Tab.TAB_TYPE_LIST:
-                TwinownHelper.getUserListStatuses(userPreference, tab.getListId(), paging);
+                TwinownHelper.getUserListStatuses(userPreference, tab.getListId(), paging, true);
                 break;
         }
     }
 
     private void tailUpdate(long maxId) {
         Paging paging = new Paging();
+        paging.setCount(count);
         paging.setMaxId(maxId);
         switch (tab.type) {
             case Tab.TAB_TYPE_STREAM:
-                TwinownHelper.getHomeTimeline(userPreference, paging);
+                TwinownHelper.getHomeTimeline(userPreference, paging, false);
                 break;
             case Tab.TAB_TYPE_MENTION:
                 TwinownHelper.getMentionTimeline(userPreference, paging);
                 break;
             case Tab.TAB_TYPE_LIST:
-                TwinownHelper.getUserListStatuses(userPreference, tab.getListId(), paging);
+                TwinownHelper.getUserListStatuses(userPreference, tab.getListId(), paging, false);
                 break;
         }
     }
@@ -118,10 +122,10 @@ public class TimelineFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         if (timelineAdapter != null) {
-            timelineAdapter.refreshActivity(getFragmentManager(), activity);
+            timelineAdapter.refreshActivity(getFragmentManager(), context);
         }
     }
 
@@ -166,9 +170,12 @@ public class TimelineFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(final Component.HomeStatusListEvent homeStatusListEvent) {
+    public void onEventMainThread(final Component.HomeStatusListEvent homeStatusListEvent) {
         if (tab.type == Tab.TAB_TYPE_STREAM && Objects.equals(homeStatusListEvent.userPreference.userId, userPreference.userId)) {
             addStatusList(homeStatusListEvent.statuses);
+            if (homeStatusListEvent.isReconnect) {
+                moveOnTop();
+            }
         }
     }
 
@@ -212,9 +219,12 @@ public class TimelineFragment extends Fragment {
     }
 
     @SuppressWarnings("unused")
-    public void onEvent(final Component.UserListStatusesEvent userListStatusesEvent) {
+    public void onEventMainThread(final Component.UserListStatusesEvent userListStatusesEvent) {
         if (tab.type == Tab.TAB_TYPE_LIST && tab.getListId() == userListStatusesEvent.listId
                 && Objects.equals(userListStatusesEvent.userPreference.userId, userPreference.userId)) {
+            if (timelineAdapter.getItemCount() > 0 && userListStatusesEvent.isHead) {
+                Utils.showToastLong(getContext(), String.format("%d件の新着ツイート", userListStatusesEvent.statuses.size()));
+            }
             addStatusList(userListStatusesEvent.statuses);
         }
     }

@@ -11,14 +11,18 @@ import twitter4j.UserStreamAdapter;
 
 class TwinownUserStreamListener extends UserStreamAdapter implements ConnectionLifeCycleListener {
     UserPreference userPreference;
+    int count;
 
-    public TwinownUserStreamListener(UserPreference userPreference) {
+    public TwinownUserStreamListener(UserPreference userPreference, int count) {
         this.userPreference = userPreference;
+        this.count = count;
     }
 
     @Override
     public void onConnect() {
-        TwinownHelper.getHomeTimeline(userPreference, new Paging());
+        Paging paging = new Paging();
+        paging.setCount(count);
+        TwinownHelper.getHomeTimeline(userPreference, paging, true);
     }
 
     @Override

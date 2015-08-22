@@ -49,4 +49,12 @@ public class Utils {
     public static boolean getPreferenceBoolean(Context context, String preferenceKey, boolean defaultValue) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(preferenceKey, defaultValue);
     }
+
+    public static int getPreferenceInt(Context context, String preferenceKey, int defaultInt) {
+        String tempValue = getPreferenceString(context, preferenceKey, null);
+        if (tempValue != null) {
+            return Integer.parseInt(tempValue);
+        }
+        return defaultInt;
+    }
 }

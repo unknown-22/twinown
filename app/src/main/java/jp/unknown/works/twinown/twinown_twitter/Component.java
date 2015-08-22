@@ -26,9 +26,11 @@ public class Component {
     public static class HomeStatusListEvent {
         public final ResponseList<Status> statuses;
         public final UserPreference userPreference;
-        public HomeStatusListEvent(ResponseList<Status> statuses, UserPreference userPreference) {
+        public final boolean isReconnect;
+        public HomeStatusListEvent(ResponseList<Status> statuses, UserPreference userPreference, boolean isReconnect) {
             this.statuses = statuses;
             this.userPreference = userPreference;
+            this.isReconnect = isReconnect;
         }
     }
 
@@ -143,10 +145,12 @@ public class Component {
         public final ResponseList<Status> statuses;
         public final UserPreference userPreference;
         public final long listId;
-        public UserListStatusesEvent(ResponseList<Status> statuses, UserPreference userPreference, long listId) {
+        public final boolean isHead;
+        public UserListStatusesEvent(ResponseList<Status> statuses, UserPreference userPreference, long listId, boolean isHead) {
             this.statuses = statuses;
             this.userPreference = userPreference;
             this.listId = listId;
+            this.isHead = isHead;
         }
     }
 

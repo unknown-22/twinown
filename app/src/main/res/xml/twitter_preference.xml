@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <ListPreference
+        android:key="@string/preference_key_load_count"
+        android:title="@string/dialog_title_choose_load_count"
+        android:entries="@array/entries_list_preference_load_count"
+        android:entryValues="@array/entry_values_list_preference_load_count"
+        android:dialogTitle="@string/dialog_title_choose_load_count" />
+</PreferenceScreen>

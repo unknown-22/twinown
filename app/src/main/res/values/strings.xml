@@ -46,12 +46,14 @@
     <string name="setting_action_account">アカウント設定</string>
     <string name="setting_action_tab">タブ設定</string>
     <string name="setting_action_appearance">外観設定</string>
+    <string name="setting_action_twitter">Twitter設定</string>
 
     <string name="dialog_title_choose_tab_type">タブの種類を設定してください</string>
     <string name="dialog_title_choose_account">アカウントを選択してください</string>
     <string name="dialog_title_choose_list">リストを選択してください</string>
 
     <string name="dialog_title_choose_theme">テーマを選択してください</string>
+    <string name="dialog_title_choose_load_count">読み込みツイート数を選択してください</string>
     <string name="setting_item_title_bar">タイトルバーを表示する</string>
     <string name="setting_item_tab_layout">タブを表示する</string>
     <string name="setting_item_quick_post">起動時にクイック投稿をオンにする</string>
@@ -61,6 +63,7 @@
 
     <string name="title_activity_tab_control">TabControlActivity</string>
     <string name="title_activity_appearance_control">AppearanceControlActivity</string>
+    <string name="title_activity_twitter_control">TwitterControlActivity</string>
 
     <string name="preference_key_theme">preference_key_theme</string>
     <string name="preference_key_title_bar">preference_key_title_bar</string>
@@ -69,6 +72,7 @@
     <string name="preference_key_quick_post_on_top">preference_key_quick_post_on_top</string>
     <string name="preference_key_show_created_at">preference_show_created_at</string>
     <string name="preference_key_show_client_name">preference_show_client_name</string>
+    <string name="preference_key_load_count">preference_key_load_count</string>
 
     <string name="title_activity_user">UserActivity</string>
     <string name="title_activity_talk">TalkActivity</string>

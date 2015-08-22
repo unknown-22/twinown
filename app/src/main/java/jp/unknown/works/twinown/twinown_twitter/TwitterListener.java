@@ -6,7 +6,6 @@ import jp.unknown.works.twinown.models.UserPreference;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.TwitterAdapter;
-import twitter4j.User;
 import twitter4j.UserList;
 
 public class TwitterListener extends TwitterAdapter{
@@ -19,7 +18,7 @@ public class TwitterListener extends TwitterAdapter{
     @Override
     public void gotHomeTimeline(ResponseList<Status> statuses) {
         super.gotHomeTimeline(statuses);
-        EventBus.getDefault().post(new Component.HomeStatusListEvent(statuses, userPreference));
+        EventBus.getDefault().post(new Component.HomeStatusListEvent(statuses, userPreference, false));
     }
 
     @Override

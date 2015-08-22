@@ -208,14 +208,21 @@ public class TwinownHelper {
         task.execute();
     }
 
-    public static void getHomeTimeline(UserPreference userPreference, Paging paging) {
-        AsyncTwitter twitter;
-        if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createAsyncTwitter(userPreference);
-        }
-        twitter.getHomeTimeline(paging);
+    public static void getHomeTimeline(final UserPreference userPreference, final Paging paging, final boolean isReconnect) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    ResponseList<twitter4j.Status> statuses = twitter.getHomeTimeline(paging);
+                    EventBus.getDefault().post(new Component.HomeStatusListEvent(statuses, userPreference, isReconnect));
+                } catch (TwitterException e) {
+                    EventBus.getDefault().post(new Component.HomeStatusListEvent(null, userPreference, isReconnect));
+                }
+                return null;
+            }
+        };
+        task.execute();
     }
 
     public static void getMentionTimeline(UserPreference userPreference, Paging paging) {
@@ -255,14 +262,14 @@ public class TwinownHelper {
         twitter.getUserLists(userPreference.userId);
     }
 
-    public static void getUserListStatuses(final UserPreference userPreference, final Long listId, final Paging paging) {
+    public static void getUserListStatuses(final UserPreference userPreference, final Long listId, final Paging paging, final boolean isHead) {
         final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
                     ResponseList<twitter4j.Status> statuses = twitter.getUserListStatuses(listId, paging);
-                    EventBus.getDefault().post(new Component.UserListStatusesEvent(statuses, userPreference, listId));
+                    EventBus.getDefault().post(new Component.UserListStatusesEvent(statuses, userPreference, listId, isHead));
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }
@@ -272,7 +279,7 @@ public class TwinownHelper {
         task.execute();
     }
 
-    private static TwitterStream createUserStream(UserPreference userPreference) {
+    private static TwitterStream createUserStream(UserPreference userPreference, int count) {
         Client client = Client.get(userPreference.clientId);
         ConfigurationBuilder conf  = new ConfigurationBuilder()
                 .setOAuthAccessToken(userPreference.tokenKey)
@@ -280,7 +287,7 @@ public class TwinownHelper {
                 .setOAuthConsumerKey(client.consumerKey)
                 .setOAuthConsumerSecret(client.consumerSecret);
         TwitterStream twitterStream = new TwitterStreamFactory(conf.build()).getInstance();
-        TwinownUserStreamListener twinownUserStreamListener = new TwinownUserStreamListener(userPreference);
+        TwinownUserStreamListener twinownUserStreamListener = new TwinownUserStreamListener(userPreference, count);
         twitterStream.addListener(twinownUserStreamListener);
         twitterStream.addConnectionLifeCycleListener(twinownUserStreamListener);
         return twitterStream;
@@ -317,11 +324,11 @@ public class TwinownHelper {
             return ourInstance;
         }
 
-        public TwitterStream getOrCreateTwitterStream(UserPreference userPreference) {
+        public TwitterStream getOrCreateTwitterStream(UserPreference userPreference, int count) {
             if (userIdTwitterStreamHashMap.containsKey(userPreference.userId)) {
                 return userIdTwitterStreamHashMap.get(userPreference.userId);
             }
-            TwitterStream twitterStream = createUserStream(userPreference);
+            TwitterStream twitterStream = createUserStream(userPreference, count);
             userIdTwitterStreamHashMap.put(userPreference.userId, twitterStream);
             return twitterStream;
         }
