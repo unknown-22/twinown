@@ -51,8 +51,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="center"
-            android:scaleX="2.5"
-            android:scaleY="2.5"
+            android:scaleX="2"
+            android:scaleY="2"
             android:contentDescription="@android:string/untitled"
             android:src="@drawable/ic_notifications_white"
             android:id="@+id/twitterActivityEmptyView"/>
