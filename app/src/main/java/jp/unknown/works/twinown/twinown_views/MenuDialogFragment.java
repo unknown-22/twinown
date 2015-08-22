@@ -26,6 +26,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,6 +41,7 @@ import butterknife.ButterKnife;
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.PreviewActivity;
 import jp.unknown.works.twinown.TalkActivity;
+import jp.unknown.works.twinown.TweetActivity;
 import jp.unknown.works.twinown.UserActivity;
 import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
@@ -293,7 +296,41 @@ public class MenuDialogFragment extends DialogFragment {
                 dismiss();
             }
         });
-        int dialogWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);  // TODO 画面サイズで分けるかも
+        statusMenuListVew.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                final StatusMenuItem statusMenuItem = statusMenuItemList.get(position - 1);
+                switch (statusMenuItem.actionType) {
+                    case MENU_ACTION_TYPE_REPLY:
+                        if (!status.isRetweet()) {
+                            startActivity(new Intent(getActivity(), TweetActivity.class)
+                                    .putExtra(Utils.ARGUMENTS_KEYWORD_STATUS, status));
+                        } else {
+                            startActivity(new Intent(getActivity(), TweetActivity.class)
+                                    .putExtra(Utils.ARGUMENTS_KEYWORD_STATUS, status.getRetweetedStatus()));
+                        }
+                        dismiss();
+                        return true;
+                    case MENU_ACTION_TYPE_USER_SCREEN_NAME:
+                        startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse("https://twitter.com/" + StringUtils.stripStart(statusMenuItem.statusMenuItemText, "@"))
+                        ));
+                        dismiss();
+                        return true;
+                    case MENU_ACTION_TYPE_LINK_MEDIA:
+                        ExtendedMediaEntity extendedMediaEntity = status.getExtendedMediaEntities()[0];
+                        startActivity(new Intent(
+                                Intent.ACTION_VIEW,
+                                Uri.parse(extendedMediaEntity.getExpandedURL())
+                        ));
+                        dismiss();
+                        return true;
+                }
+                return false;
+            }
+        });
+        int dialogWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);
         AlertDialog alertDialog = builder.create();
         WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();
         lp.width = dialogWidth;
@@ -400,7 +437,7 @@ public class MenuDialogFragment extends DialogFragment {
             StatusMenuItem item = (StatusMenuItem) getItem(position);
             switch (item.actionType) {
                 case MENU_ACTION_TYPE_REPLY:
-                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reply_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_reply_white, 0, R.drawable.ic_keyboard_arrow_right_white, 0);
                     break;
                 case MENU_ACTION_TYPE_RT:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_autorenew_white, 0, 0, 0);
@@ -415,7 +452,7 @@ public class MenuDialogFragment extends DialogFragment {
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_chat_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_USER_SCREEN_NAME:
-                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_person_white, 0, R.drawable.ic_keyboard_arrow_right_white, 0);
                     break;
                 case MENU_ACTION_TYPE_DELETE:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_delete_white, 0, 0, 0);
@@ -427,7 +464,7 @@ public class MenuDialogFragment extends DialogFragment {
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_link_white, 0, 0, 0);
                     break;
                 case MENU_ACTION_TYPE_LINK_MEDIA:
-                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_white, 0, 0, 0);
+                    holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_image_white, 0, R.drawable.ic_keyboard_arrow_right_white, 0);
                     break;
                 case MENU_ACTION_TYPE_OPEN_BROWSER:
                     holder.statusMenuItemText.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_open_in_browser_white, 0, 0, 0);

@@ -7,7 +7,6 @@
     <string name="action_change_account">アカウント変更</string>
     <string name="notice_change_account">アカウントを変更しました(%s)</string>
 
-    <string name="title_activity_auth">AuthActivity</string>
     <string name="pin_code_edit_text_hint">PINコードを入力してください</string>
     <string name="open_authorization_button_hint">認証画面を開く</string>
     <string name="error">エラーが発生しました</string>
@@ -42,7 +41,6 @@
     <string name="tweet_delete_rt_confirm">"リツイートを取り消しますか？"</string>
     <string name="tweet_delete_confirm">"ツイートを削除しますか？"</string>
 
-    <string name="title_activity_setting">SettingActivity</string>
     <string name="setting_action_account">アカウント設定</string>
     <string name="setting_action_tab">タブ設定</string>
     <string name="setting_action_appearance">外観設定</string>
@@ -61,10 +59,6 @@
     <string name="setting_item_show_created_at">投稿時間を表示する</string>
     <string name="setting_item_show_client_name">クライアント名を表示する</string>
 
-    <string name="title_activity_tab_control">TabControlActivity</string>
-    <string name="title_activity_appearance_control">AppearanceControlActivity</string>
-    <string name="title_activity_twitter_control">TwitterControlActivity</string>
-
     <string name="preference_key_theme">preference_key_theme</string>
     <string name="preference_key_title_bar">preference_key_title_bar</string>
     <string name="preference_key_tab_layout">preference_key_tab_layout</string>
@@ -74,9 +68,12 @@
     <string name="preference_key_show_client_name">preference_show_client_name</string>
     <string name="preference_key_load_count">preference_key_load_count</string>
 
-    <string name="title_activity_user">UserActivity</string>
-    <string name="title_activity_talk">TalkActivity</string>
-    <string name="title_activity_tweet">TweetActivity</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_setting">設定</string>
+    <string name="title_activity_tab_control">タブ設定</string>
+    <string name="title_activity_appearance_control">外観設定</string>
+    <string name="title_activity_twitter_control">Twitter設定</string>
+    <string name="title_activity_auth">Twitter認証</string>
+    <string name="title_activity_user">ユーザ</string>
+    <string name="title_activity_talk">会話</string>
+    <string name="title_activity_tweet">Twinownで投稿</string>
 </resources>
