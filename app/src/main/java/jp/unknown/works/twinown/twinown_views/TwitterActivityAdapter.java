@@ -32,7 +32,11 @@ public class TwitterActivityAdapter extends RecyclerView.Adapter{
 
     public void addTwitterActivity(TwitterActivity twitterActivity) {
         sortedList.add(twitterActivity);
-        notifyDataSetChanged();
+        if (sortedList.size() > 0) {
+            recyclerView.setVisibility(View.VISIBLE);
+            //noinspection ConstantConditions
+            fragment.getView().findViewById(R.id.twitterActivityEmptyView).setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -110,7 +114,7 @@ public class TwitterActivityAdapter extends RecyclerView.Adapter{
 
         @Override
         public void onRemoved(int position, int count) {
-            adapter.notifyItemRangeInserted(position, count);
+            adapter.notifyItemRangeRemoved(position, count);
         }
 
         @Override

@@ -84,6 +84,7 @@ public class MainFragment extends Fragment {
     @Bind(R.id.mainDrawerLayout) DrawerLayout mainDrawerLayout;
     @Bind(R.id.mainNavigation) NavigationView mainNavigation;
     @Bind(R.id.twitterActivityRecyclerView) RecyclerView twitterActivityRecyclerView;
+    @Bind(R.id.twitterActivityEmptyView) ImageView twitterActivityEmptyView;
     @Bind(R.id.headerSpinner) AppCompatSpinner headerSpinner;
     @Bind(R.id.drawerHeader) RelativeLayout drawerHeader;
     @Bind(R.id.userBannerView) ImageView userBannerView;
@@ -292,6 +293,10 @@ public class MainFragment extends Fragment {
         twitterActivityRecyclerView.addItemDecoration(new TimelineItemDecoration(getActivity()));
         twitterActivityRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         twitterActivityRecyclerView.setAdapter(twitterActivityAdapter);
+        if (twitterActivityAdapter.getItemCount() > 0) {
+            twitterActivityRecyclerView.setVisibility(View.VISIBLE);
+            twitterActivityEmptyView.setVisibility(View.GONE);
+        }
         return view;
     }
 

@@ -47,9 +47,19 @@
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:id="@+id/activityNavigation">
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="center"
+            android:scaleX="2.5"
+            android:scaleY="2.5"
+            android:contentDescription="@android:string/untitled"
+            android:src="@drawable/ic_notifications_white"
+            android:id="@+id/twitterActivityEmptyView"/>
         <android.support.v7.widget.RecyclerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:visibility="gone"
             android:id="@+id/twitterActivityRecyclerView"/>
     </android.support.design.widget.NavigationView>
 </android.support.v4.widget.DrawerLayout>
