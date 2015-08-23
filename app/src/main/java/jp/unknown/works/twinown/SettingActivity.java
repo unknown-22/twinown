@@ -25,6 +25,7 @@ public class SettingActivity extends AppCompatActivity {
     private static final int SETTING_ACTION_TYPE_TAB = 1;
     private static final int SETTING_ACTION_TYPE_APPEARANCE = 2;
     private static final int SETTING_ACTION_TYPE_TWITTER = 3;
+    private static final int SETTING_ACTION_TYPE_CLIENT = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +48,7 @@ public class SettingActivity extends AppCompatActivity {
             settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_account), SETTING_ACTION_TYPE_ACCOUNT));
             settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_tab), SETTING_ACTION_TYPE_TAB));
             settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_appearance), SETTING_ACTION_TYPE_APPEARANCE));
-            settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_twitter), SETTING_ACTION_TYPE_TWITTER));
+            settingMenuItems.add(new SettingMenuItem(getString(R.string.setting_action_client), SETTING_ACTION_TYPE_CLIENT));
             final SettingAdapter settingAdapter = new SettingAdapter(getActivity(), 0, settingMenuItems);
             settingListView.setAdapter(settingAdapter);
             settingListView.setOnItemClickListener(new ListView.OnItemClickListener() {
@@ -66,6 +67,9 @@ public class SettingActivity extends AppCompatActivity {
                             break;
                         case SETTING_ACTION_TYPE_TWITTER:
                             startActivity(new Intent(getActivity(), TwitterControlActivity.class));
+                            break;
+                        case SETTING_ACTION_TYPE_CLIENT:
+                            startActivity(new Intent(getActivity(), ClientControlActivity.class));
                             break;
                     }
                 }

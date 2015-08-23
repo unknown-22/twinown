@@ -309,6 +309,7 @@ public class MainFragment extends Fragment {
         context.unbindService(serviceConnection);
         context.stopService(new Intent(context, TwinownService.class));
         TwinownHelper.StreamSingleton.getInstance().stopAllUserStream();
+        TwinownHelper.clearAllTwitter();
     }
 
     private void togglePostView() {

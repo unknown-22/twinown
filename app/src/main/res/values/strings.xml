@@ -8,7 +8,9 @@
     <string name="notice_change_account">アカウントを変更しました(%s)</string>
 
     <string name="pin_code_edit_text_hint">PINコードを入力してください</string>
+    <string name="show_client_name">クライアント名 : %s </string>
     <string name="open_authorization_button_hint">認証画面を開く</string>
+    <string name="change_client">認証クライアントを変更</string>
     <string name="error">エラーが発生しました</string>
     <string name="please_enter_pin_code">PINコードを入力してください</string>
     <string name="added_user_preference">アカウントを追加しました</string>
@@ -21,6 +23,7 @@
     <string name="tweet">TWEET</string>
     <string name="tweet_length">140</string>
     <string name="add">ADD</string>
+    <string name="setting">設定</string>
     <string name="twitterActivity">通知</string>
 
     <string name="menu_action_reply">返信する</string>
@@ -45,10 +48,16 @@
     <string name="setting_action_tab">タブ設定</string>
     <string name="setting_action_appearance">外観設定</string>
     <string name="setting_action_twitter">Twitter設定</string>
+    <string name="setting_action_client">クライアント設定</string>
 
     <string name="dialog_title_choose_tab_type">タブの種類を設定してください</string>
     <string name="dialog_title_choose_account">アカウントを選択してください</string>
     <string name="dialog_title_choose_list">リストを選択してください</string>
+
+    <string name="dialog_title_add_client">クライアント追加</string>
+    <string name="dialog_hint_client_name">クライアント名</string>
+    <string name="dialog_hint_client_consumer_key">コンシューマーキー</string>
+    <string name="dialog_hint_client_consumer_secret">コンシューマーシークレット</string>
 
     <string name="dialog_title_choose_theme">テーマを選択してください</string>
     <string name="dialog_title_choose_load_count">読み込みツイート数を選択してください</string>
@@ -72,6 +81,7 @@
     <string name="title_activity_tab_control">タブ設定</string>
     <string name="title_activity_appearance_control">外観設定</string>
     <string name="title_activity_twitter_control">Twitter設定</string>
+    <string name="title_activity_client_control">クライアント設定</string>
     <string name="title_activity_auth">Twitter認証</string>
     <string name="title_activity_user">ユーザ</string>
     <string name="title_activity_talk">会話</string>

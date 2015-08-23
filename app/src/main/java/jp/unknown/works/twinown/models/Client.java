@@ -2,6 +2,7 @@ package jp.unknown.works.twinown.models;
 
 
 import java.io.Serializable;
+import java.util.List;
 
 import ollie.Model;
 import ollie.annotation.Column;
@@ -20,6 +21,10 @@ public class Client extends Model implements Serializable{
 
     public static Client get(Long clientId) {
         return Select.from(Client.class).where(String.format("%s=%d", Model._ID, clientId)).fetchSingle();
+    }
+
+    public static List<Client> getAll() {
+        return Select.from(Client.class).fetch();
     }
 
     public static int getCount() {

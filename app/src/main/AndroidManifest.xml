@@ -55,6 +55,10 @@
             android:label="@string/title_activity_twitter_control" >
         </activity>
         <activity
+            android:name=".ClientControlActivity"
+            android:label="@string/title_activity_client_control" >
+        </activity>
+        <activity
             android:name=".UserActivity"
             android:label="@string/title_activity_user" >
         </activity>

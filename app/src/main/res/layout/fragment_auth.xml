@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:text="@string/open_authorization_button_hint"
         android:id="@+id/open_authorization_button"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/clientNameTextView"
         android:layout_centerHorizontal="true"/>
 
     <EditText
@@ -33,5 +33,23 @@
         android:text="@android:string/ok"
         android:id="@+id/pin_code_ok_button"
         android:layout_below="@+id/pin_code_edit_text"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text=""
+        android:id="@+id/clientNameTextView"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/change_client"
+        android:id="@+id/change_client"
+        android:visibility="gone"
+        android:layout_below="@+id/open_authorization_button"
         android:layout_centerHorizontal="true"/>
 </RelativeLayout>

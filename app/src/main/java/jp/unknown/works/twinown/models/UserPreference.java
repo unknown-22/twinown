@@ -21,6 +21,10 @@ public class UserPreference extends Model implements Serializable {
         return Select.from(UserPreference.class).where(String.format("%s=%d", "user_id", userId)).fetchSingle();
     }
 
+    public static List<UserPreference> getByClientId(long clientId) {
+        return Select.from(UserPreference.class).where(String.format("%s=%d", "client_id", clientId)).fetch();
+    }
+
     public static List<UserPreference> getAll() {
         return Select.from(UserPreference.class).fetch();
     }

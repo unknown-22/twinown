@@ -23,6 +23,12 @@ import twitter4j.UserMentionEntity;
 
 
 public class Component {
+    public static class ClientAddEvent {
+        public ClientAddEvent() {
+
+        }
+    }
+
     public static class HomeStatusListEvent {
         public final ResponseList<Status> statuses;
         public final UserPreference userPreference;

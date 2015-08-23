@@ -54,6 +54,11 @@ public class TwinownHelper {
         return twitter;
     }
 
+    public static void clearAllTwitter() {
+        userIdTwitterHashMap.clear();
+        userIdAsyncTwitterHashMap.clear();
+    }
+
     public static void updateStatus(UserPreference userPreference, final String statusText, final Status toReplyStatus, final ArrayList<InputStream> imageInputStreams) {
         final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
