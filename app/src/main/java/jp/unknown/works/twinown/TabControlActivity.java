@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -75,8 +76,10 @@ public class TabControlActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         switch (which) {
                             case 0: // Stream
+                                showSelectStreamAccountDialog();
                                 break;
                             case 1: // Mention
+                                showSelectMentionAccountDialog();
                                 break;
                             case 2: // List
                                 showSelectListAccountDialog();
@@ -84,6 +87,42 @@ public class TabControlActivity extends AppCompatActivity {
                         }
                     }
 
+                })
+                .show();
+    }
+
+    private void showSelectStreamAccountDialog() {
+        final List<UserPreference> userPreferenceList = UserPreference.getAll();
+        String[] userScreenNameList = new String[userPreferenceList.size()];
+        for(int i = 0; i < userPreferenceList.size(); i++) {
+            userScreenNameList[i] = String.format("@%s", userPreferenceList.get(i).screenName);
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title_choose_account))
+                .setItems(userScreenNameList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userPreference = userPreferenceList.get(which);
+                        Tab.createStreamTab(userPreference);
+                    }
+                })
+                .show();
+    }
+
+    private void showSelectMentionAccountDialog() {
+        final List<UserPreference> userPreferenceList = UserPreference.getAll();
+        String[] userScreenNameList = new String[userPreferenceList.size()];
+        for(int i = 0; i < userPreferenceList.size(); i++) {
+            userScreenNameList[i] = String.format("@%s", userPreferenceList.get(i).screenName);
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.dialog_title_choose_account))
+                .setItems(userScreenNameList, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        userPreference = userPreferenceList.get(which);
+                        Tab.createMentionTab(userPreference);
+                    }
                 })
                 .show();
     }
@@ -128,6 +167,34 @@ public class TabControlActivity extends AppCompatActivity {
             View view = inflater.inflate(android.R.layout.list_content, container, false);
             ButterKnife.bind(this, view);
             tabAdapter = new TabAdapter(getActivity(), 0, tabMenuItems);
+            tabListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, final int position, long id) {
+                    View dialogView = getActivity().getLayoutInflater().inflate(R.layout.tab_name_input_dialog, null);
+                    final AlertDialog dialog = new AlertDialog.Builder(getActivity())
+                            .setView(dialogView)
+                            .setTitle(R.string.dialog_title_tab_name)
+                            .show();
+                    final EditText tabNameEditText = (EditText) dialog.findViewById(R.id.tabNameEditText);
+                    tabNameEditText.setText(tabMenuItems.get(position).tabName);
+                    dialog.findViewById(R.id.buttonOk).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Tab tab = Tab.get(tabMenuItems.get(position).id);
+                            tab.name = tabNameEditText.getText().toString();
+                            tab.save();
+                            dialog.dismiss();
+                            refreshTabAdapter();
+                        }
+                    });
+                    dialog.findViewById(R.id.buttonCancel).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            dialog.dismiss();
+                        }
+                    });
+                }
+            });
             tabListView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, final int position, long id) {
