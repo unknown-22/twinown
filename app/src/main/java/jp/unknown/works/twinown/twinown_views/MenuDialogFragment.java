@@ -14,6 +14,7 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -330,6 +331,21 @@ public class MenuDialogFragment extends DialogFragment {
                 return false;
             }
         });
+        dialogView.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (KeyEvent.ACTION_DOWN == event.getAction()) {
+                    switch (keyCode) {
+                        case KeyEvent.KEYCODE_F:
+                            TwinownHelper.createFavorite(userPreference, status);
+                            dismiss();
+                            return true;
+                    }
+                }
+                return false;
+            }
+        });
+        dialogView.setFocusable(true);
         int dialogWidth = (int) (getResources().getDisplayMetrics().widthPixels * 0.85);
         AlertDialog alertDialog = builder.create();
         WindowManager.LayoutParams lp = alertDialog.getWindow().getAttributes();

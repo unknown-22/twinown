@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_twitter.Component;
+import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.User;
@@ -169,7 +171,21 @@ class TimelineAdapter extends RecyclerView.Adapter{
             ButterKnife.bind(this, itemView);
             context = itemView.getContext();
             // textSize = statusTextView.getTextSize();
+            itemView.setFocusable(true);
             textSizeSmall = statusTextView.getTextSize() * SMALL_TEXT_SCALE;
+            itemView.setOnKeyListener(new View.OnKeyListener() {
+                @Override
+                public boolean onKey(View v, int keyCode, KeyEvent event) {
+                    if (KeyEvent.ACTION_DOWN == event.getAction()){
+                        switch (keyCode) {
+                            case KeyEvent.KEYCODE_F:
+                                TwinownHelper.createFavorite(userPreference, timelineList.get(getAdapterPosition()));
+                                return true;
+                        }
+                    }
+                    return false;
+                }
+            });
         }
 
         public void setStatus(Status status) {
