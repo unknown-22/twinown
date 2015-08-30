@@ -15,36 +15,9 @@
         android:layout_marginRight="@dimen/icon_vertical_margin"
         android:id="@+id/statusIconView"
         android:contentDescription="@android:string/untitled"
-        android:layout_alignTop="@+id/statusNameView"
+        android:layout_below="@+id/statusCreatedAt"
         android:layout_alignParentStart="true"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:paddingLeft="0dp"
-        android:paddingRight="@dimen/status_text_vertical_short_margin"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/app_name"
-        android:id="@+id/statusNameView"
-        android:layout_alignTop="@+id/statusScreenNameView"
-        android:layout_toEndOf="@+id/statusIconView"/>
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ellipsize="end"
-        android:singleLine="true"
-        android:alpha="0.7"
-        android:gravity="center|left"
-        android:paddingLeft="0dp"
-        android:paddingRight="@dimen/status_text_vertical_margin"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/app_name"
-        android:textStyle="bold"
-        android:id="@+id/statusScreenNameView"
-        android:layout_below="@+id/statusCreatedAt"
-        android:layout_toEndOf="@+id/statusNameView"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -53,9 +26,9 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:text="@string/app_name"
         android:id="@+id/statusTextView"
-        android:layout_below="@+id/statusNameView"
+        android:layout_below="@+id/statusTopLayout"
         android:layout_alignParentEnd="true"
-        android:layout_alignStart="@+id/statusNameView"/>
+        android:layout_alignStart="@+id/statusTopLayout"/>
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -71,7 +44,7 @@
         android:textStyle="bold"
         android:drawableLeft="@drawable/ic_autorenew_white"
         android:id="@+id/statusRetweetedScreenName"
-        android:layout_below="@+id/statusClientName"
+        android:layout_below="@+id/statusTextView"
         android:layout_toEndOf="@+id/statusIconView"/>
     <TextView
         android:layout_width="wrap_content"
@@ -102,5 +75,40 @@
         android:textStyle="bold"
         android:id="@+id/statusCreatedAt"
         android:layout_alignParentTop="true"
-        android:layout_alignEnd="@+id/statusTextView"/>
+        android:layout_alignParentEnd="true"/>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/statusTopLayout"
+        android:layout_alignTop="@+id/statusIconView"
+        android:layout_toEndOf="@+id/statusIconView">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:paddingLeft="0dp"
+            android:paddingRight="@dimen/status_text_vertical_short_margin"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/app_name"
+            android:id="@+id/statusNameView"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:alpha="0.7"
+            android:gravity="center|left"
+            android:paddingLeft="0dp"
+            android:paddingRight="@dimen/status_text_vertical_margin"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="@string/app_name"
+            android:textStyle="bold"
+            android:id="@+id/statusScreenNameView"/>
+    </LinearLayout>
 </RelativeLayout>
