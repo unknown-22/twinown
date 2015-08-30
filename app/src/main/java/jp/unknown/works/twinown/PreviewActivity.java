@@ -20,6 +20,7 @@ import uk.co.senab.photoview.PhotoView;
 public class PreviewActivity extends AppCompatActivity {
     @Bind(R.id.viewPager) ViewPager viewPager;
     private ArrayList<ExtendedMediaEntity> extendedMediaEntities;
+    private int firstPosition = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,10 +28,14 @@ public class PreviewActivity extends AppCompatActivity {
         if (extendedMediaEntities == null) {
             //noinspection unchecked
             extendedMediaEntities = (ArrayList<ExtendedMediaEntity>) getIntent().getSerializableExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS);
+            if (getIntent().getSerializableExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_POSITION) != null) {
+                firstPosition = (int) getIntent().getSerializableExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_POSITION);
+            }
         }
         setContentView(R.layout.activity_preview);
         ButterKnife.bind(this);
         viewPager.setAdapter(new PreviewPagerAdapter(this, extendedMediaEntities));
+        viewPager.setCurrentItem(firstPosition, false);
     }
 
     class PreviewPagerAdapter extends PagerAdapter {

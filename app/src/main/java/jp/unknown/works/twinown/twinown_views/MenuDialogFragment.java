@@ -363,6 +363,7 @@ public class MenuDialogFragment extends DialogFragment {
         TextView statusCreatedAt = (TextView) headerView.findViewById(R.id.statusCreatedAt);
         TextView statusClientName = (TextView) headerView.findViewById(R.id.statusClientName);
         TextView statusRetweetedScreenName = (TextView) headerView.findViewById(R.id.statusRetweetedScreenName);
+        View colorBarView = headerView.findViewById(R.id.colorBarView);
         float textSizeSmall = statusTextView.getTextSize() * 0.8f;
         RoundedTransformation transform = new RoundedTransformation((int) (getActivity().getResources().getDimension(R.dimen.icon_size) / 8));
 
@@ -405,7 +406,11 @@ public class MenuDialogFragment extends DialogFragment {
         statusCreatedAt.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
         statusClientName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
         statusRetweetedScreenName.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSmall);
-
+        if (status.isFavorited()){
+            colorBarView.setVisibility(View.VISIBLE);
+        } else {
+            colorBarView.setVisibility(View.GONE);
+        }
         statusMenuListVew.addHeaderView(headerView, null, false);
         return statusIconView;
     }

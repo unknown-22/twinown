@@ -17,6 +17,7 @@ public class Utils {
     public static final String ARGUMENTS_KEYWORD_STATUS = "arguments_keyword_status";
     public static final String ARGUMENTS_KEYWORD_USER = "arguments_keyword_user";
     public static final String ARGUMENTS_KEYWORD_USER_EXTRA = "arguments_keyword_user_extra";
+    public static final String ARGUMENTS_KEYWORD_MEDIA_POSITION = "arguments_keyword_media_position";
     public static final String ARGUMENTS_KEYWORD_MEDIA_URLS = "arguments_keyword_media_urls";
 
     public static final String SHARED_ELEMENT_NAME_STATUS_ICON = "shared_element_name_status_icon";

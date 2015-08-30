@@ -47,7 +47,7 @@ public class TimelineFragment extends Fragment {
         tab = (Tab) getArguments().getSerializable(Utils.ARGUMENTS_KEYWORD_TAB);
         userPreference = UserPreference.get(tab != null ? tab.userId : null);
         initializeTwitter();
-        timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
+        timelineAdapter = new TimelineAdapter(this, getFragmentManager(), getActivity(), userPreference);
         userScreenNamePattern = Pattern.compile(Pattern.quote(String.format("@%s", userPreference.screenName)), Pattern.CASE_INSENSITIVE);
         EventBus.getDefault().register(this);
     }
@@ -125,7 +125,7 @@ public class TimelineFragment extends Fragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         if (timelineAdapter != null) {
-            timelineAdapter.refreshActivity(getFragmentManager(), context);
+            timelineAdapter.refreshActivity(this, getFragmentManager(), context);
         }
     }
 

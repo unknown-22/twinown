@@ -1,7 +1,7 @@
 package jp.unknown.works.twinown.twinown_views;
 
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -37,16 +37,16 @@ public class TalkFragment extends Fragment {
         if (rootStatus != null) {
             TwinownHelper.getInReplyToStatus(userPreference, rootStatus);
         }
-        timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
+        timelineAdapter = new TimelineAdapter(this, getFragmentManager(), getActivity(), userPreference);
         timelineAdapter.addStatus(rootStatus);
         EventBus.getDefault().register(this);
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
+    public void onAttach(Context context) {
+        super.onAttach(context);
         if (timelineAdapter != null) {
-            timelineAdapter.refreshActivity(getFragmentManager(), activity);
+            timelineAdapter.refreshActivity(this, getFragmentManager(), context);
         }
     }
 

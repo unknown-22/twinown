@@ -1,0 +1,6 @@
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+           android:layout_width="@dimen/image_preview_size"
+           android:layout_height="@dimen/image_preview_size"
+           android:contentDescription="@android:string/untitled"
+           android:id="@+id/imageView"
+           android:padding="@dimen/image_preview_margin"/>

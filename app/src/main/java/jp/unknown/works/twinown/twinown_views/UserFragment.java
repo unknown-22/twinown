@@ -61,7 +61,7 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
             paging.setCount(count);
             TwinownHelper.getUserTimeLine(userPreference, user.getId(), paging);
         }
-        timelineAdapter = new TimelineAdapter(getFragmentManager(), getActivity(), userPreference);
+        timelineAdapter = new TimelineAdapter(this, getFragmentManager(), getActivity(), userPreference);
         EventBus.getDefault().register(this);
     }
 
@@ -69,7 +69,7 @@ public class UserFragment extends Fragment implements AppBarLayout.OnOffsetChang
     public void onAttach(Context context) {
         super.onAttach(context);
         if (timelineAdapter != null) {
-            timelineAdapter.refreshActivity(getFragmentManager(), context);
+            timelineAdapter.refreshActivity(this, getFragmentManager(), context);
         }
     }
 

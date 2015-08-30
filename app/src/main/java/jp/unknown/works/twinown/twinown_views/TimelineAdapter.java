@@ -2,8 +2,10 @@ package jp.unknown.works.twinown.twinown_views;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.util.SortedList;
 import android.support.v7.widget.RecyclerView;
@@ -13,12 +15,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.regex.Matcher;
@@ -27,16 +32,19 @@ import java.util.regex.Pattern;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import jp.unknown.works.twinown.PreviewActivity;
 import jp.unknown.works.twinown.Utils;
 import jp.unknown.works.twinown.R;
 import jp.unknown.works.twinown.models.UserPreference;
 import jp.unknown.works.twinown.twinown_twitter.Component;
 import jp.unknown.works.twinown.twinown_twitter.TwinownHelper;
+import twitter4j.ExtendedMediaEntity;
 import twitter4j.ResponseList;
 import twitter4j.Status;
 import twitter4j.User;
 
 class TimelineAdapter extends RecyclerView.Adapter{
+    private Fragment fragment;
     private FragmentManager fragmentManager;
     private final UserPreference userPreference;
     private RecyclerView recyclerView;
@@ -56,7 +64,8 @@ class TimelineAdapter extends RecyclerView.Adapter{
     static final float SMALL_TEXT_SCALE = 0.9f;
 
 
-    public TimelineAdapter(FragmentManager fragmentManager, Context context, UserPreference userPreference) {
+    public TimelineAdapter(Fragment fragment, FragmentManager fragmentManager, Context context, UserPreference userPreference) {
+        this.fragment = fragment;
         this.fragmentManager = fragmentManager;
         this.userPreference = userPreference;
         inflater = LayoutInflater.from(context);
@@ -66,7 +75,8 @@ class TimelineAdapter extends RecyclerView.Adapter{
         is_show_client_name = Utils.getPreferenceBoolean(context, context.getString(R.string.preference_key_show_client_name), true);
     }
 
-    public void refreshActivity(FragmentManager fragmentManager, Context context) {
+    public void refreshActivity(Fragment fragment, FragmentManager fragmentManager, Context context) {
+        this.fragment = fragment;
         this.fragmentManager = fragmentManager;
         inflater = LayoutInflater.from(context);
     }
@@ -151,6 +161,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
         @Bind(R.id.statusClientName) TextView statusClientName;
         @Bind(R.id.statusRetweetedScreenName) TextView statusRetweetedScreenName;
         @Bind(R.id.colorBarView) View colorBarView;
+        @Bind(R.id.imagePreviewLayout) LinearLayout imagePreviewLayout;
         // private final float textSize;
         private final float textSizeSmall;
 
@@ -249,6 +260,32 @@ class TimelineAdapter extends RecyclerView.Adapter{
                 colorBarView.setVisibility(View.VISIBLE);
             } else {
                 colorBarView.setVisibility(View.GONE);
+            }
+
+            // サムネイル
+            imagePreviewLayout.removeAllViews();
+            int i = 0;
+            if (Utils.getPreferenceBoolean(fragment.getContext(), fragment.getString(R.string.preference_key_show_thumbnail), true)) {
+                final ExtendedMediaEntity[] extendedMediaEntities = status.getExtendedMediaEntities();
+                for (ExtendedMediaEntity extendedMediaEntity : extendedMediaEntities) {
+                    final String imageUrl = extendedMediaEntity.getMediaURL();
+                    ImageView thumbnailView = (ImageView) inflater.inflate(R.layout.image_preview, null);
+                    final int finalI = i;
+                    thumbnailView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            fragment.startActivity(new Intent(
+                                    fragment.getActivity(),
+                                    PreviewActivity.class)
+                                    .putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_URLS, new ArrayList<>(Arrays.asList(extendedMediaEntities)))
+                                    .putExtra(Utils.ARGUMENTS_KEYWORD_MEDIA_POSITION, finalI)
+                                    );
+                        }
+                    });
+                    Picasso.with(inflater.getContext()).load(imageUrl).resizeDimen(R.dimen.image_preview_size, R.dimen.image_preview_size).centerCrop().into(thumbnailView);
+                    imagePreviewLayout.addView(thumbnailView);
+                    i++;
+                }
             }
         }
     }
