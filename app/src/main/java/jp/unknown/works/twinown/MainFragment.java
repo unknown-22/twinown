@@ -85,10 +85,6 @@ public class MainFragment extends Fragment {
     @Bind(R.id.mainNavigation) NavigationView mainNavigation;
     @Bind(R.id.twitterActivityRecyclerView) RecyclerView twitterActivityRecyclerView;
     @Bind(R.id.twitterActivityEmptyView) ImageView twitterActivityEmptyView;
-    @Bind(R.id.headerSpinner) AppCompatSpinner headerSpinner;
-    @Bind(R.id.drawerHeader) RelativeLayout drawerHeader;
-    @Bind(R.id.userBannerView) ImageView userBannerView;
-    @Bind(R.id.userIconView) ImageView userIconView;
     @Bind(R.id.mainLinearLayout) LinearLayout mainLinearLayout;
     @Bind(R.id.toolbar) Toolbar toolbar;
     @Bind(R.id.tabLayout) TabLayout tabLayout;
@@ -98,10 +94,12 @@ public class MainFragment extends Fragment {
     @Bind(R.id.tweetEditText) EditText tweetEditText;
     @Bind(R.id.quickPostUserIconView) ImageView quickPostUserIconView;
 
+    AppCompatSpinner headerSpinner;
+    RelativeLayout drawerHeader;
+    ImageView userBannerView;
+    ImageView userIconView;
     Status toReplyStatus;
 
-    @SuppressWarnings("unused")
-    @OnClick(R.id.drawerHeader)
     public void drawerHeaderClick() {
         if (user == null) {
             return;
@@ -190,6 +188,18 @@ public class MainFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         final View view = inflater.inflate(R.layout.fragment_main, container, false);
+        mainNavigation = (NavigationView) view.findViewById(R.id.mainNavigation);
+        View header_view = mainNavigation.inflateHeaderView(R.layout.drawer_header);
+        headerSpinner = (AppCompatSpinner) header_view.findViewById(R.id.headerSpinner);
+        drawerHeader = (RelativeLayout) header_view.findViewById(R.id.drawerHeader);
+        userBannerView = (ImageView) header_view.findViewById(R.id.userBannerView);
+        userIconView = (ImageView) header_view.findViewById(R.id.userIconView);
+        drawerHeader.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                drawerHeaderClick();
+            }
+        });
         ButterKnife.bind(this, view);
         if (Utils.getPreferenceBoolean(getActivity(), getString(R.string.preference_key_quick_post_on_top), false)) {
             mainLinearLayout.removeView(quickPostView);
