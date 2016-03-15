@@ -25,7 +25,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import jp.unknown.works.twinown.models.Tab;
 import jp.unknown.works.twinown.models.UserPreference;
-import twitter4j.User;
 
 public class AccountControlActivity extends AppCompatActivity {
 

@@ -128,7 +128,7 @@ public class AuthActivity extends AppCompatActivity {
             }
             twitter.addListener(listener);
             twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
-            twitter.getOAuthRequestTokenAsync();
+            twitter.getOAuthRequestTokenAsync("oob");
         }
 
         @Override
@@ -148,7 +148,7 @@ public class AuthActivity extends AppCompatActivity {
             twitter = factory.getInstance();
             twitter.addListener(listener);
             twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
-            twitter.getOAuthRequestTokenAsync();
+            twitter.getOAuthRequestTokenAsync("oob");
         }
 
         private final TwitterListener listener = new TwitterAdapter() {

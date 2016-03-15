@@ -179,6 +179,7 @@ public class ClientControlActivity extends AppCompatActivity {
             }
         }
 
+        @SuppressWarnings("unused")
         public void onEventMainThread(Component.ClientAddEvent clientAddEvent) {
             clientMenuItems.clear();
             for (Client client : Client.getAll()) {
