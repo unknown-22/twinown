@@ -1,16 +1,14 @@
 package jp.unknown.works.twinown.twinown_twitter;
 
 import android.os.AsyncTask;
+import android.util.LongSparseArray;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import de.greenrobot.event.EventBus;
 import jp.unknown.works.twinown.models.Client;
 import jp.unknown.works.twinown.models.UserPreference;
-import twitter4j.AsyncTwitter;
-import twitter4j.AsyncTwitterFactory;
 import twitter4j.Paging;
 import twitter4j.ResponseList;
 import twitter4j.Status;
@@ -21,28 +19,17 @@ import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
+import twitter4j.UserList;
 import twitter4j.auth.AccessToken;
 import twitter4j.conf.ConfigurationBuilder;
 
 public class TwinownHelper {
     private static final TwitterFactory twitterFactory = new TwitterFactory();
-    private static final HashMap<Long, Twitter> userIdTwitterHashMap = new HashMap<>();
-    private static final AsyncTwitterFactory asyncTwitterFactory = new AsyncTwitterFactory();
-    private static final HashMap<Long, AsyncTwitter> userIdAsyncTwitterHashMap = new HashMap<>();
-
-    private static AsyncTwitter createAsyncTwitter(UserPreference userPreference) {
-        Client client = Client.get(userPreference.clientId);
-        AsyncTwitter twitter = asyncTwitterFactory.getInstance();
-        twitter.setOAuthConsumer(client.consumerKey, client.consumerSecret);
-        twitter.setOAuthAccessToken(new AccessToken(userPreference.tokenKey, userPreference.tokenSecret));
-        twitter.addListener(new TwitterListener(userPreference));
-        userIdAsyncTwitterHashMap.put(userPreference.userId, twitter);
-        return twitter;
-    }
+    private static final LongSparseArray<Twitter> userIdTwitterHashMap = new LongSparseArray<>();
 
     private static Twitter getOrCreateTwitter(UserPreference userPreference) {
         Twitter twitter;
-        if (userIdTwitterHashMap.containsKey(userPreference.userId)){
+        if (userIdTwitterHashMap.get(userPreference.userId) != null){
             twitter = userIdTwitterHashMap.get(userPreference.userId);
         } else {
             Client client = Client.get(userPreference.clientId);
@@ -56,10 +43,10 @@ public class TwinownHelper {
 
     public static void clearAllTwitter() {
         userIdTwitterHashMap.clear();
-        userIdAsyncTwitterHashMap.clear();
     }
 
-    public static void updateStatus(UserPreference userPreference, final String statusText, final Status toReplyStatus, final ArrayList<InputStream> imageInputStreams) {
+    public static void updateStatus(UserPreference userPreference, final String statusText, final Status toReplyStatus,
+                                    final ArrayList<InputStream> imageInputStreams) {
         final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
@@ -72,7 +59,9 @@ public class TwinownHelper {
                     if (imageInputStreams != null && imageInputStreams.size() > 0) {
                         long[] mediaIdArray = new long[imageInputStreams.size()];
                         for (int i=0; i < imageInputStreams.size(); i++) {
-                            mediaIdArray[i] = twitter.uploadMedia("upload_image", imageInputStreams.get(i)).getMediaId();
+                            mediaIdArray[i] = twitter.uploadMedia(
+                                    "upload_image", imageInputStreams.get(i)
+                            ).getMediaId();
                         }
                         statusUpdate.setMediaIds(mediaIdArray);
                     }
@@ -213,14 +202,17 @@ public class TwinownHelper {
         task.execute();
     }
 
-    public static void getHomeTimeline(final UserPreference userPreference, final Paging paging, final boolean isReconnect) {
+    public static void getHomeTimeline(final UserPreference userPreference, final Paging paging,
+                                       final boolean isReconnect) {
         final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
                     ResponseList<twitter4j.Status> statuses = twitter.getHomeTimeline(paging);
-                    EventBus.getDefault().post(new Component.HomeStatusListEvent(statuses, userPreference, isReconnect));
+                    EventBus.getDefault().post(
+                            new Component.HomeStatusListEvent(statuses, userPreference, isReconnect)
+                    );
                 } catch (TwitterException e) {
                     EventBus.getDefault().post(new Component.HomeStatusListEvent(null, userPreference, isReconnect));
                 }
@@ -230,14 +222,21 @@ public class TwinownHelper {
         task.execute();
     }
 
-    public static void getMentionTimeline(UserPreference userPreference, Paging paging) {
-        AsyncTwitter twitter;
-        if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createAsyncTwitter(userPreference);
-        }
-        twitter.getMentions(paging);
+    public static void getMentionTimeline(final UserPreference userPreference, final Paging paging) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    ResponseList<twitter4j.Status> statuses = twitter.getMentionsTimeline(paging);
+                    EventBus.getDefault().post(new Component.MentionStatusListEvent(statuses, userPreference));
+                } catch (TwitterException e) {
+                    EventBus.getDefault().post(new Component.MentionStatusListEvent(null, userPreference));
+                }
+                return null;
+            }
+        };
+        task.execute();
     }
 
     public static void getUserTimeLine(final UserPreference userPreference, final Long userId, final Paging paging) {
@@ -257,24 +256,34 @@ public class TwinownHelper {
         task.execute();
     }
 
-    public static void getUserLists(UserPreference userPreference) {
-        AsyncTwitter twitter;
-        if (userIdAsyncTwitterHashMap.containsKey(userPreference.userId)){
-            twitter = userIdAsyncTwitterHashMap.get(userPreference.userId);
-        } else {
-            twitter = createAsyncTwitter(userPreference);
-        }
-        twitter.getUserLists(userPreference.userId);
+    public static void getUserLists(final UserPreference userPreference) {
+        final Twitter twitter = getOrCreateTwitter(userPreference);
+        AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... params) {
+                try {
+                    ResponseList<UserList> userLists = twitter.getUserLists(userPreference.userId);
+                    EventBus.getDefault().post(new Component.UserListsEvent(userLists));
+                } catch (TwitterException e) {
+                    EventBus.getDefault().post(new Component.UserListsEvent(null));
+                }
+                return null;
+            }
+        };
+        task.execute();
     }
 
-    public static void getUserListStatuses(final UserPreference userPreference, final Long listId, final Paging paging, final boolean isHead) {
+    public static void getUserListStatuses(final UserPreference userPreference, final Long listId, final Paging paging,
+                                           final boolean isHead) {
         final Twitter twitter = getOrCreateTwitter(userPreference);
         AsyncTask<Void, Void, Void> task = new AsyncTask<Void, Void, Void>() {
             @Override
             protected Void doInBackground(Void... params) {
                 try {
                     ResponseList<twitter4j.Status> statuses = twitter.getUserListStatuses(listId, paging);
-                    EventBus.getDefault().post(new Component.UserListStatusesEvent(statuses, userPreference, listId, isHead));
+                    EventBus.getDefault().post(
+                            new Component.UserListStatusesEvent(statuses, userPreference, listId, isHead)
+                    );
                 } catch (TwitterException e) {
                     e.printStackTrace();
                 }
@@ -323,14 +332,14 @@ public class TwinownHelper {
 
     public static class StreamSingleton {
         private static final StreamSingleton ourInstance = new StreamSingleton();
-        private static final HashMap<Long, TwitterStream> userIdTwitterStreamHashMap = new HashMap<>();
+        private static final LongSparseArray<TwitterStream> userIdTwitterStreamHashMap = new LongSparseArray<>();
 
         public static StreamSingleton getInstance() {
             return ourInstance;
         }
 
         public TwitterStream getOrCreateTwitterStream(UserPreference userPreference, int count) {
-            if (userIdTwitterStreamHashMap.containsKey(userPreference.userId)) {
+            if (userIdTwitterStreamHashMap.get(userPreference.userId) != null) {
                 return userIdTwitterStreamHashMap.get(userPreference.userId);
             }
             TwitterStream twitterStream = createUserStream(userPreference, count);
@@ -339,21 +348,22 @@ public class TwinownHelper {
         }
 
         public void startUserStream(UserPreference userPreference) {
-            if (userIdTwitterStreamHashMap.containsKey(userPreference.userId)) {
+            if (userIdTwitterStreamHashMap.get(userPreference.userId) != null) {
                 TwinownHelper.startUserStream(userIdTwitterStreamHashMap.get(userPreference.userId));
             }
         }
 
         public void stopAndDeleteUserStream(UserPreference userPreference) {
-            if (userIdTwitterStreamHashMap.containsKey(userPreference.userId)) {
+            if (userIdTwitterStreamHashMap.get(userPreference.userId) != null) {
                 TwinownHelper.stopUserStream(userIdTwitterStreamHashMap.get(userPreference.userId));
                 userIdTwitterStreamHashMap.remove(userPreference.userId);
             }
         }
 
         public void stopAllUserStream() {
-            for (TwitterStream twitterStream : userIdTwitterStreamHashMap.values()) {
-                TwinownHelper.stopUserStream(twitterStream);
+            for(int i = 0; i < userIdTwitterStreamHashMap.size(); i++) {
+                long key = userIdTwitterStreamHashMap.keyAt(i);
+                TwinownHelper.stopUserStream(userIdTwitterStreamHashMap.get(key));
             }
             userIdTwitterStreamHashMap.clear();
         }
