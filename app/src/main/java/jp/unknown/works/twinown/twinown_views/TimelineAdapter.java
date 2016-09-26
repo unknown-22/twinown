@@ -268,7 +268,7 @@ class TimelineAdapter extends RecyclerView.Adapter{
             imagePreviewLayout.removeAllViews();
             int i = 0;
             boolean wifi_status = true;
-            if (Utils.getPreferenceBoolean(fragment.getContext(), fragment.getString(R.string.preference_key_show_thumbnail_wifi_only), true)) {
+            if (Utils.getPreferenceBoolean(fragment.getContext(), fragment.getString(R.string.preference_key_show_thumbnail_wifi_only), false)) {
                 // WiFi時のみサムネイルを表示
                 wifi_status = isWifiConnected(fragment.getContext());
             }
