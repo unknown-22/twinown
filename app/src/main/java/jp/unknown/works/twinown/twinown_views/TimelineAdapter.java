@@ -3,6 +3,8 @@ package jp.unknown.works.twinown.twinown_views;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
@@ -265,7 +267,12 @@ class TimelineAdapter extends RecyclerView.Adapter{
             // サムネイル
             imagePreviewLayout.removeAllViews();
             int i = 0;
-            if (Utils.getPreferenceBoolean(fragment.getContext(), fragment.getString(R.string.preference_key_show_thumbnail), true)) {
+            boolean wifi_status = true;
+            if (Utils.getPreferenceBoolean(fragment.getContext(), fragment.getString(R.string.preference_key_show_thumbnail_wifi_only), true)) {
+                // WiFi時のみサムネイルを表示
+                wifi_status = isWifiConnected(fragment.getContext());
+            }
+            if (Utils.getPreferenceBoolean(fragment.getContext(), fragment.getString(R.string.preference_key_show_thumbnail), true) && wifi_status) {
                 final ExtendedMediaEntity[] extendedMediaEntities = status.getExtendedMediaEntities();
                 for (ExtendedMediaEntity extendedMediaEntity : extendedMediaEntities) {
                     final String imageUrl = extendedMediaEntity.getMediaURL();
@@ -288,6 +295,14 @@ class TimelineAdapter extends RecyclerView.Adapter{
                 }
             }
         }
+    }
+
+    public static boolean isWifiConnected(Context context) {
+        ConnectivityManager connMgr = (ConnectivityManager)
+                context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connMgr.getActiveNetworkInfo();
+        return networkInfo != null && networkInfo.isConnected()
+                && networkInfo.getType() == ConnectivityManager.TYPE_WIFI;
     }
 
     private class TimelineCallback extends SortedList.Callback<Status> {

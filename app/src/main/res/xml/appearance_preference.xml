@@ -48,4 +48,11 @@
         android:defaultValue="true"
         android:switchTextOff="OFF"
         android:switchTextOn="ON"/>
+    <SwitchPreference
+        android:key="@string/preference_key_show_thumbnail_wifi_only"
+        android:title="@string/setting_item_show_thumbnail_wifi_only"
+        android:defaultValue="false"
+        android:switchTextOff="OFF"
+        android:switchTextOn="ON"
+        android:dependency="@string/preference_key_show_thumbnail"/>
 </PreferenceScreen>

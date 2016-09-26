@@ -80,6 +80,7 @@
     <string name="preference_key_show_client_name">preference_show_client_name</string>
     <string name="preference_key_show_thumbnail">preference_show_thumbnail</string>
     <string name="preference_key_load_count">preference_key_load_count</string>
+    <string name="preference_key_show_thumbnail_wifi_only">preference_key_show_thumbnail_wifi_only</string>
 
     <string name="title_activity_setting">設定</string>
     <string name="title_activity_tab_control">タブ設定</string>
@@ -90,4 +91,5 @@
     <string name="title_activity_user">ユーザ</string>
     <string name="title_activity_talk">会話</string>
     <string name="title_activity_tweet">Twinownで投稿</string>
+    <string name="setting_item_show_thumbnail_wifi_only">WiFi時のみ表示</string>
 </resources>
